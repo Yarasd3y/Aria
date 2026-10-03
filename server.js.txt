@@ -1,0 +1,136 @@
+const express = require('express');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const path = require('path');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// ۱. پاراستنی هەدەری HTTP بە بەکارهێنانی Helmet
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
+// ۲. دیاریکردنی زۆرترین قەبارەی داواکاری (٥٠ کیلۆبایت)
+app.use(express.json({ limit: '50kb' }));
+
+// ۳. ڕێگەپێدانی CORS
+app.use(cors());
+
+// ٤. سنووردارکردنی ژمارەی داواکارییەکان (ڕێگری لە ڕاوبۆت و DDoS)
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // ١٥ خولەک
+    max: 20, // تەنها ٢٠ پرسیار لە ١٥ خولەکدا
+    message: { error: 'ژمارەی داواکارییەکانت زۆر بوو. تکایە ١٥ خولەکی تر هەوڵبدەرەوە.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api/', apiLimiter);
+
+// ٥. پێشاندانی فایلە جێگیرەکانی فرۆنتئێند لە فۆڵدەری public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ٦. پاڵاوتنی تێکست پێش ناردنی بۆ AI
+function sanitizeInput(text) {
+    if (!text || typeof text !== 'string') return '';
+    return text.slice(0, 500).trim();
+}
+
+// ٧. ناونیشانی وەڵامدانەوەی چات (Chat API Endpoint)
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { userPrompt } = req.body;
+        const cleanPrompt = sanitizeInput(userPrompt);
+
+        if (!cleanPrompt) {
+            return res.status(400).json({ error: "داواکارییەکەت نادروستە یان دەقەکە بەتاڵە." });
+        }
+
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            console.error("کێشە: GEMINI_API_KEY نەدۆزرایەوە لە فایلی .env");
+            return res.status(500).json({ error: "کلیلی API سێرڤەر جێگیر نەکراوە." });
+        }
+
+        const systemInstruction = `تۆ ڕاوێژکارێکی نێودەوڵەتیی لێهاتووی. بە زمانی کوردیی سۆرانی زۆر پاراو و ڕاستەوخۆ وەڵامی پرسیارەکە بدەرەوە.
+یاساکان:
+١. ژمارەکان بە وشەی کوردی بنووسە (وەک: یەک، دوو، سێ).
+٢. مەنووسە "من ناتوانم بە دەنگ قسە بکەم".
+٣. وەڵامەکانت کورت و دیاریکراو بن.`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: cleanPrompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                generationConfig: {
+                    maxOutputTokens: 350,
+                    temperature: 0.3
+                }
+            })
+        });
+
+        if (!response.ok) {
+            return res.status(502).json({ error: "کێشەیەک لە سێرڤەری سەرەکی Gemini ڕوویدا." });
+        }
+
+        const data = await response.json();
+        const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "ببورە، وەڵامێک وەرنەگیرا.";
+
+        return res.json({ reply: replyText });
+    } catch (error) {
+        console.error("Server Error:", error);
+        return res.status(500).json({ error: "کێشەیەکی ناوخۆیی لە سێرڤەر ڕوویدا." });
+    }
+});
+
+// ٨. ناونیشانی دروستکردنی دەنگی کوردی (TTS Proxy Endpoint)
+app.post('/api/tts', async (req, res) => {
+    try {
+        const { text, voice = "Puck" } = req.body;
+        const cleanText = sanitizeInput(text);
+
+        if (!cleanText) {
+            return res.status(400).json({ error: "دەقەکە نادروستە." });
+        }
+
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: "کلیلی API نەدۆزرایەوە." });
+        }
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: "Say naturally and clearly in Kurdish Sorani: " + cleanText }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voice }
+                        }
+                    }
+                }
+            })
+        });
+
+        if (!response.ok) {
+            return res.status(502).json({ error: "کێشەی بەرهەمهێنانی دەنگ ڕوویدا." });
+        }
+
+        const data = await response.json();
+        return res.json(data);
+    } catch (error) {
+        console.error("TTS Error:", error);
+        return res.status(500).json({ error: "کێشە لە دروستکردنی دەنگ." });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`🚀 سێرڤەری Kurd AI بە سەرکەوتوویی لەسەر پۆڕتی ${PORT} دەستی پێکرد: http://localhost:${PORT}`);
+});
