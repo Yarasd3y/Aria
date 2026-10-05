@@ -234,7 +234,7 @@
             </div>
 
             <p id="ui-modal-desc" class="text-xs text-slate-300 leading-relaxed">
-                Enter your <strong>Google Gemini API Key</strong> (Supports all formats including <code class="text-indigo-300 font-mono">AQ.Ab8...</code> and <code class="text-indigo-300 font-mono">AIzaSy...</code>):
+                Enter your <strong>Google Gemini API Key</strong>:
             </p>
 
             <div class="space-y-1">
@@ -252,7 +252,7 @@
     </div>
 
     <script>
-        // Dictionary for Complete UI Internationalization (i18n)
+        // Clean Dictionary for Complete UI Internationalization
         const uiTranslations = {
             'en': {
                 dir: 'ltr',
@@ -279,7 +279,7 @@
                 placeholder: 'Ask AriaAI anything or type a prompt in any language...',
                 speechStatus: 'Voice Playback Enabled',
                 modalTitle: 'Settings & API Key',
-                modalDesc: 'Enter your Google Gemini API Key (Supports all key formats including AQ.Ab8... and AIzaSy...):',
+                modalDesc: 'Enter your Google Gemini API Key:',
                 modalLabel: 'Gemini API Key',
                 modalCancel: 'Cancel',
                 modalSave: 'Save Key',
@@ -313,7 +313,7 @@
                 placeholder: 'داواکاری یان پرسیارەکەت بنووسە بە هەر زمانێک...',
                 speechStatus: 'سیستەمی خوێندنەوەی دەنگ چالاکە',
                 modalTitle: 'ڕێکخستن و کلیلی API Key',
-                modalDesc: 'کلیلی Gemini API دابنێ (پشتیوانی هەموو جۆرە کلیلەکان دەکات وەک AQ.Ab8... و AIzaSy...):',
+                modalDesc: 'کلیلی Gemini API دابنێ:',
                 modalLabel: 'کلیلی Gemini API',
                 modalCancel: 'پاشگەزبوونەوە',
                 modalSave: 'پاشەکەوتکردن',
@@ -347,7 +347,7 @@
                 placeholder: 'اكتب سؤالك أو طلبك بأي لغة...',
                 speechStatus: 'تشغيل الصوت التلقائي مفعل',
                 modalTitle: 'الإعدادات ومفتاح API Key',
-                modalDesc: 'أدخل مفتاح Gemini API الخاص بك (يدعم جميع الصيغ بما فيها AQ.Ab8... و AIzaSy...):',
+                modalDesc: 'أدخل مفتاح Gemini API الخاص بك:',
                 modalLabel: 'مفتاح Gemini API',
                 modalCancel: 'إلغاء',
                 modalSave: 'حفظ المفتاح',
@@ -381,7 +381,7 @@
                 placeholder: 'AriaAI\'ye herhangi bir dilde bir şey sorun...',
                 speechStatus: 'Sesli Okuma Etkin',
                 modalTitle: 'Ayarlar ve API Anahtarı',
-                modalDesc: 'Google Gemini API Anahtarınızı girin (AQ.Ab8... ve AIzaSy... dahil tüm formatları destekler):',
+                modalDesc: 'Google Gemini API Anahtarınızı girin:',
                 modalLabel: 'Gemini API Anahtarı',
                 modalCancel: 'İptal',
                 modalSave: 'Kaydet',
@@ -429,15 +429,13 @@
             const langSelect = document.getElementById('language-selector');
             selectedLanguage = langSelect.value;
 
-            // Map code to UI key
             if (selectedLanguage.startsWith('ckb')) currentLangKey = 'ckb';
             else if (selectedLanguage.startsWith('ar')) currentLangKey = 'ar';
             else if (selectedLanguage.startsWith('tr')) currentLangKey = 'tr';
-            else currentLangKey = 'en'; // Default base English
+            else currentLangKey = 'en';
 
             const t = uiTranslations[currentLangKey] || uiTranslations['en'];
 
-            // Update Direction and Text
             const inputEl = document.getElementById('user-prompt');
             inputEl.dir = t.dir;
             inputEl.placeholder = t.placeholder;
@@ -477,7 +475,7 @@
             }
         }
 
-        // Web Speech Recognition Initialization
+        // Web Speech Recognition
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SpeechRecognitionClass();
@@ -602,26 +600,14 @@
             alert('📋 Copied!');
         }
 
-        // Automatic Voice Playback Engine
+        // Voice Engine
         function speakText(rawText) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop any ongoing speech
+                window.speechSynthesis.cancel();
                 const cleanText = rawText.replace(/[*_#`]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
                 utterance.rate = 1.0;
-
-                const voices = window.speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                    const maleVoice = voices.find(v => 
-                        v.name.toLowerCase().includes('male') || 
-                        v.name.toLowerCase().includes('david') || 
-                        v.name.toLowerCase().includes('george') || 
-                        v.name.toLowerCase().includes('mark')
-                    );
-                    if (maleVoice) utterance.voice = maleVoice;
-                }
-
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -629,13 +615,6 @@
         function speakResponseText(btn) {
             const rawText = btn.getAttribute('data-text');
             speakText(rawText);
-        }
-
-        // Ensure voices are loaded asynchronously
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
-            };
         }
 
         function clearChat() {
@@ -649,7 +628,7 @@
             handleSendMessage(new Event('submit'));
         }
 
-        // Main Fetch and Smart Model Iteration Handler
+        // Streamlined Direct Fast-Route API Execution
         async function handleSendMessage(e) {
             if (e) e.preventDefault();
 
@@ -688,77 +667,46 @@
                 return;
             }
 
-            // Discovery + Fallback logic
-            let dynamicModels = [];
-            try {
-                const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-                const listRes = await fetch(listUrl);
-                if (listRes.ok) {
-                    const listData = await listRes.json();
-                    if (listData.models && Array.isArray(listData.models)) {
-                        dynamicModels = listData.models
-                            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
-                            .map(m => m.name.replace('models/', ''));
-                    }
-                }
-            } catch (err) {
-                console.warn('Dynamic model query notice:', err);
-            }
-
-            const fallbackModels = [
-                'gemini-2.5-flash',
-                'gemini-2.0-flash',
-                'gemini-1.5-flash-latest',
-                'gemini-1.5-flash',
-                'gemini-1.5-pro-latest',
-                'gemini-1.5-pro'
-            ];
-
-            const targetModels = [...new Set([...dynamicModels, ...fallbackModels])];
-
+            // Directly targeting top performant models without discovery delays
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
             let aiResponseText = null;
             let lastError = '';
 
-            const systemInstructions = `You are "AriaAI", a world-class international business advisor, market strategist, and autonomous AI proficient in OVER 100 LANGUAGES globally.
-Guidelines:
-- Reply naturally, clearly, and concisely in the EXACT language used by the user.
-- Structure responses to sound conversational and clear for human voice reading.`;
+            const systemInstructions = `You are "AriaAI", a world-class international business advisor and autonomous AI proficient in OVER 100 LANGUAGES globally.
+IMPORTANT: You have full audio playback capability in the frontend. NEVER apologize or state that you are a text-only model or cannot speak. Provide direct, highly structured, expert business advisory answers immediately in the language requested.`;
 
-            for (const model of targetModels) {
+            for (const model of modelsToTry) {
                 if (aiResponseText) break;
 
-                const apiVersions = ['v1beta', 'v1'];
-                for (const version of apiVersions) {
-                    try {
-                        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-                        
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                systemInstruction: {
-                                    parts: [{ text: systemInstructions }]
-                                },
-                                contents: [
-                                    {
-                                        role: 'user',
-                                        parts: [{ text: userQuery }]
-                                    }
-                                ]
-                            })
-                        });
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            systemInstruction: {
+                                parts: [{ text: systemInstructions }]
+                            },
+                            contents: [
+                                {
+                                    role: 'user',
+                                    parts: [{ text: userQuery }]
+                                }
+                            ]
+                        })
+                    });
 
-                        const data = await response.json();
+                    const data = await response.json();
 
-                        if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-                            aiResponseText = data.candidates[0].content.parts[0].text;
-                            break;
-                        } else if (data.error?.message) {
-                            lastError = data.error.message;
-                        }
-                    } catch (err) {
-                        lastError = err.message || 'Network error';
+                    if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                        aiResponseText = data.candidates[0].content.parts[0].text;
+                        break;
+                    } else if (data.error?.message) {
+                        lastError = data.error.message;
                     }
+                } catch (err) {
+                    lastError = err.message || 'Network error';
                 }
             }
 
@@ -766,14 +714,12 @@ Guidelines:
 
             if (aiResponseText) {
                 appendMessage('ai', aiResponseText);
-                // Trigger natural auto-speech playback immediately upon response arrival
                 speakText(aiResponseText);
             } else {
                 appendMessage('ai', `⚠️ **Connection Error**: ${lastError ? lastError : 'Unable to connect.'} Please check your Gemini API key.`);
             }
         }
 
-        // Initialize default English interface
         handleLanguageChange();
     </script>
 </body>
