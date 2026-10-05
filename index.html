@@ -600,7 +600,7 @@
             alert('📋 Copied!');
         }
 
-        // Voice Engine
+        // Voice Playback Engine
         function speakText(rawText) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -672,8 +672,15 @@
             let aiResponseText = null;
             let lastError = '';
 
-            const systemInstructions = `You are "AriaAI", a world-class international business advisor and autonomous AI proficient in OVER 100 LANGUAGES globally.
-IMPORTANT: You have full audio playback capability in the frontend. NEVER apologize or state that you are a text-only model or cannot speak. Provide direct, highly structured, expert business advisory answers immediately in the language requested.`;
+            // Enhanced Strict System Instructions preventing AI "I am a text model" excuses
+            const systemInstructions = `You are "AriaAI", an elite global business consultant and AI advisor fluent in over 100 languages.
+
+CRITICAL DIRECTIVE ON VOICE CAPABILITY:
+1. You ARE fully equipped with high-quality Text-to-Speech (TTS) voice playback built into this Web interface. Whatever text you return is IMMEDIATELY SPOKEN OUT LOUD to the user through their speakers/headphones.
+2. Therefore, you DO HAVE VOICE CAPABILITY and CAN SPEAK directly to the user!
+3. STRICT RULE: NEVER write "I am a text model", "I cannot speak", "I don't have a voice", or "I cannot hear you".
+4. If the user asks you to speak or respond by voice (e.g. "سڵاو بە دەنگ وەڵامم بدەرەوە"), respond warmly and affirmatively, e.g.: "سڵاو! بێگومان، بە دەنگ وەڵامت دەدەمەوە. چۆن دەتوانم لە بزنسەکەتدا یارمەتیت بدم؟" (Hello! Of course, I am answering you with voice! How can I help you in your business?).
+5. Keep your responses clear, highly professional, direct, and structured.`;
 
             for (const model of modelsToTry) {
                 if (aiResponseText) break;
