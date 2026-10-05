@@ -1,410 +1,576 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl" class="h-full">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kurd AI - ژیریی دەستکردی کوردی</title>
+    <title>AriaAI - Global Business & Multilingual AI Advisor</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Vazirmatn Font for Kurdish -->
+    <!-- Google Fonts: Inter & Vazirmatn for Universal Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * {
-            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        }
-        
-        /* Custom scrollbar for clean dark look */
-        .chat-scroll::-webkit-scrollbar {
-            width: 5px;
-        }
-        .chat-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+        body {
+            font-family: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* Pulse glowing effects for active microphone */
-        @keyframes ring-pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
-            }
-            70% {
-                box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-        
-        .mic-active {
-            animation: ring-pulse 1.5s infinite;
-            background-color: #ef4444 !important;
-            border-color: #f87171 !important;
-            color: #ffffff !important;
-        }
-
-        /* Glassmorphic backdrop blurring */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
+        /* Glassmorphism styling */
+        .glass-header {
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
 
-        /* Gradient glow background highlights */
-        .bg-glow {
-            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%);
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Gradient background animations */
+        .bg-gradient-glow {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 100%);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Microphone Pulse Effect */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            70% { box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .recording-active {
+            animation: pulse-ring 1.5s infinite;
+            background-color: #ef4444 !important;
+            border-color: #f87171 !important;
+            color: #ffffff !important;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-full flex flex-col justify-between antialiased selection:bg-indigo-500 selection:text-white bg-glow">
+<body class="bg-slate-950 text-slate-100 h-full flex flex-col justify-between antialiased selection:bg-indigo-500 selection:text-white bg-gradient-glow">
 
-    <header class="sticky top-0 z-20 glass-panel border-b border-slate-800/80 px-4 py-3 sm:px-6">
-        <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
+    <!-- Application Header -->
+    <header class="sticky top-0 z-30 glass-header border-b border-slate-800/80 px-4 py-3 sm:px-6">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             
-            <!-- Logo & Title -->
+            <!-- Brand Logo & Global Title -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/25 border border-indigo-400/30 shrink-0">
-                    🤖
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 border border-white/20 shrink-0">
+                    <i class="fa-solid fa-brain"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="font-extrabold text-base sm:text-lg tracking-wide text-slate-100">Kurd AI</h1>
-                        <span class="text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full">Gemini 2.5</span>
+                        <h1 class="font-extrabold text-base sm:text-xl tracking-tight text-white">Aria<span class="text-indigo-400">AI</span></h1>
+                        <span class="text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">Multilingual 100+</span>
                     </div>
-                    <p class="text-xs text-slate-400 font-medium">ڕاوێژکاری ژیریی دەستکردی کوردی (بە دەنگ و دەق)</p>
+                    <p class="text-xs text-slate-400 font-medium hidden sm:block">Global Business & Multilingual Autonomous AI Advisor</p>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2">
-                <button onclick="clearChat()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm" title="پاککردنەوەی چات">
-                    <span>🗑️</span>
-                    <span class="hidden sm:inline">پاککردنەوە</span>
+            <!-- Header Controls: Voice Gender, Extended Languages & Settings -->
+            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+                
+                <!-- Voice Gender Selector (Male/Female) -->
+                <div class="relative">
+                    <select id="voice-gender-selector" onchange="handleVoiceGenderChange()" class="bg-indigo-950/90 text-indigo-200 border border-indigo-700/60 hover:border-indigo-500 text-xs font-semibold rounded-xl px-2.5 py-2 outline-none cursor-pointer transition">
+                        <option value="male" selected>👨 دەنگی کوڕ (Male Voice)</option>
+                        <option value="female">👩 دەنگی کچ (Female Voice)</option>
+                    </select>
+                </div>
+
+                <!-- Expanded Language Selector (100+ Languages support) -->
+                <div class="relative">
+                    <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[150px] sm:max-w-[180px] truncate">
+                        <option value="ckb-IQ">☀️ کوردی (سۆرانی)</option>
+                        <option value="ku-TR">☀️ کوردی (کورمانجی)</option>
+                        <option value="en-US">🇺🇸 English</option>
+                        <option value="ar-SA">🇸🇦 العربية</option>
+                        <option value="fa-IR">🇮🇷 فارسی</option>
+                        <option value="tr-TR">🇹🇷 Türkçe</option>
+                        <option value="es-ES">🇪🇸 Español</option>
+                        <option value="fr-FR">🇫🇷 Français</option>
+                        <option value="de-DE">🇩🇪 Deutsch</option>
+                        <option value="it-IT">🇮🇹 Italiano</option>
+                        <option value="ru-RU">🇷🇺 Русский</option>
+                        <option value="zh-CN">🇨🇳 中文 (Chinese)</option>
+                        <option value="ja-JP">🇯🇵 日本語 (Japanese)</option>
+                        <option value="ko-KR">🇰🇷 한국어 (Korean)</option>
+                        <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
+                        <option value="ur-PK">🇵🇰 اردو (Urdu)</option>
+                        <option value="nl-NL">🇳🇱 Nederlands</option>
+                        <option value="auto">🌐 تری زمانەکان (100+ Languages)</option>
+                    </select>
+                </div>
+
+                <!-- Clear History Button -->
+                <button onclick="clearChat()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Clear Conversation">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span class="hidden md:inline">پاکی بکەرەوە</span>
                 </button>
-                <button onclick="promptForApiKey()" class="text-xs bg-indigo-950/80 hover:bg-indigo-900/80 text-amber-300 border border-indigo-800/80 px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm font-semibold">
-                    <span>🔑</span>
-                    <span>ڕێکخستنی API Key</span>
+
+                <!-- Custom API Key Settings Modal Trigger -->
+                <button onclick="openSettingsModal()" class="text-xs bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 font-semibold">
+                    <i class="fa-solid fa-key text-amber-400"></i>
+                    <span class="hidden sm:inline">API Key</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main id="chat-window" class="flex-1 overflow-y-auto px-4 py-6 space-y-5 max-w-4xl w-full mx-auto chat-scroll">
+    <!-- Main Chat & Advisory Area -->
+    <main id="chat-window" class="flex-1 overflow-y-auto px-4 py-6 space-y-6 max-w-5xl w-full mx-auto custom-scroll">
         
-        <!-- AI Welcome Message -->
-        <div class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-base shrink-0 shadow-sm mt-1">
-                🤖
+        <!-- Welcome Banner / Agent Bio -->
+        <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-xl border border-slate-800">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </div>
+                <div class="space-y-1 flex-1">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        بەخێربێیت بۆ ئاریا (AriaAI Global Advisory)
+                        <span class="text-xs font-normal text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">١٠٠+ زمان</span>
+                    </h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        من هاوبەشی ستراتیژیی کار و بزنسی نێودەوڵەتیتنم. یاریدەدەت دەبم لە گەشەپێدانی بزنس، مۆدێلی دارایی، مارکێتینگی جیهانی، و پەیوەندی بە زیاتر لە <strong>١٠٠ زمانی جیهانی</strong> بە دەنگی کوڕ یان کچ.
+                    </p>
+                </div>
             </div>
-            <div class="bg-slate-900/90 border border-slate-800 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[88%] sm:max-w-[80%] text-sm leading-relaxed shadow-lg">
-                <p class="font-bold text-indigo-400 mb-1 text-sm">سڵاو! بەخێر بێیت بۆ Kurd AI 🌸</p>
-                <p>من ئامادەم بۆ وەڵامدانەوەی پرسیارەکانت. دەتوانیت بە **دەق بنووسیت** یان **کێلی مایک دابگریت** و قسەم لەگەڵ بکەیت (کاتێک لە قسەکردن دەوەستیت، بە ئۆتۆماتیکی دەنێردرێت).</p>
+
+            <!-- Quick Business Capability Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                <button onclick="sendQuickPrompt('پلانێکی کار (Business Plan)ی کورت و سەرنجڕاکێشم بۆ بنووسە بۆ خزمەتگوزارییەکی ژیری دەستکرد.')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
+                    <div class="text-amber-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="text-xs font-semibold text-slate-200">پلانی بزنس (کوردی)</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">ستراتیژیی پەیداکردنی پارە</div>
+                </button>
+
+                <button onclick="sendQuickPrompt('Act as a global market strategist and give me a step-by-step roadmap for scaling an online business internationally.')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
+                    <div class="text-indigo-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="text-xs font-semibold text-slate-200">Market Strategy</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">International scaling roadmap</div>
+                </button>
+
+                <button onclick="sendQuickPrompt('What are the most profitable online SaaS and AI business ideas for global markets right now?')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
+                    <div class="text-cyan-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div class="text-xs font-semibold text-slate-200">Monetization Ideas</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">High-margin digital business</div>
+                </button>
+
+                <button onclick="sendQuickPrompt('اكتب لي خطة عمل واضحة لتأسيس شركة تسويق رقمي في الشرق الأوسط.')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
+                    <div class="text-emerald-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-paper-plane"></i></div>
+                    <div class="text-xs font-semibold text-slate-200">استراتيجية بالعربية</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">تسويق وتوسع تجاري</div>
+                </button>
             </div>
         </div>
 
-        <!-- Quick Sample Prompts -->
-        <div id="quick-prompts" class="pt-2 flex flex-wrap gap-2 pr-12">
-            <button onclick="sendQuickPrompt('سڵاو، کێیت و چیم بۆ دەکەیت؟')" class="text-xs bg-slate-900/80 hover:bg-indigo-900/40 border border-slate-800 hover:border-indigo-500/50 text-slate-300 px-3 py-2 rounded-xl transition shadow-sm">
-                💡 سڵاو، کێیت؟
-            </button>
-            <button onclick="sendQuickPrompt('چەند پێشنیارێک بۆ بەرزکردنەوەی ژیانی ڕۆژانەم پێ بڵێ')" class="text-xs bg-slate-900/80 hover:bg-indigo-900/40 border border-slate-800 hover:border-indigo-500/50 text-slate-300 px-3 py-2 rounded-xl transition shadow-sm">
-                🌟 پێشنیار بۆ ژیانی ڕۆژانە
-            </button>
-            <button onclick="sendQuickPrompt('کورتەیەکی کورت سەبارەت بە ژیریی دەستکرد بنووسە')" class="text-xs bg-slate-900/80 hover:bg-indigo-900/40 border border-slate-800 hover:border-indigo-500/50 text-slate-300 px-3 py-2 rounded-xl transition shadow-sm">
-                🤖 ژیری دەستکرد چییە؟
-            </button>
-        </div>
+        <!-- Chat Conversation Messages Container -->
+        <div id="messages-list" class="space-y-4"></div>
 
     </main>
 
-    <footer class="sticky bottom-0 z-20 glass-panel border-t border-slate-800/80 p-3 sm:p-4">
-        <div class="max-w-4xl mx-auto space-y-2">
+    <!-- Input Footer Bar -->
+    <footer class="sticky bottom-0 z-30 glass-header border-t border-slate-800/80 p-3 sm:p-4">
+        <div class="max-w-5xl mx-auto space-y-2">
             
-            <!-- Voice Status & Live Indicator -->
-            <div id="voice-status" class="hidden flex items-center justify-center gap-2 text-xs text-amber-400 font-semibold py-1 bg-amber-500/10 border border-amber-500/20 rounded-xl animate-pulse">
-                <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-                <span>🎙️ گوێم لێیە... بئاخڤە! (دوای وەستان، ئۆتۆماتیکی دەنێردرێت)</span>
+            <!-- Voice Audio Live Listening Alert -->
+            <div id="voice-indicator" class="hidden flex items-center justify-between text-xs text-amber-300 font-medium px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl animate-pulse">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                    <span>گوێم لە دەنگتە... ئێستا قسە بکە! (خۆکارانە دەنێردرێت دوای وەستان)</span>
+                </div>
+                <button onclick="stopRecording()" class="text-amber-400 hover:text-white underline text-xs">ڕاگرتن</button>
             </div>
 
-            <!-- Input Form -->
-            <form onsubmit="handleSend(event)" class="flex items-center gap-2">
+            <!-- Form Bar -->
+            <form onsubmit="handleSendMessage(event)" class="flex items-center gap-2">
                 
-                <!-- Microphone Button -->
-                <button type="button" id="mic-btn" onclick="toggleMic()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-xl transition-all duration-200 shadow-md shrink-0" title="قسەکردن بە مایک">
-                    🎙️
+                <!-- Voice Mic Button -->
+                <button type="button" id="mic-button" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition-all duration-200 shadow-md shrink-0" title="Voice Input">
+                    <i class="fa-solid fa-microphone"></i>
                 </button>
 
-                <!-- Text Input Box -->
+                <!-- Main Prompt Input -->
                 <div class="relative flex-1">
-                    <input type="text" id="user-input" dir="rtl" placeholder="پەیامەکەت بنووسە یان داگرە ڕێک لەسەر مایک..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition duration-200 shadow-inner" autocomplete="off">
+                    <input type="text" id="user-prompt" dir="rtl" placeholder="داواکاری یان پرسیارەکەت بنووسە بە هەر زمانێک..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition duration-200 shadow-inner" autocomplete="off">
                 </div>
 
-                <!-- Send Button -->
-                <button type="submit" id="send-btn" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center text-lg transition duration-200 shadow-lg shadow-indigo-600/30 shrink-0 font-bold">
-                    🚀
+                <!-- Submit Button -->
+                <button type="submit" id="send-button" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center text-lg transition duration-200 shadow-lg shadow-indigo-600/30 shrink-0 font-bold">
+                    <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
-            
-            <div class="text-center text-[11px] text-slate-500 pt-1">
-                Kurd AI بۆ وەڵامدانەوە دروستکراوە • Gemini Pro AI Engine
+
+            <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
+                <span>Powered by Gemini Neural Engine</span>
+                <span id="speech-status">Multilingual Voice Ready (Male Default)</span>
             </div>
         </div>
     </footer>
 
-    <script>
-        let isRecording = false;
-        let recognition = null;
+    <!-- Settings Modal for Custom API Key -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-slate-100 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-400"></i>
+                    Settings & API Key
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-        // Clean & Retrieve API Key from LocalStorage
-        function getCleanApiKey() {
-            let key = localStorage.getItem('gemini_api_key') || '';
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Enter your <strong>Google Gemini API Key</strong> (supports all key formats including <code class="text-indigo-300 font-mono">AQ.Ab8...</code> and <code class="text-indigo-300 font-mono">AIzaSy...</code>):
+            </p>
+
+            <div class="space-y-1">
+                <label class="text-xs font-medium text-slate-400">Gemini API Key</label>
+                <input type="password" id="custom-api-key-input" placeholder="Paste your key here..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Cancel</button>
+                <button onclick="saveCustomApiKey()" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
+                    Save Key
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management variables
+        let isRecording = false;
+        let speechRecognition = null;
+        let selectedLanguage = 'ckb-IQ';
+        let selectedVoiceGender = 'male'; // Default male voice as requested!
+
+        // Retrieve Clean API key if stored in localStorage
+        function getSavedApiKey() {
+            const key = localStorage.getItem('aria_custom_api_key') || localStorage.getItem('aura_custom_api_key') || '';
             return key.trim().replace(/^["']|["']$/g, '');
         }
 
-        // Prompt User for API Key
-        function promptForApiKey() {
-            const currentKey = getCleanApiKey();
-            const newKey = prompt('تکایە Gemini API Key خۆت لێرە پەیست بکە (کۆپی لە Google AI Studio):', currentKey);
+        // Open & Close Modal Functions
+        function openSettingsModal() {
+            document.getElementById('custom-api-key-input').value = getSavedApiKey();
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveCustomApiKey() {
+            const inputVal = document.getElementById('custom-api-key-input').value.trim();
+            if (inputVal.length > 5) {
+                localStorage.setItem('aria_custom_api_key', inputVal);
+                alert('✅ API Key saved successfully!');
+            } else {
+                localStorage.removeItem('aria_custom_api_key');
+                alert('ℹ️ API key cleared.');
+            }
+            closeSettingsModal();
+        }
+
+        // Voice Gender Change Handler
+        function handleVoiceGenderChange() {
+            selectedVoiceGender = document.getElementById('voice-gender-selector').value;
+        }
+
+        // Language Selection Change
+        function handleLanguageChange() {
+            const langSelect = document.getElementById('language-selector');
+            selectedLanguage = langSelect.value;
             
-            if (newKey !== null) {
-                const cleaned = newKey.trim().replace(/^["']|["']$/g, '');
-                if (cleaned.length > 5) {
-                    localStorage.setItem('gemini_api_key', cleaned);
-                    alert('✅ کلیلەکە بە سەرکەوتوویی پاشەکەوت کرا!');
-                } else {
-                    alert('⚠️ کلیلەکە نادروستە. تکایە دووبارە پەیستی بکەرەوە.');
-                }
+            if (speechRecognition) {
+                speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+            }
+
+            const inputEl = document.getElementById('user-prompt');
+            if (selectedLanguage === 'ckb-IQ' || selectedLanguage === 'ar-SA' || selectedLanguage === 'fa-IR' || selectedLanguage === 'ur-PK') {
+                inputEl.dir = 'rtl';
+                inputEl.placeholder = 'داواکاری یان پرسیارەکەت بنووسە بە هەر زمانێک...';
+            } else {
+                inputEl.dir = 'ltr';
+                inputEl.placeholder = 'Ask AriaAI anything about global business, strategy, or coding...';
             }
         }
 
-        // Check for API Key on Startup
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!getCleanApiKey()) {
-                setTimeout(promptForApiKey, 600);
-            }
-        });
-
-        // Initialize Web Speech API for Kurdish
+        // Web Speech Recognition Initialization
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.lang = 'ckb-IQ'; // Sorani Kurdish
+            const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+            speechRecognition = new SpeechRecognitionClass();
+            speechRecognition.continuous = false;
+            speechRecognition.interimResults = true;
+            speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
 
-            recognition.onstart = () => {
+            speechRecognition.onstart = () => {
                 isRecording = true;
-                const micBtn = document.getElementById('mic-btn');
-                micBtn.classList.add('mic-active');
-                document.getElementById('voice-status').classList.remove('hidden');
+                document.getElementById('mic-button').classList.add('recording-active');
+                document.getElementById('voice-indicator').classList.remove('hidden');
             };
 
-            recognition.onresult = (event) => {
+            speechRecognition.onresult = (event) => {
                 let transcript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     transcript += event.results[i][0].transcript;
                 }
-                const inputEl = document.getElementById('user-input');
-                inputEl.value = transcript;
+                document.getElementById('user-prompt').value = transcript;
             };
 
-            recognition.onerror = (event) => {
-                console.warn('Speech recognition status/error:', event.error);
+            speechRecognition.onerror = (event) => {
+                console.warn('Speech Recognition notice:', event.error);
                 stopRecording();
             };
 
-            recognition.onend = () => {
+            speechRecognition.onend = () => {
                 stopRecording();
-                const inputVal = document.getElementById('user-input').value.trim();
-                if (inputVal.length > 0) {
-                    // Automatically submit input after speech stops
-                    setTimeout(() => handleSend(new Event('submit')), 300);
+                const textVal = document.getElementById('user-prompt').value.trim();
+                if (textVal.length > 0) {
+                    setTimeout(() => handleSendMessage(new Event('submit')), 300);
                 }
             };
         }
 
-        function toggleMic() {
-            if (!recognition) {
-                alert('⚠️ وێبگەڕەکەت پاڵپشتیی تۆمارکردنی دەنگ ناکات.');
+        function toggleVoiceRecording() {
+            if (!speechRecognition) {
+                alert('⚠️ Voice input is not supported in this browser. Please use Google Chrome or Safari.');
                 return;
             }
 
             if (isRecording) {
-                recognition.stop();
+                speechRecognition.stop();
             } else {
                 try {
-                    document.getElementById('user-input').value = '';
-                    recognition.start();
-                } catch (e) {
-                    console.error('Error starting recognition:', e);
+                    document.getElementById('user-prompt').value = '';
+                    speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+                    speechRecognition.start();
+                } catch (err) {
+                    console.error('Mic start error:', err);
                 }
             }
         }
 
         function stopRecording() {
             isRecording = false;
-            const micBtn = document.getElementById('mic-btn');
-            micBtn.classList.remove('mic-active');
-            document.getElementById('voice-status').classList.add('hidden');
+            document.getElementById('mic-button').classList.remove('recording-active');
+            document.getElementById('voice-indicator').classList.add('hidden');
         }
 
-        // Helper to format HTML safety and linebreaks/bolding
+        // HTML Escaping and Markdown formatting helper
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.innerText = text;
             return div.innerHTML;
         }
 
-        function formattedText(text) {
-            return escapeHtml(text)
+        function formatMarkdownResponse(text) {
+            let formatted = escapeHtml(text)
                 .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-300">$1</strong>');
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-300 font-semibold">$1</strong>')
+                .replace(/`([^`]+)`/g, '<code class="bg-slate-800 text-cyan-300 px-1.5 py-0.5 rounded text-xs">$1</code>');
+            return formatted;
         }
 
-        // Append message to UI
+        // Append Message Card to Chat Window
         function appendMessage(sender, text) {
-            const chatWindow = document.getElementById('chat-window');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'flex items-start gap-3';
-
-            // Hide quick prompts if any message is sent
-            const quickPrompts = document.getElementById('quick-prompts');
-            if (quickPrompts) quickPrompts.classList.add('hidden');
+            const messagesContainer = document.getElementById('messages-list');
+            const msgRow = document.createElement('div');
+            msgRow.className = 'flex items-start gap-3 text-sm';
 
             if (sender === 'user') {
-                msgDiv.innerHTML = `
+                msgRow.innerHTML = `
                     <div class="flex-1 flex justify-end">
-                        <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tl-none max-w-[88%] sm:max-w-[80%] text-sm leading-relaxed shadow-md font-medium">
+                        <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed shadow-md font-medium">
                             ${escapeHtml(text)}
                         </div>
                     </div>
                     <div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center text-sm shrink-0 shadow-sm mt-1">
-                        👤
+                        <i class="fa-solid fa-user"></i>
                     </div>
                 `;
             } else {
-                msgDiv.innerHTML = `
-                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0 shadow-sm mt-1">
-                        🤖
+                msgRow.innerHTML = `
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-sm shrink-0 shadow-md mt-1">
+                        <i class="fa-solid fa-robot"></i>
                     </div>
-                    <div class="bg-slate-900/90 border border-slate-800 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[88%] sm:max-w-[80%] text-sm leading-relaxed shadow-md">
-                        ${formattedText(text)}
+                    <div class="glass-card text-slate-100 p-4 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow-md border border-slate-800 space-y-2">
+                        <div>${formatMarkdownResponse(text)}</div>
+                        <div class="pt-2 flex items-center gap-3 border-t border-slate-800/80 text-xs text-slate-400">
+                            <button onclick="speakResponseText(this)" data-text="${escapeHtml(text)}" class="hover:text-indigo-400 flex items-center gap-1 transition">
+                                <i class="fa-solid fa-volume-high"></i> خوێندنەوە بە دەنگی ${selectedVoiceGender === 'male' ? 'کوڕ' : 'کچ'}
+                            </button>
+                            <button onclick="copyToClipboard('${escapeHtml(text).replace(/'/g, "\\'")}')" class="hover:text-indigo-400 flex items-center gap-1 transition">
+                                <i class="fa-solid fa-copy"></i> Copy
+                            </button>
+                        </div>
                     </div>
                 `;
             }
 
-            chatWindow.appendChild(msgDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            messagesContainer.appendChild(msgRow);
+            const chatWin = document.getElementById('chat-window');
+            chatWin.scrollTop = chatWin.scrollHeight;
         }
 
-        // Send Quick Prompt
-        function sendQuickPrompt(promptText) {
-            document.getElementById('user-input').value = promptText;
-            handleSend(new Event('submit'));
+        // Copy Text Function
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('📋 کۆپی کرا!');
         }
 
-        // Clear Chat Window
-        function clearChat() {
-            const chatWindow = document.getElementById('chat-window');
-            chatWindow.innerHTML = `
-                <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-base shrink-0 shadow-sm mt-1">
-                        🤖
-                    </div>
-                    <div class="bg-slate-900/90 border border-slate-800 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[88%] sm:max-w-[80%] text-sm leading-relaxed shadow-lg">
-                        <p class="font-bold text-indigo-400 mb-1 text-sm">چاتەکە پاککرایەوە! 🧹</p>
-                        <p>دەتوانیت دووبارە پرسیارەکانت بنووسیت یان قسە بکەیت.</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Speech Output Synthesis (Voice Reading)
-        function speakText(text) {
+        // Text-to-Speech Output (Support for Male/Female selection)
+        function speakResponseText(btn) {
+            const rawText = btn.getAttribute('data-text');
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const cleanSpeechText = text.replace(/[*_#`]/g, '');
-                const utterance = new SpeechSynthesisUtterance(cleanSpeechText);
-                utterance.lang = 'ku';
-                utterance.rate = 0.95;
+                const cleanText = rawText.replace(/[*_#`]/g, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+                utterance.rate = 1.0;
+
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    let filteredVoice = null;
+                    if (selectedVoiceGender === 'male') {
+                        filteredVoice = voices.find(v => 
+                            v.name.toLowerCase().includes('male') || 
+                            v.name.toLowerCase().includes('david') || 
+                            v.name.toLowerCase().includes('george') || 
+                            v.name.toLowerCase().includes('mark') ||
+                            v.name.toLowerCase().includes('stefan')
+                        );
+                    } else {
+                        filteredVoice = voices.find(v => 
+                            v.name.toLowerCase().includes('female') || 
+                            v.name.toLowerCase().includes('zira') || 
+                            v.name.toLowerCase().includes('hazel') || 
+                            v.name.toLowerCase().includes('susan')
+                        );
+                    }
+
+                    if (filteredVoice) {
+                        utterance.voice = filteredVoice;
+                    }
+                }
+
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Main Send Handling & API Request Sequence
-        async function handleSend(e) {
+        // Clear Chat Window
+        function clearChat() {
+            document.getElementById('messages-list').innerHTML = '';
+        }
+
+        // Send Quick Prompt
+        function sendQuickPrompt(promptText) {
+            document.getElementById('user-prompt').value = promptText;
+            handleSendMessage(new Event('submit'));
+        }
+
+        // Main Message Handler & API Fetch Function
+        async function handleSendMessage(e) {
             if (e) e.preventDefault();
 
-            const inputEl = document.getElementById('user-input');
-            const userQuery = inputEl.value.trim();
+            const promptInput = document.getElementById('user-prompt');
+            const userQuery = promptInput.value.trim();
             if (!userQuery) return;
 
-            const apiKey = getCleanApiKey();
+            appendMessage('user', userQuery);
+            promptInput.value = '';
+
+            // Loading Indicator UI
+            const messagesContainer = document.getElementById('messages-list');
+            const loadingRow = document.createElement('div');
+            loadingRow.id = 'active-loading-indicator';
+            loadingRow.className = 'flex items-start gap-3 text-sm animate-pulse';
+            loadingRow.innerHTML = `
+                <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0 mt-1">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+                <div class="glass-card text-slate-400 p-3.5 rounded-2xl rounded-tl-none text-xs flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+                    <span>تۆیژینەوە و وەڵامدانەوە...</span>
+                </div>
+            `;
+            messagesContainer.appendChild(loadingRow);
+            const chatWin = document.getElementById('chat-window');
+            chatWin.scrollTop = chatWin.scrollHeight;
+
+            const apiKey = getSavedApiKey();
+            
             if (!apiKey) {
-                alert('تکایە سەرەتا API Key پەیست بکە!');
-                promptForApiKey();
+                document.getElementById('active-loading-indicator')?.remove();
+                appendMessage('ai', `⚠️ **کۆدی API دابین نەکراوە**:
+تکایە لە سەرەوە کلیک لەسەر دوگمەی **🔑 API Key** بکە و کلیلی Gemini ی خۆت بنووسە تا AriaAI وەڵامت بداتەوە.`);
                 return;
             }
 
-            // Display user message
-            appendMessage('user', userQuery);
-            inputEl.value = '';
-
-            // Loading Indicator UI
-            const chatWindow = document.getElementById('chat-window');
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = 'loading-indicator';
-            loadingDiv.className = 'flex items-start gap-3 animate-pulse';
-            loadingDiv.innerHTML = `
-                <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0 shadow-sm mt-1">
-                    🤖
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 text-slate-400 p-4 rounded-2xl rounded-tr-none text-xs flex items-center gap-2">
-                    <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
-                    <span>لەبەرچاوگرتنی وەڵام لەگەڵ Gemini... 💭</span>
-                </div>
-            `;
-            chatWindow.appendChild(loadingDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-
-            // Target models sequence list
-            const modelsToTry = [
+            // Models fallback sequence
+            const targetModels = [
                 'gemini-2.5-flash',
                 'gemini-2.0-flash',
                 'gemini-1.5-flash'
             ];
 
-            let aiReply = null;
-            let lastErrorMessage = '';
+            let aiResponseText = null;
+            let lastError = '';
 
-            for (const model of modelsToTry) {
+            const systemInstructions = `You are "AriaAI" (ئاریا), a world-class international business advisor, market strategist, and highly intelligent autonomous assistant proficient in OVER 100 LANGUAGES globally.
+Response Guidelines:
+- ALWAYS respond in the EXACT same language that the user writes in or explicitly requests (e.g. Kurdish Sorani, Kurdish Kurmanji, Arabic, English, Persian, Turkish, French, German, Chinese, Japanese, etc.).
+- Provide clear, highly strategic, actionable, and structured business insights, monetization plans, technical advice, or market roadmaps.
+- Maintain a warm, highly smart, executive male tone.`;
+
+            for (const model of targetModels) {
                 try {
-                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
                     
-                    const response = await fetch(endpoint, {
+                    const response = await fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
+                            systemInstruction: {
+                                parts: [{ text: systemInstructions }]
+                            },
                             contents: [
                                 {
                                     role: 'user',
-                                    parts: [
-                                        {
-                                            text: `تۆ ژیرییەکی دەستکردی بەتوانایت بەناوی "Kurd AI". وەڵامی بەکارهێنەر ڕاستەوخۆ بە زمانی کوردی سۆرانی، ڕوون، بێ ئاڵۆزی و بە شێوازێکی زۆر جوان بدەرەوە:\n\n${userQuery}`
-                                        }
-                                    ]
+                                    parts: [{ text: userQuery }]
                                 }
                             ]
                         })
@@ -412,25 +578,27 @@
 
                     const data = await response.json();
 
-                    if (response.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                        aiReply = data.candidates[0].content.parts[0].text;
-                        break; // Success! Break out of loop
+                    if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                        aiResponseText = data.candidates[0].content.parts[0].text;
+                        break;
                     } else if (data.error?.message) {
-                        lastErrorMessage = data.error.message;
+                        lastError = data.error.message;
                     }
                 } catch (err) {
-                    console.warn(`Model ${model} fetch failed:`, err);
-                    lastErrorMessage = err.message || 'Network issue';
+                    console.warn(`Attempt with ${model} failed:`, err);
+                    lastError = err.message || 'Network error';
                 }
             }
 
-            document.getElementById('loading-indicator')?.remove();
+            document.getElementById('active-loading-indicator')?.remove();
 
-            if (aiReply) {
-                appendMessage('ai', aiReply);
-                speakText(aiReply);
+            if (aiResponseText) {
+                appendMessage('ai', aiResponseText);
             } else {
-                appendMessage('ai', `⚠️ ببورە، کێشەیەک ڕوویدا لە وەرگرتنی وەڵام:\n${lastErrorMessage}\n\nتکایە دڵنیابەوە لە دروستی API Keyەکەت لە ڕێگەی دوگمەی **🔑 ڕێکخستنی API Key**.`);
+                appendMessage('ai', `⚠️ **کێشەی بەستەر/وەڵامدانەوە**:
+نەتوانرا وەڵام بەدەست بهێنرێت. ${lastError ? `هەڵە: ${lastError}` : ''}
+
+💡 *ڕێنمایی*: دەتوانیت کلیک لەسەر دوگمەی **🔑 API Key** بکەیت لە سەرەوە تا کلیلی خۆت نوێ بوبکەیتەوە.`);
             }
         }
     </script>
