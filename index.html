@@ -5,7 +5,7 @@
             🤖
         </div>
         <div>
-            <h1 class="text-lg font-bold text-slate-100">Kurd AI <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Gemini 1.5</span></h1>
+            <h1 class="text-lg font-bold text-slate-100">Kurd AI <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Gemini 2.5</span></h1>
             <p class="text-xs text-slate-400">ڕاوێژکاری ژیریی دەستکرد بە دەنگ و دەق</p>
         </div>
     </div>
@@ -25,7 +25,7 @@
         </div>
         <div class="bg-slate-800 border border-slate-700/60 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[85%] text-sm leading-relaxed shadow-md">
             سڵاو! بەخێر بێیت بۆ **Kurd AI**. 🌸<br>
-            کلیلە نوێیەکەت (`AQ.Ab8...`) بە تەواوی کاراکراوە. بنووسە یان بە مایک قسەم لەگەڵ بکە (دوای وەستان، ڕاستەوخۆ دەقەکە خۆی دەنێرێت).
+            کلیلە نوێیەکەت بە تەواوی کاراکراوە. بنووسە یان بە مایک قسەم لەگەڵ بکە (دوای وەستان، ڕاستەوخۆ دەقەکە خۆی دەنێرێت).
         </div>
     </div>
 </main>
@@ -92,7 +92,7 @@
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = true;
-        recognition.lang = 'ckb-IQ'; // Sorani Kurdish or fallback
+        recognition.lang = 'ckb-IQ'; // Sorani Kurdish
 
         recognition.onstart = () => {
             isRecording = true;
@@ -233,10 +233,10 @@
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
         try {
-            // Direct call to Gemini 1.5 Flash API with user key
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+            // Direct call to Gemini 2.5 Flash API with user key
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
             
-            const response = await fetch(endpoint, {
+            let response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -255,6 +255,21 @@
                 })
             });
 
+            // Fallback to gemini-2.0-flash if 2.5 is not accessible in specific key regions
+            if (!response.ok) {
+                const fallbackEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+                const fallbackResp = await fetch(fallbackEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: 'user', parts: [{ text: userQuery }] }]
+                    })
+                });
+                if (fallbackResp.ok) {
+                    response = fallbackResp;
+                }
+            }
+
             document.getElementById('loading-indicator')?.remove();
 
             const data = await response.json();
@@ -266,7 +281,7 @@
             } else {
                 console.error('API Error Response:', data);
                 const errorMsg = data.error?.message || 'کلیلەکە یان پەیوەندییەکە ڕەتکرایەوە.';
-                appendMessage('ai', `⚠️️ هەڵەیەک ڕوویدا:\n${errorMsg}\n\nتکایە دووبارە لە دوگمەی **🔑 ڕێکخستنی API Key** کلیلەکەت ڕاست بکەرەوە.`);
+                appendMessage('ai', `⚠ هەڵەیەک ڕوویدا:\n${errorMsg}\n\nتکایە دووبارە لە دوگمەی **🔑 ڕێکخستنی API Key** کلیلەکەت ڕاست بکەرەوە.`);
             }
         } catch (err) {
             console.error('Fetch Error:', err);
