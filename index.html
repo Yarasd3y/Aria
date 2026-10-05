@@ -86,20 +86,12 @@
                 </div>
             </div>
 
-            <!-- Controls: Gender Selector, Dynamic Language Selector & Settings -->
+            <!-- Controls: Dynamic Language Selector & Settings -->
             <div class="flex items-center flex-wrap gap-2 sm:gap-3">
                 
-                <!-- Voice Gender Selector -->
+                <!-- Dynamic Language Selector -->
                 <div class="relative">
-                    <select id="voice-gender-selector" onchange="handleVoiceGenderChange()" class="bg-indigo-950/90 text-indigo-200 border border-indigo-700/60 hover:border-indigo-500 text-xs font-semibold rounded-xl px-2.5 py-2 outline-none cursor-pointer transition">
-                        <option value="male" selected id="opt-gender-male">👨 Male Voice</option>
-                        <option value="female" id="opt-gender-female">👩 Female Voice</option>
-                    </select>
-                </div>
-
-                <!-- Expanded Dynamic Language Selector -->
-                <div class="relative">
-                    <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[150px] sm:max-w-[180px] truncate">
+                    <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[160px] sm:max-w-[190px] truncate">
                         <option value="en-US" selected>🇺🇸 English</option>
                         <option value="ckb-IQ">☀️ کوردی (سۆرانی)</option>
                         <option value="ku-TR">☀️ کوردی (کورمانجی)</option>
@@ -223,7 +215,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
                 <span>Powered by Gemini Neural Engine</span>
-                <span id="speech-status">Multilingual Voice Engine Ready</span>
+                <span id="speech-status">Voice Playback Enabled</span>
             </div>
         </div>
     </footer>
@@ -266,8 +258,6 @@
                 dir: 'ltr',
                 badgeMultilingual: '100+ Languages',
                 headerSubtitle: 'Global Business & Multilingual Autonomous AI Advisor',
-                genderMale: '👨 Male Voice',
-                genderFemale: '👩 Female Voice',
                 btnClear: 'Clear',
                 welcomeTitle: 'Welcome to AriaAI (Global Executive Advisor)',
                 welcomePill: '100+ Languages',
@@ -287,7 +277,7 @@
                 listeningText: 'Listening... Speak now! (Auto-submits after pause)',
                 stopText: 'Stop',
                 placeholder: 'Ask AriaAI anything or type a prompt in any language...',
-                speechStatus: 'Multilingual Voice Engine Ready',
+                speechStatus: 'Voice Playback Enabled',
                 modalTitle: 'Settings & API Key',
                 modalDesc: 'Enter your Google Gemini API Key (Supports all key formats including AQ.Ab8... and AIzaSy...):',
                 modalLabel: 'Gemini API Key',
@@ -302,12 +292,10 @@
                 dir: 'rtl',
                 badgeMultilingual: '١٠٠+ زمان',
                 headerSubtitle: 'ڕاوێژکاری ژیریی دەستکردی سەربەخۆ بۆ بزنس و ئاخاوتنی جیهانی',
-                genderMale: '👨 دەنگی کوڕ (Male Voice)',
-                genderFemale: '👩 دەنگی کچ (Female Voice)',
                 btnClear: 'پاکی بکەرەوە',
                 welcomeTitle: 'بەخێربێیت بۆ ئاریا (AriaAI Global Advisory)',
                 welcomePill: '١٠٠+ زمان',
-                welcomeDesc: 'من هاوبەشی ستراتیژیی کار و بزنسی نێودەوڵەتیتنم. یاریدەدەت دەبم لە گەشەپێدانی بزنس، مۆدێلی دارایی، مارکێتینگی جیهانی، و پەیوەندی بە زیاتر لە ١٠٠ زمانی جیهانی بە دەنگی کوڕ یان کچ.',
+                welcomeDesc: 'من هاوبەشی ستراتیژیی کار و بزنسی نێودەوڵەتیتنم. یاریدەدەت دەبم لە گەشەپێدانی بزنس، مۆدێلی دارایی، مارکێتینگی جیهانی، و پەیوەندی بە زیاتر لە ١٠٠ زمانی جیهانی.',
                 card1Title: 'پلانی بزنس',
                 card1Desc: 'ستراتیژیی پەیداکردنی پارە',
                 card1Prompt: 'پلانێکی کار (Business Plan)ی کامل و پرۆفێشیناڵم بۆ بنووسە بۆ ئاژانسێکی ژیریی دەستکرد لەگەڵ مۆدێلی دارایی.',
@@ -323,7 +311,7 @@
                 listeningText: 'گوێم لە دەنگتە... ئێستا قسە بکە! (خۆکارانە دەنێردرێت دوای وەستان)',
                 stopText: 'ڕاگرتن',
                 placeholder: 'داواکاری یان پرسیارەکەت بنووسە بە هەر زمانێک...',
-                speechStatus: 'سیستەمی دەنگی فرەزمان ئامادەیە',
+                speechStatus: 'سیستەمی خوێندنەوەی دەنگ چالاکە',
                 modalTitle: 'ڕێکخستن و کلیلی API Key',
                 modalDesc: 'کلیلی Gemini API دابنێ (پشتیوانی هەموو جۆرە کلیلەکان دەکات وەک AQ.Ab8... و AIzaSy...):',
                 modalLabel: 'کلیلی Gemini API',
@@ -338,8 +326,6 @@
                 dir: 'rtl',
                 badgeMultilingual: '١٠٠+ لغة',
                 headerSubtitle: 'المستشار الذكي المستقل للأعمال والتوسع العالمي',
-                genderMale: '👨 صوت رجالي (Male Voice)',
-                genderFemale: '👩 صوت نسائي (Female Voice)',
                 btnClear: 'مسح',
                 welcomeTitle: 'مرحباً بك في AriaAI (المستشار التنفيذي العالمي)',
                 welcomePill: '١٠٠+ لغة',
@@ -359,7 +345,7 @@
                 listeningText: 'جاري الاستماع... تحدث الآن! (يتم الإرسال تلقائياً بعد التوقف)',
                 stopText: 'إيقاف',
                 placeholder: 'اكتب سؤالك أو طلبك بأي لغة...',
-                speechStatus: 'محرك الصوت متعدد اللغات جاهز',
+                speechStatus: 'تشغيل الصوت التلقائي مفعل',
                 modalTitle: 'الإعدادات ومفتاح API Key',
                 modalDesc: 'أدخل مفتاح Gemini API الخاص بك (يدعم جميع الصيغ بما فيها AQ.Ab8... و AIzaSy...):',
                 modalLabel: 'مفتاح Gemini API',
@@ -367,15 +353,13 @@
                 modalSave: 'حفظ المفتاح',
                 speechBtn: 'قراءة صوتية',
                 copyBtn: 'نسخ',
-                missingKey: '⚠️️ **مفتاح API غير متوفر**: يرجى الضغط على زر **🔑 API Key** في الأعلى وإدخال المفتاح الخاص بك.',
+                missingKey: '⚠ **مفتاح API غير متوفر**: يرجى الضغط على زر **🔑 API Key** في الأعلى وإدخال المفتاح الخاص بك.',
                 loading: 'جاري التحليل وإعداد الرد...'
             },
             'tr': {
                 dir: 'ltr',
                 badgeMultilingual: '100+ Dil',
                 headerSubtitle: 'Küresel İş ve Çok Dilli Özerk Yapay Zeka Danışmanı',
-                genderMale: '👨 Erkek Sesi (Male Voice)',
-                genderFemale: '👩 Kadın Sesi (Female Voice)',
                 btnClear: 'Temizle',
                 welcomeTitle: 'AriaAI\'ye Hoş Geldiniz (Küresel Yönetici Danışmanı)',
                 welcomePill: '100+ Dil',
@@ -395,7 +379,7 @@
                 listeningText: 'Dinleniyor... Şimdi konuşun! (Duraklamadan sonra otomatik gönderilir)',
                 stopText: 'Durdur',
                 placeholder: 'AriaAI\'ye herhangi bir dilde bir şey sorun...',
-                speechStatus: 'Çok Dilli Ses Motoru Hazır',
+                speechStatus: 'Sesli Okuma Etkin',
                 modalTitle: 'Ayarlar ve API Anahtarı',
                 modalDesc: 'Google Gemini API Anahtarınızı girin (AQ.Ab8... ve AIzaSy... dahil tüm formatları destekler):',
                 modalLabel: 'Gemini API Anahtarı',
@@ -405,114 +389,6 @@
                 copyBtn: 'Kopyala',
                 missingKey: '⚠️ **API Anahtarı Eksik**: Lütfen üstteki **🔑 API Key** düğmesine tıklayın ve anahtarınızı yapıştırın.',
                 loading: 'Analiz ediliyor ve yanıt oluşturuluyor...'
-            },
-            'de': {
-                dir: 'ltr',
-                badgeMultilingual: '100+ Sprachen',
-                headerSubtitle: 'Globaler Geschäftspartner & Mehrsprachiger KI-Berater',
-                genderMale: '👨 Männliche Stimme',
-                genderFemale: '👩 Weibliche Stimme',
-                btnClear: 'Löschen',
-                welcomeTitle: 'Willkommen bei AriaAI (Globaler Berater)',
-                welcomePill: '100+ Sprachen',
-                welcomeDesc: 'Ihr internationaler strategischer Partner für Business & Monetarisierung. Ich helfe Ihnen bei der Skalierung und bei der Kommunikation in über 100 Sprachen.',
-                card1Title: 'Businessplan',
-                card1Desc: 'Strategie & Monetiarisierung',
-                card1Prompt: 'Schreiben Sie einen umfassenden Businessplan für eine KI-Agentur inklusive Finanzmodell.',
-                card2Title: 'Skalierung',
-                card2Desc: 'Wachstums-Roadmap',
-                card2Prompt: 'Erstellen Sie eine Schritt-für-Schritt-Roadmap zur internationalen Skalierung eines Online-Business.',
-                card3Title: 'Profitable Ideen',
-                card3Desc: 'SaaS & KI Dienstleistungen',
-                card3Prompt: 'Was sind derzeit die 5 profitabelsten digitalen KI- und SaaS-Geschäftsideen?',
-                card4Title: 'Werbekampagne',
-                card4Desc: 'Mehrsprachiges Copywriting',
-                card4Prompt: 'Erstellen Sie eine 30-Tage-Marketingkampagne und Werbetexte für einen digitalen Service.',
-                listeningText: 'Zuhören... Sprechen Sie jetzt! (Automatisches Senden nach Pause)',
-                stopText: 'Stopp',
-                placeholder: 'Fragen Sie AriaAI etwas in einer beliebigen Sprache...',
-                speechStatus: 'Mehrsprachige Sprachausgabe bereit',
-                modalTitle: 'Einstellungen & API-Schlüssel',
-                modalDesc: 'Geben Sie Ihren Google Gemini API-Schlüssel ein:',
-                modalLabel: 'Gemini API-Schlüssel',
-                modalCancel: 'Abbrechen',
-                modalSave: 'Speichern',
-                speechBtn: 'Vorlesen',
-                copyBtn: 'Kopieren',
-                missingKey: '⚠️ **API-Schlüssel fehlt**: Bitte klicken Sie oben auf **🔑 API Key** und geben Sie Ihren Schlüssel ein.',
-                loading: 'Analysiere und erstelle Antwort...'
-            },
-            'fr': {
-                dir: 'ltr',
-                badgeMultilingual: '100+ Langues',
-                headerSubtitle: 'Conseiller IA Autonome et Multilingue pour Entreprises',
-                genderMale: '👨 Voix Masculine',
-                genderFemale: '👩 Voix Féminine',
-                btnClear: 'Effacer',
-                welcomeTitle: 'Bienvenue sur AriaAI (Conseiller Exécutif)',
-                welcomePill: '100+ Langues',
-                welcomeDesc: 'Votre partenaire stratégique international. Je vous aide à développer vos activités, concevoir des modèles économiques et communiquer dans plus de 100 langues.',
-                card1Title: 'Business Plan',
-                card1Desc: 'Stratégie de Monétisation',
-                card1Prompt: 'Rédigez un business plan complet pour une agence IA avec modèle financier et tarification.',
-                card2Title: 'Développement',
-                card2Desc: 'Feuille de Route Globale',
-                card2Prompt: 'Proposez une feuille de route étape par étape pour développer une entreprise en ligne à l\'international.',
-                card3Title: 'Idées Rentables',
-                card3Desc: 'SaaS & Services IA',
-                card3Prompt: 'Quelles sont les 5 idées de projets IA et SaaS les plus rentables actuellement ?',
-                card4Title: 'Campagne Pub',
-                card4Desc: 'Rédaction Multilingue',
-                card4Prompt: 'Créez une campagne marketing de 30 jours et des textes publicitaires pour un service numérique.',
-                listeningText: 'Écoute en cours... Parlez maintenant ! (Envoi automatique après une pause)',
-                stopText: 'Arrêter',
-                placeholder: 'Posez une question à AriaAI dans n\'importe quelle langue...',
-                speechStatus: 'Moteur Vocal Multilingue Prêt',
-                modalTitle: 'Paramètres & Clé API',
-                modalDesc: 'Entrez votre clé API Google Gemini (Prend en charge tous les formats) :',
-                modalLabel: 'Clé API Gemini',
-                modalCancel: 'Annuler',
-                modalSave: 'Enregistrer',
-                speechBtn: 'Lire à voix haute',
-                copyBtn: 'Copier',
-                missingKey: '⚠️ **Clé API manquante** : Veuillez cliquer sur le bouton **🔑 API Key** en haut et coller votre clé.',
-                loading: 'Analyse et génération de la réponse...'
-            },
-            'es': {
-                dir: 'ltr',
-                badgeMultilingual: '100+ Idiomas',
-                headerSubtitle: 'Asesor de IA Autónomo y Multilingüe para Negocios',
-                genderMale: '👨 Voz Masculina',
-                genderFemale: '👩 Voz Femenina',
-                btnClear: 'Limpiar',
-                welcomeTitle: 'Bienvenido a AriaAI (Asesor Ejecutivo Global)',
-                welcomePill: '100+ Idiomas',
-                welcomeDesc: 'Su socio estratégico internacional. Le ayudo a escalar operaciones, crear modelos de negocio y comunicarse en más de 100 idiomas.',
-                card1Title: 'Plan de Negocios',
-                card1Desc: 'Estrategia y Monetización',
-                card1Prompt: 'Escriba un plan de negocios completo para una agencia de IA, incluyendo modelo financiero.',
-                card2Title: 'Escalamiento',
-                card2Desc: 'Ruta de Crecimiento Global',
-                card2Prompt: 'Proporcione una ruta paso a paso para escalar un negocio en línea a nivel internacional.',
-                card3Title: 'Ideas Rentables',
-                card3Desc: 'SaaS y Servicios de IA',
-                card3Prompt: '¿Cuáles son las 5 ideas de negocios digitales de IA y SaaS más rentables en este momento?',
-                card4Title: 'Campaña Publicitaria',
-                card4Desc: 'Redacción Multilingüe',
-                card4Prompt: 'Cree una campaña de marketing de 30 días y textos publicitarios para un servicio digital.',
-                listeningText: 'Escuchando... ¡Hable ahora! (Se envía automáticamente tras una pausa)',
-                stopText: 'Detener',
-                placeholder: 'Pregunte a AriaAI en cualquier idioma...',
-                speechStatus: 'Motor de Voz Multilingüe Listo',
-                modalTitle: 'Configuración y Clave API',
-                modalDesc: 'Ingrese su clave API de Google Gemini:',
-                modalLabel: 'Clave API Gemini',
-                modalCancel: 'Cancelar',
-                modalSave: 'Guardar',
-                speechBtn: 'Leer en voz alta',
-                copyBtn: 'Copiar',
-                missingKey: '⚠️ **Falta la clave API**: Haga clic en el botón **🔑 API Key** arriba e ingrese su clave.',
-                loading: 'Analizando y generando respuesta...'
             }
         };
 
@@ -521,7 +397,6 @@
         let speechRecognition = null;
         let selectedLanguage = 'en-US';
         let currentLangKey = 'en';
-        let selectedVoiceGender = 'male';
 
         function getSavedApiKey() {
             const key = localStorage.getItem('aria_custom_api_key') || localStorage.getItem('aura_custom_api_key') || '';
@@ -549,10 +424,6 @@
             closeSettingsModal();
         }
 
-        function handleVoiceGenderChange() {
-            selectedVoiceGender = document.getElementById('voice-gender-selector').value;
-        }
-
         // Apply Dynamic Translations when language changes
         function handleLanguageChange() {
             const langSelect = document.getElementById('language-selector');
@@ -562,9 +433,6 @@
             if (selectedLanguage.startsWith('ckb')) currentLangKey = 'ckb';
             else if (selectedLanguage.startsWith('ar')) currentLangKey = 'ar';
             else if (selectedLanguage.startsWith('tr')) currentLangKey = 'tr';
-            else if (selectedLanguage.startsWith('de')) currentLangKey = 'de';
-            else if (selectedLanguage.startsWith('fr')) currentLangKey = 'fr';
-            else if (selectedLanguage.startsWith('es')) currentLangKey = 'es';
             else currentLangKey = 'en'; // Default base English
 
             const t = uiTranslations[currentLangKey] || uiTranslations['en'];
@@ -576,8 +444,6 @@
 
             document.getElementById('ui-badge-multilingual').innerText = t.badgeMultilingual;
             document.getElementById('ui-header-subtitle').innerText = t.headerSubtitle;
-            document.getElementById('opt-gender-male').innerText = t.genderMale;
-            document.getElementById('opt-gender-female').innerText = t.genderFemale;
             document.getElementById('ui-btn-clear').innerText = t.btnClear;
 
             document.getElementById('ui-welcome-title').childNodes[0].nodeValue = t.welcomeTitle + " ";
@@ -711,7 +577,7 @@
                         <div>${formatMarkdownResponse(text)}</div>
                         <div class="pt-2 flex items-center gap-3 border-t border-slate-800/80 text-xs text-slate-400">
                             <button onclick="speakResponseText(this)" data-text="${escapeHtml(text)}" class="hover:text-indigo-400 flex items-center gap-1 transition">
-                                <i class="fa-solid fa-volume-high"></i> ${t.speechBtn} (${selectedVoiceGender})
+                                <i class="fa-solid fa-volume-high"></i> ${t.speechBtn}
                             </button>
                             <button onclick="copyToClipboard('${escapeHtml(text).replace(/'/g, "\\'")}')" class="hover:text-indigo-400 flex items-center gap-1 transition">
                                 <i class="fa-solid fa-copy"></i> ${t.copyBtn}
@@ -736,10 +602,10 @@
             alert('📋 Copied!');
         }
 
-        function speakResponseText(btn) {
-            const rawText = btn.getAttribute('data-text');
+        // Automatic Voice Playback Engine
+        function speakText(rawText) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
+                window.speechSynthesis.cancel(); // Stop any ongoing speech
                 const cleanText = rawText.replace(/[*_#`]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
@@ -747,26 +613,29 @@
 
                 const voices = window.speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                    let filteredVoice = null;
-                    if (selectedVoiceGender === 'male') {
-                        filteredVoice = voices.find(v => 
-                            v.name.toLowerCase().includes('male') || 
-                            v.name.toLowerCase().includes('david') || 
-                            v.name.toLowerCase().includes('george') || 
-                            v.name.toLowerCase().includes('mark')
-                        );
-                    } else {
-                        filteredVoice = voices.find(v => 
-                            v.name.toLowerCase().includes('female') || 
-                            v.name.toLowerCase().includes('zira') || 
-                            v.name.toLowerCase().includes('hazel')
-                        );
-                    }
-                    if (filteredVoice) utterance.voice = filteredVoice;
+                    const maleVoice = voices.find(v => 
+                        v.name.toLowerCase().includes('male') || 
+                        v.name.toLowerCase().includes('david') || 
+                        v.name.toLowerCase().includes('george') || 
+                        v.name.toLowerCase().includes('mark')
+                    );
+                    if (maleVoice) utterance.voice = maleVoice;
                 }
 
                 window.speechSynthesis.speak(utterance);
             }
+        }
+
+        function speakResponseText(btn) {
+            const rawText = btn.getAttribute('data-text');
+            speakText(rawText);
+        }
+
+        // Ensure voices are loaded asynchronously
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
         }
 
         function clearChat() {
@@ -852,9 +721,8 @@
 
             const systemInstructions = `You are "AriaAI", a world-class international business advisor, market strategist, and autonomous AI proficient in OVER 100 LANGUAGES globally.
 Guidelines:
-- Always reply in the EXACT same language that the user writes in or selected.
-- Provide clear, highly strategic, actionable, and structured insights or plans.
-- Maintain an executive, highly intelligent male tone.`;
+- Reply naturally, clearly, and concisely in the EXACT language used by the user.
+- Structure responses to sound conversational and clear for human voice reading.`;
 
             for (const model of targetModels) {
                 if (aiResponseText) break;
@@ -898,6 +766,8 @@ Guidelines:
 
             if (aiResponseText) {
                 appendMessage('ai', aiResponseText);
+                // Trigger natural auto-speech playback immediately upon response arrival
+                speakText(aiResponseText);
             } else {
                 appendMessage('ai', `⚠️ **Connection Error**: ${lastError ? lastError : 'Unable to connect.'} Please check your Gemini API key.`);
             }
