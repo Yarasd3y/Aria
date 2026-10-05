@@ -1,3 +1,37 @@
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-slate-800 pb-4">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-xl font-bold shadow-lg shadow-indigo-500/30">
+            🤖
+        </div>
+        <div>
+            <h1 class="text-lg font-bold text-slate-100">Kurd AI <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Gemini 1.5</span></h1>
+            <p class="text-xs text-slate-400">ڕاوێژکاری ژیریی دەستکرد بە دەنگ و دەق</p>
+        </div>
+    </div>
+    
+    <!-- Key Setup Button -->
+    <button onclick="promptForApiKey()" class="text-xs bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow">
+        <span>🔑</span> ڕێکخستنی API Key
+    </button>
+</header>
+
+<!-- Chat Window -->
+<main id="chat-window" class="flex-1 overflow-y-auto my-4 space-y-4 pr-1 chat-scroll">
+    <!-- AI Welcome Message -->
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0">
+            🤖
+        </div>
+        <div class="bg-slate-800 border border-slate-700/60 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[85%] text-sm leading-relaxed shadow-md">
+            سڵاو! بەخێر بێیت بۆ **Kurd AI**. 🌸<br>
+            کلیلە نوێیەکەت (`AQ.Ab8...`) بە تەواوی کاراکراوە. بنووسە یان بە مایک قسەم لەگەڵ بکە (دوای وەستان، ڕاستەوخۆ دەقەکە خۆی دەنێرێت).
+        </div>
+    </div>
+</main>
+
+<!-- Footer Input Area -->
+<footer class="space-y-2">
     <!-- Voice Status Indicator -->
     <div id="voice-status" class="hidden text-xs text-center text-amber-400 font-medium animate-pulse">
         🎙️ گوێم لێیە... بئاخڤە! (دوای وەستان، ئۆتۆماتیکی دەنێردرێت)
@@ -5,16 +39,239 @@
 
     <form onsubmit="handleSend(event)" class="flex items-center gap-2">
         <!-- Mic Button -->
-        <button type="button" id="mic-btn" onclick="toggleMic()" class="w-12 h-12 rounded-2xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-slate-200 hover:text-indigo-400 flex items-center justify-center text-xl transition shadow-md shrink-0">
+        <button type="button" id="mic-btn" onclick="toggleMic()" class="w-12 h-12 rounded-2xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-slate-200 hover:text-indigo-400 flex items-center justify-center text-xl transition shadow-md shrink-0" title="قسەکردن">
             🎙️
         </button>
 
         <!-- Text Input -->
-        <input type="text" id="user-input" placeholder="پەیامەکەت بنووسە یان قسە لەگەڵ مایک بکه..." class="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3 outline-none transition" autocomplete="off">
+        <input type="text" id="user-input" placeholder="پەیامەکەت بنووسە یان قسە لەگەڵ مایک بکه..." class="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3 outline-none transition shadow-inner" autocomplete="off">
 
         <!-- Send Button -->
         <button type="submit" id="send-btn" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-lg transition shadow-lg shadow-indigo-600/30 shrink-0">
             🚀
         </button>
     </form>
-</div>
+</footer>
+
+<script>
+    let isRecording = false;
+    let recognition = null;
+
+    // Clean & Get API Key
+    function getCleanApiKey() {
+        let key = localStorage.getItem('gemini_api_key') || '';
+        return key.trim().replace(/^["']|["']$/g, '');
+    }
+
+    // Prompt user for API Key if missing or user wants to reset
+    function promptForApiKey() {
+        const currentKey = getCleanApiKey();
+        const newKey = prompt('تکایە Gemini API Key خۆت لێرە پەیست بکە:', currentKey);
+        
+        if (newKey !== null) {
+            const cleaned = newKey.trim().replace(/^["']|["']$/g, '');
+            if (cleaned.length > 5) {
+                localStorage.setItem('gemini_api_key', cleaned);
+                alert('✅ کلیلەکە بە سەرکەوتوویی پاشەکەوت کرا!');
+            } else {
+                alert('⚠️ کلیلەکە دروست نییە. تکایە دووبارە تاقی بکەرەوە.');
+            }
+        }
+    }
+
+    // Check key on startup
+    window.addEventListener('DOMContentLoaded', () => {
+        if (!getCleanApiKey()) {
+            setTimeout(promptForApiKey, 500);
+        }
+    });
+
+    // Initialize Web Speech API
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'ckb-IQ'; // Sorani Kurdish or fallback
+
+        recognition.onstart = () => {
+            isRecording = true;
+            document.getElementById('mic-btn').classList.add('bg-red-600/20', 'border-red-500', 'text-red-400');
+            document.getElementById('voice-status').classList.remove('hidden');
+        };
+
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            document.getElementById('user-input').value = transcript;
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            stopRecording();
+        };
+
+        recognition.onend = () => {
+            stopRecording();
+            const inputVal = document.getElementById('user-input').value.trim();
+            if (inputVal.length > 0) {
+                // Auto send when speech finishes!
+                handleSend(new Event('submit'));
+            }
+        };
+    }
+
+    function toggleMic() {
+        if (!recognition) {
+            alert('وێبگەڕەکەت پاڵپشتیی تۆمارکردنی دەنگ ناکات.');
+            return;
+        }
+
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+
+    function stopRecording() {
+        isRecording = false;
+        document.getElementById('mic-btn').classList.remove('bg-red-600/20', 'border-red-500', 'text-red-400');
+        document.getElementById('voice-status').classList.add('hidden');
+    }
+
+    // Append message to UI
+    function appendMessage(sender, text) {
+        const chatWindow = document.getElementById('chat-window');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'flex items-start gap-3';
+
+        if (sender === 'user') {
+            msgDiv.innerHTML = `
+                <div class="flex-1 flex justify-end">
+                    <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed shadow-md">
+                        ${escapeHtml(text)}
+                    </div>
+                </div>
+                <div class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 flex items-center justify-center text-xs shrink-0">
+                    👤
+                </div>
+            `;
+        } else {
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0">
+                    🤖
+                </div>
+                <div class="bg-slate-800 border border-slate-700/60 text-slate-200 p-4 rounded-2xl rounded-tr-none max-w-[85%] text-sm leading-relaxed shadow-md">
+                    ${formattedText(text)}
+                </div>
+            `;
+        }
+
+        chatWindow.appendChild(msgDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
+    }
+
+    function formattedText(text) {
+        return escapeHtml(text).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    // Text-To-Speech (Voice Output)
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop ongoing speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ku'; // Kurdish language
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Handle Send Event
+    async function handleSend(e) {
+        if (e) e.preventDefault();
+
+        const inputEl = document.getElementById('user-input');
+        const userQuery = inputEl.value.trim();
+        if (!userQuery) return;
+
+        const apiKey = getCleanApiKey();
+        if (!apiKey) {
+            alert('تکایە تەکیک بکە لە پێدانی API Key!');
+            promptForApiKey();
+            return;
+        }
+
+        // Render User Message
+        appendMessage('user', userQuery);
+        inputEl.value = '';
+
+        // Show Loading Indicator
+        const chatWindow = document.getElementById('chat-window');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-indicator';
+        loadingDiv.className = 'flex items-start gap-3 animate-pulse';
+        loadingDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0">🤖</div>
+            <div class="bg-slate-800 border border-slate-700/60 text-slate-400 p-4 rounded-2xl rounded-tr-none text-xs">
+                دابینکردنی وەڵام لە لایەن Gemini... 💭
+            </div>
+        `;
+        chatWindow.appendChild(loadingDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        try {
+            // Direct call to Gemini 1.5 Flash API with user key
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+            
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [
+                                {
+                                    text: `تۆ ژیرییەکی دەستکردی کوردی بەناوی "Kurd AI". ڕاستەوخۆ بە زمانی کوردی (سۆرانى) و بە شێوازێکی زۆر کورت، بێ کێشە و ڕوون وەڵامی بەکارهێنەر بدەرەوە:\n\n${userQuery}`
+                                }
+                            ]
+                        }
+                    ]
+                })
+            });
+
+            document.getElementById('loading-indicator')?.remove();
+
+            const data = await response.json();
+
+            if (response.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                const aiReply = data.candidates[0].content.parts[0].text;
+                appendMessage('ai', aiReply);
+                speakText(aiReply);
+            } else {
+                console.error('API Error Response:', data);
+                const errorMsg = data.error?.message || 'کلیلەکە یان پەیوەندییەکە ڕەتکرایەوە.';
+                appendMessage('ai', `⚠️️ هەڵەیەک ڕوویدا:\n${errorMsg}\n\nتکایە دووبارە لە دوگمەی **🔑 ڕێکخستنی API Key** کلیلەکەت ڕاست بکەرەوە.`);
+            }
+        } catch (err) {
+            console.error('Fetch Error:', err);
+            document.getElementById('loading-indicator')?.remove();
+            appendMessage('ai', '⚠️ هەڵەیەک لە پەیوەندیکردن بە سێرڤەری Google Gemini ڕوویدا. دڵنیابەوە لە هێڵی ئینتەرنێتەکەت.');
+        }
+    }
+</script>
