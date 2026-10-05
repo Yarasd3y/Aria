@@ -94,7 +94,7 @@
                     <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[160px] sm:max-w-[190px] truncate">
                         <option value="en-US" selected>🇺🇸 English</option>
                         <option value="ckb-IQ">☀️ کوردی (سۆرانی)</option>
-                        <option value="ku-TR">☀️ کوردی (کورمانجی)</option>
+                        <option value="ku-TR">☀️️ کوردی (کورمانجی)</option>
                         <option value="ar-SA">🇸🇦 العربية</option>
                         <option value="fa-IR">🇮🇷 فارسی</option>
                         <option value="tr-TR">🇹🇷 Türkçe</option>
@@ -600,14 +600,42 @@
             alert('📋 Copied!');
         }
 
-        // Voice Playback Engine
+        // Automatic Intelligent Text Language Detection for Voice Playback
+        function detectLanguageFromText(text) {
+            // Check for Arabic/Persian/Kurdish script
+            if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(text)) {
+                // If specific Sorani Kurdish letters present
+                if (/[پچۆێڵڕە]/.test(text)) {
+                    return 'ar-IQ'; // Kurdish accent fallback
+                }
+                return 'ar-SA'; // Arabic
+            }
+            if (/[ğüşıöçĞÜŞİÖÇ]/.test(text)) return 'tr-TR';
+            if (/[äöüßÄÖÜ]/.test(text)) return 'de-DE';
+            if (/[éèêëàâùûçÉÈÊËÀÂÙÛÇ]/.test(text)) return 'fr-FR';
+            if (/[ñáéíóúÁÉÍÓÚÑ]/.test(text)) return 'es-ES';
+            
+            return selectedLanguage && selectedLanguage !== 'auto' ? selectedLanguage : 'en-US';
+        }
+
+        // Smart Multilingual Voice Playback Engine
         function speakText(rawText) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const cleanText = rawText.replace(/[*_#`]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+                
+                const targetLang = detectLanguageFromText(cleanText);
+                utterance.lang = targetLang;
                 utterance.rate = 1.0;
+
+                // Attempt to pick matching voice from browser
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(targetLang.substring(0,2).toLowerCase()));
+                    if (matchedVoice) utterance.voice = matchedVoice;
+                }
+
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -628,7 +656,7 @@
             handleSendMessage(new Event('submit'));
         }
 
-        // Streamlined Direct Fast-Route API Execution
+        // Streamlined Ultra-Fast Direct API Route with Fast 5-Second Timeout
         async function handleSendMessage(e) {
             if (e) e.preventDefault();
 
@@ -667,30 +695,35 @@
                 return;
             }
 
-            // Directly targeting top performant models without discovery delays
-            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+            // High-Performance Fast Models List
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
             let aiResponseText = null;
             let lastError = '';
 
-            // Enhanced Strict System Instructions preventing AI "I am a text model" excuses
+            // Enhanced Strict System Instructions enforcing match of input language & voice capability
             const systemInstructions = `You are "AriaAI", an elite global business consultant and AI advisor fluent in over 100 languages.
 
-CRITICAL DIRECTIVE ON VOICE CAPABILITY:
-1. You ARE fully equipped with high-quality Text-to-Speech (TTS) voice playback built into this Web interface. Whatever text you return is IMMEDIATELY SPOKEN OUT LOUD to the user through their speakers/headphones.
-2. Therefore, you DO HAVE VOICE CAPABILITY and CAN SPEAK directly to the user!
-3. STRICT RULE: NEVER write "I am a text model", "I cannot speak", "I don't have a voice", or "I cannot hear you".
-4. If the user asks you to speak or respond by voice (e.g. "سڵاو بە دەنگ وەڵامم بدەرەوە"), respond warmly and affirmatively, e.g.: "سڵاو! بێگومان، بە دەنگ وەڵامت دەدەمەوە. چۆن دەتوانم لە بزنسەکەتدا یارمەتیت بدم؟" (Hello! Of course, I am answering you with voice! How can I help you in your business?).
-5. Keep your responses clear, highly professional, direct, and structured.`;
+CRITICAL DIRECTIVES:
+1. STRICT LANGUAGE MATCHING: Respond in the EXACT language that the user typed or spoke in. If the user asks in Arabic, respond in clear, professional Arabic. If in Kurdish, respond in Kurdish. If in English, respond in English.
+2. VOICE CAPABILITY: You ARE fully equipped with high-quality Text-to-Speech (TTS) voice playback built into this Web interface. Your output is IMMEDIATELY SPOKEN OUT LOUD to the user through their speakers.
+3. NEVER write "I am a text model", "I cannot speak", "I don't have a voice", or "I cannot hear you".
+4. If the user asks to speak or ask if you can talk via voice, respond warmly and affirmatively in their exact language!
+5. Keep your responses concise, clear, and highly practical.`;
 
             for (const model of modelsToTry) {
                 if (aiResponseText) break;
 
                 try {
+                    // Fast 5-second AbortController to jump models if one lags
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
                     
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        signal: controller.signal,
                         body: JSON.stringify({
                             systemInstruction: {
                                 parts: [{ text: systemInstructions }]
@@ -704,6 +737,7 @@ CRITICAL DIRECTIVE ON VOICE CAPABILITY:
                         })
                     });
 
+                    clearTimeout(timeoutId);
                     const data = await response.json();
 
                     if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
@@ -713,7 +747,7 @@ CRITICAL DIRECTIVE ON VOICE CAPABILITY:
                         lastError = data.error.message;
                     }
                 } catch (err) {
-                    lastError = err.message || 'Network error';
+                    lastError = err.name === 'AbortError' ? 'Fast model timeout' : (err.message || 'Network error');
                 }
             }
 
