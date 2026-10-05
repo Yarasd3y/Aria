@@ -1,3 +1,21 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurd AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #374151;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 h-screen flex flex-col font-sans">
 <!-- Header -->
 <header class="bg-slate-800 border-b border-slate-700 p-4 text-center shadow-lg flex items-center justify-between px-6">
     <div class="flex items-center gap-3">
@@ -7,13 +25,12 @@
         <h1 class="text-xl font-bold text-indigo-400">Kurd AI</h1>
     </div>
     <div class="flex items-center gap-2">
-        <button id="configKeyBtn" onclick="setApiKey()" class="text-xs bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 px-3 py-1.5 rounded-lg transition">
+        <button id="configKeyBtn" onclick="setApiKey()" class="text-xs bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 px-3 py-1.5 rounded-lg transition shadow">
             🔑 ڕێکخستنی API Key
         </button>
         <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-full">ئۆنلاین</span>
     </div>
 </header>
-
 <!-- Main Chat Area -->
 <main id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 chat-scroll max-w-4xl mx-auto w-full">
     <!-- Welcome Message -->
@@ -24,12 +41,11 @@
         <div class="space-y-1">
             <p class="text-sm font-semibold text-indigo-300">Kurd AI</p>
             <p class="text-slate-200 text-sm leading-relaxed">
-                سڵاو! بەخێر بێیت بۆ **Kurd AI**. من ئامادەم بۆ وەڵامدانەوەی پرسیارەکانت بە زمانی کوردی.
+                سڵاو! بەخێر بێیت بۆ **Kurd AI**. تەنها کلیک لەسەر مایكەکە بکە و قسە بکە، پەیامەکەت ڕاستەوخۆ بە ئۆتۆماتیکی دەنێردرێت!
             </p>
         </div>
     </div>
 </main>
-
 <!-- Input Form -->
 <footer class="bg-slate-800 border-t border-slate-700 p-4">
     <form id="chatForm" class="max-w-4xl mx-auto flex gap-2">
@@ -37,15 +53,15 @@
             type="button" 
             id="micBtn" 
             onclick="toggleMic()"
-            class="bg-slate-700 hover:bg-slate-600 text-white p-3 rounded-xl transition flex items-center justify-center shadow-lg"
-            title="قسەکردن بە مایک"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white p-3.5 rounded-xl transition flex items-center justify-center shadow-lg active:scale-95 shrink-0"
+            title="داگرە بۆ قسەکردن"
         >
-            🎙️
+            <span id="micIcon" class="text-xl">🎙️</span>
         </button>
         <input 
             type="text" 
             id="userInput" 
-            placeholder="پەیامەکەت لێرە بنووسە..." 
+            placeholder="پەیامەکەت لێرە بنووسە یان مایک بەکاربهێنە..." 
             class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition"
             required
         />
@@ -61,24 +77,23 @@
         </button>
     </form>
 </footer>
-
 <script>
-    // API Key Storage (تۆمارکردن لە مۆبایل/کۆمپیو تەری خۆت)
     let GEMINI_API_KEY = localStorage.getItem('GEMINI_KEY') || '';
 
     function setApiKey() {
-        const key = prompt("تکایە کلیلی Gemini APIەکە ت لێرە دابنێ:", GEMINI_API_KEY);
-        if (key) {
-            GEMINI_API_KEY = key.trim();
+        const key = prompt("تکایە کلیلی Gemini APIەکەت لێرە پەیست بکه:", GEMINI_API_KEY);
+        if (key !== null) {
+            GEMINI_API_KEY = key.trim().replace(/^["']|["']$/g, '');
             localStorage.setItem('GEMINI_KEY', GEMINI_API_KEY);
-            alert("کلیلەکە بە سەرکەوتوویی پاشەکەوت کرا!");
+            if (GEMINI_API_KEY) {
+                alert("کلیلەکە بە سەرکەوتوویی تۆمار کرا!");
+            }
         }
     }
 
     const chatForm = document.getElementById('chatForm');
     const userInput = document.getElementById('userInput');
     const chatBox = document.getElementById('chatBox');
-    const sendBtn = document.getElementById('sendBtn');
 
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -102,13 +117,14 @@
             speakText(responseText);
         } catch (err) {
             removeLoading(loadingId);
-            appendMessage('ai', '⚠️ ببورە، هەڵەیەک ڕوویدا لە پەیوەندیکردن بە Gemini API. تکایە دڵنیابەوە لە دروستی API Keyەکەت.');
+            appendMessage('ai', `⚠️ هەڵەیەک ڕوودا: ${err.message}\nتکایە دڵنیابەوە کلیلەکەت ڕاستە یان کلیک لە '🔑 ڕێکخستنی API Key' بکەرەوە.`);
             console.error(err);
         }
     });
 
     async function callGeminiAPI(promptText) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const cleanKey = GEMINI_API_KEY.trim();
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`;
         
         const response = await fetch(url, {
             method: 'POST',
@@ -116,14 +132,16 @@
             body: JSON.stringify({
                 contents: [{
                     parts: [{
-                        text: "تۆ یاریدەدەری ژیریی دەستکردی بە ناوی Kurd AI. هەمیشە زۆر بە ئاسانی و ڕەوانی و بە زمانی کوردی (سۆرانی) وەڵام بدەرەوە.\n\nپرسیار: " + promptText
+                        text: "تۆ یاریدەدەری ژیریی دەستکردی بە ناوی Kurd AI. بە زمانی کوردی (سۆرانی) زۆر بە پوختی، زوڵاڵی و ئاسانی وەڵامی بەکارهێنەر بدەرەوە.\n\nپرسیاری بەکارهێنەر: " + promptText
                     }]
                 }]
             })
         });
 
         if (!response.ok) {
-            throw new Error('API Error');
+            const errData = await response.json().catch(() => ({}));
+            const msg = errData.error?.message || 'کلیلەکە نادروستە یان ئینتەرنێت پچڕاوە';
+            throw new Error(msg);
         }
 
         const data = await response.json();
@@ -136,10 +154,10 @@
         msgDiv.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''} max-w-xl ${isUser ? 'mr-auto' : 'ml-auto'}`;
 
         msgDiv.innerHTML = `
-            <div class="w-8 h-8 rounded-full ${isUser ? 'bg-emerald-600' : 'bg-indigo-600'} flex items-center justify-center text-sm font-bold flex-shrink-0">
+            <div class="w-8 h-8 rounded-full ${isUser ? 'bg-emerald-600' : 'bg-indigo-600'} flex items-center justify-center text-sm font-bold flex-shrink-0 shadow">
                 ${isUser ? 'تۆ' : 'AI'}
             </div>
-            <div class="bg-slate-800 p-4 rounded-2xl border ${isUser ? 'border-emerald-500/30' : 'border-slate-700'} space-y-1">
+            <div class="bg-slate-800 p-4 rounded-2xl border ${isUser ? 'border-emerald-500/30' : 'border-slate-700'} space-y-1 shadow-md">
                 <p class="text-xs font-semibold ${isUser ? 'text-emerald-400' : 'text-indigo-300'}">${isUser ? 'تۆ' : 'Kurd AI'}</p>
                 <p class="text-slate-200 text-sm leading-relaxed">${escapeHtml(text)}</p>
             </div>
@@ -156,8 +174,8 @@
         msgDiv.className = 'flex items-start gap-3 max-w-xl ml-auto';
         msgDiv.innerHTML = `
             <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold flex-shrink-0">AI</div>
-            <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                <p class="text-slate-400 text-sm animate-pulse">کورد AI بیر دەکاتەوە...</p>
+            <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 shadow">
+                <p class="text-slate-400 text-sm animate-pulse">Kurd AI بیر دەکاتەوە...</p>
             </div>
         `;
         chatBox.appendChild(msgDiv);
@@ -176,44 +194,66 @@
         return div.innerHTML;
     }
 
-    // Voice Synthesizer (دەنگ)
+    // Voice Synthesizer (دەنگدانەوە)
     function speakText(text) {
         if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ckb';
+            utterance.rate = 0.95;
             window.speechSynthesis.speak(utterance);
         }
     }
 
-    // Voice Recognition (مایک)
+    // Voice Recognition (تۆمارکردن و ناردنی ئۆتۆماتیکی)
+    let isRecording = false;
+
     function toggleMic() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
             alert('وێبگەڕەکەت پشتیوانی تۆمارکردنی دەنگ ناکات.');
             return;
         }
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const micBtn = document.getElementById('micBtn');
+        const micIcon = document.getElementById('micIcon');
+
         const recognition = new SpeechRecognition();
-        recognition.lang = 'ckb-IQ'; // کوردی
+        recognition.lang = 'ckb-IQ';
         recognition.interimResults = false;
 
         recognition.onstart = () => {
-            document.getElementById('micBtn').classList.add('bg-red-600');
+            isRecording = true;
+            micBtn.classList.remove('bg-indigo-600');
+            micBtn.classList.add('bg-red-600', 'animate-pulse');
+            micIcon.textContent = '🔴';
         };
 
         recognition.onresult = (e) => {
-            userInput.value = e.results[0][0].transcript;
-            document.getElementById('micBtn').classList.remove('bg-red-600');
+            const transcript = e.results[0][0].transcript;
+            if (transcript.trim()) {
+                userInput.value = transcript;
+                // ناردنی ئۆتۆماتیکی پاش قسەکردن
+                chatForm.requestSubmit();
+            }
         };
 
         recognition.onerror = () => {
-            document.getElementById('micBtn').classList.remove('bg-red-600');
+            resetMicBtn();
         };
 
         recognition.onend = () => {
-            document.getElementById('micBtn').classList.remove('bg-red-600');
+            resetMicBtn();
         };
 
         recognition.start();
+
+        function resetMicBtn() {
+            isRecording = false;
+            micBtn.classList.remove('bg-red-600', 'animate-pulse');
+            micBtn.classList.add('bg-indigo-600');
+            micIcon.textContent = '🎙️';
+        }
     }
-</script>
+</body>
+</html>
