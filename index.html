@@ -94,7 +94,7 @@
                     <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[160px] sm:max-w-[190px] truncate">
                         <option value="en-US" selected>🇺🇸 English</option>
                         <option value="ckb-IQ">☀️ کوردی (سۆرانی)</option>
-                        <option value="ku-TR">☀️️ کوردی (کورمانجی)</option>
+                        <option value="ku-TR">☀ کوردی (کورمانجی)</option>
                         <option value="ar-SA">🇸🇦 العربية</option>
                         <option value="fa-IR">🇮🇷 فارسی</option>
                         <option value="tr-TR">🇹🇷 Türkçe</option>
@@ -666,7 +666,7 @@
             handleSendMessage(new Event('submit'));
         }
 
-        // Streamlined Ultra-Fast Direct API Route with Fast 5-Second Timeout
+        // Streamlined Direct API Route
         async function handleSendMessage(e) {
             if (e) e.preventDefault();
 
@@ -702,7 +702,14 @@
             if (!apiKey) {
                 document.getElementById('active-loading-indicator')?.remove();
                 appendMessage('ai', t.missingKey);
-            // Streamlined Ultra-Fast Direct API Route with Strict Output Rules
+                return;
+            }
+
+            let aiResponseText = '';
+            let lastError = '';
+            const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+
+            // Streamlined Direct API Route with Strict Output Rules
             const systemInstructions = `You are AriaAI, an autonomous executive AI business advisor.
 CRITICAL DIRECTIVES:
 1. OUTPUT ONLY THE FINAL DIRECT ANSWER. Do NOT output translation breakdowns, internal thought steps, context tags, or markdown chain-of-thought analysis like "- Translation:" or "- Context:".
