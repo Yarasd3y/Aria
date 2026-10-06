@@ -209,11 +209,11 @@
             </div>
 
             <p class="text-xs text-slate-300 leading-relaxed">
-                Enter your <strong>Google Gemini API Key</strong> below to activate real-time advisory services:
+                Enter your <strong>Google Gemini API Key</strong> below (Get free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 underline">Google AI Studio</a>):
             </p>
 
             <div class="space-y-1">
-                <input type="password" id="custom-api-key-input" placeholder="Paste your API Key here..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
+                <input type="password" id="custom-api-key-input" placeholder="Paste AI Studio API Key (AIzaSy...)" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2">
@@ -519,13 +519,14 @@
             if (!apiKey) {
                 document.getElementById('active-loading-indicator')?.remove();
                 appendMessage('ai', '⚠️ **API Key Required**: Please click the **🔑 API Key** button at the top to set your Google Gemini API Key.');
+                openSettingsModal();
                 return;
             }
 
             let aiResponseText = '';
             let lastError = '';
-            // Updated active Google Gemini endpoints (Gemini 2.0 & 2.5 active family)
-            const modelsToTry = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-pro-exp'];
+            // Verified stable Gemini API models
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
 
             const systemInstructions = `You are Aria, a senior executive business consultant and multilingual strategist.
 CRITICAL INSTRUCTIONS:
@@ -584,7 +585,7 @@ CRITICAL INSTRUCTIONS:
                 appendMessage('ai', aiResponseText);
                 speakText(aiResponseText);
             } else {
-                appendMessage('ai', `⚠️️ **Connection Error**: ${lastError ? lastError : 'Unable to connect to advisory service.'} Please verify your API Key.`);
+                appendMessage('ai', `⚠ **Connection Error**: ${lastError ? lastError : 'Unable to connect to advisory service.'} Please check your Gemini API Key.`);
             }
         }
     </script>
