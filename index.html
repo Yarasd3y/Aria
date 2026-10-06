@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AriaAI - Global Business & Multilingual AI Advisor</title>
+    <title>AriaAI - Executive Business & Multilingual Advisor</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -48,9 +48,6 @@
             background: #334155;
             border-radius: 9999px;
         }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
 
         @keyframes pulse-ring {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
@@ -64,15 +61,25 @@
             border-color: #f87171 !important;
             color: #ffffff !important;
         }
+
+        /* Support for smooth RTL text alignment when user inputs Arabic/Kurdish */
+        .dir-rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .dir-ltr {
+            direction: ltr;
+            text-align: left;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 h-full flex flex-col justify-between antialiased selection:bg-indigo-500 selection:text-white bg-gradient-glow">
 
-    <!-- Application Header -->
+    <!-- Header -->
     <header class="sticky top-0 z-30 glass-header border-b border-slate-800/80 px-4 py-3 sm:px-6">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
             
-            <!-- Brand Logo & Global Title -->
+            <!-- Brand Logo -->
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 border border-white/20 shrink-0">
                     <i class="fa-solid fa-brain"></i>
@@ -80,46 +87,24 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-extrabold text-base sm:text-xl tracking-tight text-white">Aria<span class="text-indigo-400">AI</span></h1>
-                        <span id="ui-badge-multilingual" class="text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">100+ Languages</span>
+                        <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Auto-Detect Language
+                        </span>
                     </div>
-                    <p id="ui-header-subtitle" class="text-xs text-slate-400 font-medium hidden sm:block">Global Business & Multilingual Autonomous AI Advisor</p>
+                    <p class="text-xs text-slate-400 font-medium hidden sm:block">Autonomous Multilingual Executive & Business Advisor</p>
                 </div>
             </div>
 
-            <!-- Controls: Dynamic Language Selector & Settings -->
-            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
-                
-                <!-- Dynamic Language Selector -->
-                <div class="relative">
-                    <select id="language-selector" onchange="handleLanguageChange()" class="bg-slate-900 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer transition max-w-[160px] sm:max-w-[190px] truncate">
-                        <option value="en-US" selected>🇺🇸 English</option>
-                        <option value="ckb-IQ">☀️ کوردی (سۆرانی)</option>
-                        <option value="ku-TR">☀ کوردی (کورمانجی)</option>
-                        <option value="ar-SA">🇸🇦 العربية</option>
-                        <option value="fa-IR">🇮🇷 فارسی</option>
-                        <option value="tr-TR">🇹🇷 Türkçe</option>
-                        <option value="es-ES">🇪🇸 Español</option>
-                        <option value="fr-FR">🇫🇷 Français</option>
-                        <option value="de-DE">🇩🇪 Deutsch</option>
-                        <option value="it-IT">🇮🇹 Italiano</option>
-                        <option value="ru-RU">🇷🇺 Русский</option>
-                        <option value="zh-CN">🇨🇳 中文 (Chinese)</option>
-                        <option value="ja-JP">🇯🇵 日本語 (Japanese)</option>
-                        <option value="ko-KR">🇰🇷 한국어 (Korean)</option>
-                        <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
-                        <option value="ur-PK">🇵🇰 اردو (Urdu)</option>
-                        <option value="nl-NL">🇳🇱 Nederlands</option>
-                        <option value="auto">🌐 Auto / Other (100+)</option>
-                    </select>
-                </div>
-
-                <!-- Clear History Button -->
-                <button onclick="clearChat()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Clear Conversation">
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Clear Chat -->
+                <button onclick="clearChat()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 font-medium">
                     <i class="fa-solid fa-trash-can"></i>
-                    <span id="ui-btn-clear" class="hidden md:inline">Clear</span>
+                    <span class="hidden md:inline">Clear Chat</span>
                 </button>
 
-                <!-- API Key Settings Trigger -->
+                <!-- API Key -->
                 <button onclick="openSettingsModal()" class="text-xs bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 font-semibold">
                     <i class="fa-solid fa-key text-amber-400"></i>
                     <span>API Key</span>
@@ -129,93 +114,84 @@
     </header>
 
     <!-- Main Dynamic Interface -->
-    <main id="chat-window" class="flex-1 overflow-y-auto px-4 py-6 space-y-6 max-w-5xl w-full mx-auto custom-scroll">
+    <main id="chat-window" class="flex-1 overflow-y-auto px-4 py-6 space-y-6 max-w-4xl w-full mx-auto custom-scroll">
         
-        <!-- Welcome Banner / Agent Bio -->
-        <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-xl border border-slate-800">
+        <!-- Welcome Banner -->
+        <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-xl border border-slate-800" id="welcome-card">
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0">
-                    <i class="fa-solid fa-earth-americas"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </div>
                 <div class="space-y-1 flex-1">
-                    <h2 id="ui-welcome-title" class="text-lg font-bold text-white flex items-center gap-2">
-                        Welcome to AriaAI (Global Executive Advisor)
-                        <span id="ui-welcome-pill" class="text-xs font-normal text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">100+ Languages</span>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        Welcome to AriaAI Executive Advisory
                     </h2>
-                    <p id="ui-welcome-desc" class="text-sm text-slate-300 leading-relaxed">
-                        I am your international strategic business & monetization partner. I help you scale operations, craft business models, build global marketing campaigns, and communicate seamlessly in <strong>over 100 languages</strong>.
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Your global partner for business strategy, financial modeling, marketing campaigns, and cross-border expansion. Type or speak in <strong>any language</strong> (English, Kurdish, Arabic, German, etc.)—AriaAI instantly detects your language and context to respond seamlessly.
                     </p>
                 </div>
             </div>
 
-            <!-- Dynamic Business Capability Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-                <button id="card-btn-1" onclick="triggerCardPrompt(1)" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
-                    <div class="text-amber-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-briefcase"></i></div>
-                    <div id="card-title-1" class="text-xs font-semibold text-slate-200">Business Plan</div>
-                    <div id="card-desc-1" class="text-[11px] text-slate-400 mt-0.5">Monetization & Strategy</div>
+            <!-- Quick Action Prompt Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button onclick="setPrompt('Generate a comprehensive SaaS business plan and financial strategy')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left dir-ltr transition group">
+                    <div class="text-amber-400 text-xs mb-1 font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Business Plan & Strategy</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400">Formulate scalable financial & operational models</div>
                 </button>
 
-                <button id="card-btn-2" onclick="triggerCardPrompt(2)" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
-                    <div class="text-indigo-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-line"></i></div>
-                    <div id="card-title-2" class="text-xs font-semibold text-slate-200">Market Scaling</div>
-                    <div id="card-desc-2" class="text-[11px] text-slate-400 mt-0.5">Global Growth Roadmap</div>
-                </button>
-
-                <button id="card-btn-3" onclick="triggerCardPrompt(3)" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
-                    <div class="text-cyan-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-lightbulb"></i></div>
-                    <div id="card-title-3" class="text-xs font-semibold text-slate-200">High-Margin Ideas</div>
-                    <div id="card-desc-3" class="text-[11px] text-slate-400 mt-0.5">Profitable SaaS & AI Services</div>
-                </button>
-
-                <button id="card-btn-4" onclick="triggerCardPrompt(4)" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left transition group">
-                    <div class="text-emerald-400 mb-1 group-hover:scale-110 transition-transform"><i class="fa-solid fa-paper-plane"></i></div>
-                    <div id="card-title-4" class="text-xs font-semibold text-slate-200">Ad & Content Campaign</div>
-                    <div id="card-desc-4" class="text-[11px] text-slate-400 mt-0.5">Multilingual Copywriting</div>
+                <button onclick="setPrompt('Create a 30-day global marketing and ad campaign strategy')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left dir-ltr transition group">
+                    <div class="text-indigo-400 text-xs mb-1 font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <span>Marketing & Growth</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400">30-day cross-border campaign & ad copies</div>
                 </button>
             </div>
         </div>
 
-        <!-- Messages Container -->
+        <!-- Messages Area -->
         <div id="messages-list" class="space-y-4"></div>
 
     </main>
 
-    <!-- Footer Bar -->
+    <!-- Footer Input Bar -->
     <footer class="sticky bottom-0 z-30 glass-header border-t border-slate-800/80 p-3 sm:p-4">
-        <div class="max-w-5xl mx-auto space-y-2">
+        <div class="max-w-4xl mx-auto space-y-2">
             
-            <!-- Voice Indicator Alert -->
+            <!-- Recording Indicator -->
             <div id="voice-indicator" class="hidden flex items-center justify-between text-xs text-amber-300 font-medium px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                    <span id="ui-voice-listening">Listening... Speak now! (Auto-submits after pause)</span>
+                    <span>Listening... Speak naturally in any language (Auto-detected)</span>
                 </div>
-                <button onclick="stopRecording()" id="ui-voice-stop" class="text-amber-400 hover:text-white underline text-xs">Stop</button>
+                <button onclick="stopRecording()" class="text-amber-400 hover:text-white underline text-xs">Stop</button>
             </div>
 
-            <!-- Form -->
+            <!-- Input Form -->
             <form onsubmit="handleSendMessage(event)" class="flex items-center gap-2">
                 
                 <!-- Mic Button -->
-                <button type="button" id="mic-button" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition-all duration-200 shadow-md shrink-0" title="Voice Input">
+                <button type="button" id="mic-button" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shadow-md shrink-0" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
 
-                <!-- Prompt Input -->
+                <!-- Text Input -->
                 <div class="relative flex-1">
-                    <input type="text" id="user-prompt" placeholder="Ask AriaAI anything or type a prompt in any language..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition duration-200 shadow-inner" autocomplete="off">
+                    <input type="text" id="user-prompt" oninput="autoDetectDirection(this)" placeholder="Type your prompt or question in any language..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition shadow-inner" autocomplete="off">
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" id="send-button" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center text-lg transition duration-200 shadow-lg shadow-indigo-600/30 shrink-0 font-bold">
+                <button type="submit" id="send-button" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center text-lg transition shadow-lg shadow-indigo-600/30 shrink-0 font-bold">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
-                <span>Powered by Gemini Neural Engine</span>
-                <span id="speech-status">Voice Playback Enabled</span>
+                <span>AriaAI Neural Voice & Multilingual Engine</span>
+                <span id="speech-status">Auto-Language Active</span>
             </div>
         </div>
     </footer>
@@ -225,26 +201,25 @@
         <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-slate-100 text-base flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-indigo-400"></i>
-                    <span id="ui-modal-title">Settings & API Key</span>
+                    <i class="fa-solid fa-key text-amber-400"></i>
+                    <span>API Key Configuration</span>
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-sm">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <p id="ui-modal-desc" class="text-xs text-slate-300 leading-relaxed">
-                Enter your <strong>Google Gemini API Key</strong>:
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Enter your <strong>Google Gemini API Key</strong> below to activate real-time advisory services:
             </p>
 
             <div class="space-y-1">
-                <label id="ui-modal-label" class="text-xs font-medium text-slate-400">Gemini API Key</label>
-                <input type="password" id="custom-api-key-input" placeholder="Paste your key here..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
+                <input type="password" id="custom-api-key-input" placeholder="Paste your API Key here..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2">
-                <button onclick="closeSettingsModal()" id="ui-modal-cancel" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Cancel</button>
-                <button onclick="saveCustomApiKey()" id="ui-modal-save" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Cancel</button>
+                <button onclick="saveCustomApiKey()" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
                     Save Key
                 </button>
             </div>
@@ -252,151 +227,8 @@
     </div>
 
     <script>
-        // Clean Dictionary for Complete UI Internationalization
-        const uiTranslations = {
-            'en': {
-                dir: 'ltr',
-                badgeMultilingual: '100+ Languages',
-                headerSubtitle: 'Global Business & Multilingual Autonomous AI Advisor',
-                btnClear: 'Clear',
-                welcomeTitle: 'Welcome to AriaAI (Global Executive Advisor)',
-                welcomePill: '100+ Languages',
-                welcomeDesc: 'I am your international strategic business & monetization partner. I help you scale operations, craft business models, build global marketing campaigns, and communicate seamlessly in over 100 languages.',
-                card1Title: 'Business Plan',
-                card1Desc: 'Monetization & Strategy',
-                card1Prompt: 'Write a comprehensive business plan for a high-margin AI agency including financial model and pricing.',
-                card2Title: 'Market Scaling',
-                card2Desc: 'Global Growth Roadmap',
-                card2Prompt: 'Act as a global market strategist. Provide a step-by-step roadmap to scale an online business internationally.',
-                card3Title: 'High-Margin Ideas',
-                card3Desc: 'Profitable SaaS & AI Services',
-                card3Prompt: 'What are the top 5 most profitable digital AI and SaaS business ideas for global clients right now?',
-                card4Title: 'Ad & Copy Campaign',
-                card4Desc: 'Multilingual Copywriting',
-                card4Prompt: 'Create a high-converting 30-day marketing campaign and ad copies for a modern digital service.',
-                listeningText: 'Listening... Speak now! (Auto-submits after pause)',
-                stopText: 'Stop',
-                placeholder: 'Ask AriaAI anything or type a prompt in any language...',
-                speechStatus: 'Voice Playback Enabled',
-                modalTitle: 'Settings & API Key',
-                modalDesc: 'Enter your Google Gemini API Key:',
-                modalLabel: 'Gemini API Key',
-                modalCancel: 'Cancel',
-                modalSave: 'Save Key',
-                speechBtn: 'Read aloud',
-                copyBtn: 'Copy',
-                missingKey: '⚠️ **API Key Missing**: Please click on the **🔑 API Key** button in the header and paste your Gemini API Key.',
-                loading: 'Analyzing & generating response...'
-            },
-            'ckb': {
-                dir: 'rtl',
-                badgeMultilingual: '١٠٠+ زمان',
-                headerSubtitle: 'ڕاوێژکاری ژیریی دەستکردی سەربەخۆ بۆ بزنس و ئاخاوتنی جیهانی',
-                btnClear: 'پاکی بکەرەوە',
-                welcomeTitle: 'بەخێربێیت بۆ ئاریا (AriaAI Global Advisory)',
-                welcomePill: '١٠٠+ زمان',
-                welcomeDesc: 'من هاوبەشی ستراتیژیی کار و بزنسی نێودەوڵەتیتنم. یاریدەدەت دەبم لە گەشەپێدانی بزنس، مۆدێلی دارایی، مارکێتینگی جیهانی، و پەیوەندی بە زیاتر لە ١٠٠ زمانی جیهانی.',
-                card1Title: 'پلانی بزنس',
-                card1Desc: 'ستراتیژیی پەیداکردنی پارە',
-                card1Prompt: 'پلانێکی کار (Business Plan)ی کامل و پرۆفێشیناڵم بۆ بنووسە بۆ ئاژانسێکی ژیریی دەستکرد لەگەڵ مۆدێلی دارایی.',
-                card2Title: 'گەشەپێدانی مارکێت',
-                card2Desc: 'ڕێنیشاندەری بەرفراوانکردنی جیهانی',
-                card2Prompt: 'وەک ستراتیژیستێکی جیهانیی مارکێت، پلانێکی هەنگاو بە هەنگاو بنووسە بۆ پێشخستنی بزنسێکی ئۆنلاین لە ئاستی نێودەوڵەتیدا.',
-                card3Title: 'بیرۆکەی پڕداهات',
-                card3Desc: 'دیجیتاڵ بزنس و SaaS',
-                card3Prompt: '٥ بیرۆکەی زۆر بەسوود و پڕداهاتی دیجیتاڵی و AIم پێ بڵێ کە بپڕێندرێنەوە بۆ مارکێتی جیهانی.',
-                card4Title: 'کەمپینی مارکێتینگ',
-                card4Desc: 'نووسینی ڕیکلامی فرەزمان',
-                card4Prompt: 'کەمپینێکی ۳۰ ڕۆژەی مارکێتینگ و کۆپی ڕیکلام بە زمانی ئینگلیزی و عەرەبی و کوردی بنووسە.',
-                listeningText: 'گوێم لە دەنگتە... ئێستا قسە بکە! (خۆکارانە دەنێردرێت دوای وەستان)',
-                stopText: 'ڕاگرتن',
-                placeholder: 'داواکاری یان پرسیارەکەت بنووسە بە هەر زمانێک...',
-                speechStatus: 'سیستەمی خوێندنەوەی دەنگ چالاکە',
-                modalTitle: 'ڕێکخستن و کلیلی API Key',
-                modalDesc: 'کلیلی Gemini API دابنێ:',
-                modalLabel: 'کلیلی Gemini API',
-                modalCancel: 'پاشگەزبوونەوە',
-                modalSave: 'پاشەکەوتکردن',
-                speechBtn: 'خوێندنەوە بە دەنگ',
-                copyBtn: 'کۆپی',
-                missingKey: '⚠️ **کۆدی API دابین نەکراوە**: تکایە لە سەرەوە کلیک لەسەر دوگمەی **🔑 API Key** بکە و کلیلی Gemini ی خۆت بنووسە.',
-                loading: 'تۆیژینەوە و وەڵامدانەوە...'
-            },
-            'ar': {
-                dir: 'rtl',
-                badgeMultilingual: '١٠٠+ لغة',
-                headerSubtitle: 'المستشار الذكي المستقل للأعمال والتوسع العالمي',
-                btnClear: 'مسح',
-                welcomeTitle: 'مرحباً بك في AriaAI (المستشار التنفيذي العالمي)',
-                welcomePill: '١٠٠+ لغة',
-                welcomeDesc: 'أنا شريكك الاستراتيجي الدولي لتطوير الأعمال والتحصيل المالي. أساعدك في بناء نماذج الأعمال، الحملات التسويقية العالمية، والتواصل بأكثر من 100 لغة حول العالم.',
-                card1Title: 'خطة عمل متكاملة',
-                card1Desc: 'استراتيجية النماذج والربح',
-                card1Prompt: 'اكتب لي خطة عمل شاملة لتأسيس وكالة ذكاء اصطناعي بربحية عالية مع النموذج المالي.',
-                card2Title: 'التوسع العالمي',
-                card2Desc: 'خارطة طريق السوق',
-                card2Prompt: 'بصفتك خبير استراتيجيات عالمي، قدم لي خارطة طريق للتوسع بشركة عبر الإنترنت دولياً.',
-                card3Title: 'أفكار عالية الربحية',
-                card3Desc: 'خدمات SaaS والذكاء الاصطناعي',
-                card3Prompt: 'ما هي أفضل 5 أفكار مشاريع رقمية وذكاء اصطناعي تحقق أعلى نسبة أرباح في السوق العالمي حالياً؟',
-                card4Title: 'حملة تسويقية',
-                card4Desc: 'كتابة إعلانية متعددة اللغات',
-                card4Prompt: 'اكتب خطة تسويقية لمدة 30 يوماً مع نصوص إعلانية احترافية بلغات متعددة.',
-                listeningText: 'جاري الاستماع... تحدث الآن! (يتم الإرسال تلقائياً بعد التوقف)',
-                stopText: 'إيقاف',
-                placeholder: 'اكتب سؤالك أو طلبك بأي لغة...',
-                speechStatus: 'تشغيل الصوت التلقائي مفعل',
-                modalTitle: 'الإعدادات ومفتاح API Key',
-                modalDesc: 'أدخل مفتاح Gemini API الخاص بك:',
-                modalLabel: 'مفتاح Gemini API',
-                modalCancel: 'إلغاء',
-                modalSave: 'حفظ المفتاح',
-                speechBtn: 'قراءة صوتية',
-                copyBtn: 'نسخ',
-                missingKey: '⚠ **مفتاح API غير متوفر**: يرجى الضغط على زر **🔑 API Key** في الأعلى وإدخال المفتاح الخاص بك.',
-                loading: 'جاري التحليل وإعداد الرد...'
-            },
-            'tr': {
-                dir: 'ltr',
-                badgeMultilingual: '100+ Dil',
-                headerSubtitle: 'Küresel İş ve Çok Dilli Özerk Yapay Zeka Danışmanı',
-                btnClear: 'Temizle',
-                welcomeTitle: 'AriaAI\'ye Hoş Geldiniz (Küresel Yönetici Danışmanı)',
-                welcomePill: '100+ Dil',
-                welcomeDesc: 'Uluslararası stratejik iş ve gelir ortağınızım. Operasyonları ölçeklendirmenize, iş modelleri oluşturmanıza ve 100\'den fazla dilde iletişim kurmanıza yardımcı oluyorum.',
-                card1Title: 'İş Planı',
-                card1Desc: 'Gelir Stratejisi',
-                card1Prompt: 'Finansal model ve fiyatlandırma içeren kapsamlı bir yapay zeka ajansı iş planı yazın.',
-                card2Title: 'Küresel Ölçeklendirme',
-                card2Desc: 'Pazar Büyüme Haritası',
-                card2Prompt: 'Bir çevrimiçi işletmeyi uluslararası alanda büyütmek için adım adım bir yol haritası sunun.',
-                card3Title: 'Yüksek Kârlı Fikirler',
-                card3Desc: 'SaaS ve Yapay Zeka',
-                card3Prompt: 'Şu anda küresel müşteriler için en kârlı 5 dijital yapay zeka ve SaaS iş fikri nedir?',
-                card4Title: 'Pazarlama Kampanyası',
-                card4Desc: 'Çok Dilli Reklam Yazarlığı',
-                card4Prompt: 'Modern bir dijital hizmet için 30 günlük pazarlama kampanyası ve reklam metinleri oluşturun.',
-                listeningText: 'Dinleniyor... Şimdi konuşun! (Duraklamadan sonra otomatik gönderilir)',
-                stopText: 'Durdur',
-                placeholder: 'AriaAI\'ye herhangi bir dilde bir şey sorun...',
-                speechStatus: 'Sesli Okuma Etkin',
-                modalTitle: 'Ayarlar ve API Anahtarı',
-                modalDesc: 'Google Gemini API Anahtarınızı girin:',
-                modalLabel: 'Gemini API Anahtarı',
-                modalCancel: 'İptal',
-                modalSave: 'Kaydet',
-                speechBtn: 'Sesli Oku',
-                copyBtn: 'Kopyala',
-                missingKey: '⚠️ **API Anahtarı Eksik**: Lütfen üstteki **🔑 API Key** düğmesine tıklayın ve anahtarınızı yapıştırın.',
-                loading: 'Analiz ediliyor ve yanıt oluşturuluyor...'
-            }
-        };
-
-        // State variables
         let isRecording = false;
         let speechRecognition = null;
-        let selectedLanguage = 'en-US';
-        let currentLangKey = 'en';
 
         function getSavedApiKey() {
             const key = localStorage.getItem('aria_custom_api_key') || localStorage.getItem('aura_custom_api_key') || '';
@@ -419,69 +251,33 @@
                 alert('✅ API Key saved successfully!');
             } else {
                 localStorage.removeItem('aria_custom_api_key');
-                alert('ℹ️ API key cleared.');
+                alert('ℹ️ API Key cleared.');
             }
             closeSettingsModal();
         }
 
-        // Apply Dynamic Translations when language changes
-        function handleLanguageChange() {
-            const langSelect = document.getElementById('language-selector');
-            selectedLanguage = langSelect.value;
-
-            if (selectedLanguage.startsWith('ckb')) currentLangKey = 'ckb';
-            else if (selectedLanguage.startsWith('ar')) currentLangKey = 'ar';
-            else if (selectedLanguage.startsWith('tr')) currentLangKey = 'tr';
-            else currentLangKey = 'en';
-
-            const t = uiTranslations[currentLangKey] || uiTranslations['en'];
-
-            const inputEl = document.getElementById('user-prompt');
-            inputEl.dir = t.dir;
-            inputEl.placeholder = t.placeholder;
-
-            document.getElementById('ui-badge-multilingual').innerText = t.badgeMultilingual;
-            document.getElementById('ui-header-subtitle').innerText = t.headerSubtitle;
-            document.getElementById('ui-btn-clear').innerText = t.btnClear;
-
-            document.getElementById('ui-welcome-title').childNodes[0].nodeValue = t.welcomeTitle + " ";
-            document.getElementById('ui-welcome-pill').innerText = t.welcomePill;
-            document.getElementById('ui-welcome-desc').innerHTML = t.welcomeDesc;
-
-            document.getElementById('card-title-1').innerText = t.card1Title;
-            document.getElementById('card-desc-1').innerText = t.card1Desc;
-
-            document.getElementById('card-title-2').innerText = t.card2Title;
-            document.getElementById('card-desc-2').innerText = t.card2Desc;
-
-            document.getElementById('card-title-3').innerText = t.card3Title;
-            document.getElementById('card-desc-3').innerText = t.card3Desc;
-
-            document.getElementById('card-title-4').innerText = t.card4Title;
-            document.getElementById('card-desc-4').innerText = t.card4Desc;
-
-            document.getElementById('ui-voice-listening').innerText = t.listeningText;
-            document.getElementById('ui-voice-stop').innerText = t.stopText;
-            document.getElementById('speech-status').innerText = t.speechStatus;
-
-            document.getElementById('ui-modal-title').innerText = t.modalTitle;
-            document.getElementById('ui-modal-desc').innerHTML = t.modalDesc;
-            document.getElementById('ui-modal-label').innerText = t.modalLabel;
-            document.getElementById('ui-modal-cancel').innerText = t.modalCancel;
-            document.getElementById('ui-modal-save').innerText = t.modalSave;
-
-            if (speechRecognition) {
-                speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+        // Auto-detect text direction (RTL vs LTR) based on user's typing
+        function autoDetectDirection(inputEl) {
+            const val = inputEl.value.trim();
+            if (!val) {
+                inputEl.dir = 'auto';
+                return;
             }
+            // Check for Kurdish/Arabic/Persian script unicode range
+            const isRtl = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(val.charAt(0));
+            inputEl.dir = isRtl ? 'rtl' : 'ltr';
         }
 
-        // Web Speech Recognition
+        function isRtlText(text) {
+            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(text);
+        }
+
+        // Web Speech Recognition Engine
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SpeechRecognitionClass();
             speechRecognition.continuous = false;
             speechRecognition.interimResults = true;
-            speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
 
             speechRecognition.onstart = () => {
                 isRecording = true;
@@ -494,14 +290,12 @@
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     transcript += event.results[i][0].transcript;
                 }
-                document.getElementById('user-prompt').value = transcript;
+                const promptEl = document.getElementById('user-prompt');
+                promptEl.value = transcript;
+                autoDetectDirection(promptEl);
             };
 
-            speechRecognition.onerror = (event) => {
-                console.warn('Speech Recognition notice:', event.error);
-                stopRecording();
-            };
-
+            speechRecognition.onerror = () => stopRecording();
             speechRecognition.onend = () => {
                 stopRecording();
                 const textVal = document.getElementById('user-prompt').value.trim();
@@ -513,7 +307,7 @@
 
         function toggleVoiceRecording() {
             if (!speechRecognition) {
-                alert('⚠️ Voice input is not supported in this browser. Please use Google Chrome or Safari.');
+                alert('⚠️ Voice recognition is not supported in this browser. Please use Google Chrome or Safari.');
                 return;
             }
 
@@ -521,11 +315,11 @@
                 speechRecognition.stop();
             } else {
                 try {
-                    document.getElementById('user-prompt').value = '';
-                    speechRecognition.lang = selectedLanguage === 'auto' ? 'en-US' : selectedLanguage;
+                    const promptEl = document.getElementById('user-prompt');
+                    promptEl.value = '';
                     speechRecognition.start();
                 } catch (err) {
-                    console.error('Mic start error:', err);
+                    console.error(err);
                 }
             }
         }
@@ -542,6 +336,45 @@
             return div.innerHTML;
         }
 
+        // Strict Chain-of-Thought (CoT) & Internal Thinking Eraser
+        function cleanAiOutput(text) {
+            if (!text) return '';
+            
+            let lines = text.split('\n');
+            let filteredLines = lines.filter(line => {
+                const trimmed = line.trim();
+                if (
+                    trimmed.startsWith('- User:') || 
+                    trimmed.startsWith('- Language:') || 
+                    trimmed.startsWith('- Translation:') || 
+                    trimmed.startsWith('- Identity:') || 
+                    trimmed.startsWith('- Goal:') || 
+                    trimmed.startsWith('- Constraint:') || 
+                    trimmed.startsWith('- Acknowledgment:') || 
+                    trimmed.startsWith('- Addressing:') || 
+                    trimmed.startsWith('- Professionalism:') || 
+                    trimmed.startsWith('- *Option') || 
+                    trimmed.startsWith('- Option') || 
+                    trimmed.startsWith('- Draft') || 
+                    trimmed.startsWith('- Natural?') || 
+                    trimmed.startsWith('- Concise?') || 
+                    trimmed.startsWith('- Exact language?') || 
+                    trimmed.startsWith('- Persona?') || 
+                    trimmed.startsWith('User:') || 
+                    trimmed.startsWith('Translation:') ||
+                    trimmed.startsWith('Constraint:') ||
+                    trimmed.startsWith('Context:')
+                ) {
+                    return false;
+                }
+                return true;
+            });
+
+            let cleaned = filteredLines.join('\n').trim();
+            cleaned = cleaned.replace(/^"|"$/g, '').trim();
+            return cleaned;
+        }
+
         function formatMarkdownResponse(text) {
             return escapeHtml(text)
                 .replace(/\n/g, '<br>')
@@ -549,16 +382,20 @@
                 .replace(/`([^`]+)`/g, '<code class="bg-slate-800 text-cyan-300 px-1.5 py-0.5 rounded text-xs">$1</code>');
         }
 
-        function appendMessage(sender, text) {
+        function appendMessage(sender, rawText) {
+            const text = sender === 'ai' ? cleanAiOutput(rawText) : rawText;
+            if (!text) return;
+
             const messagesContainer = document.getElementById('messages-list');
             const msgRow = document.createElement('div');
-            msgRow.className = 'flex items-start gap-3 text-sm';
-            const t = uiTranslations[currentLangKey] || uiTranslations['en'];
+            const isRtl = isRtlText(text);
+
+            msgRow.className = `flex items-start gap-3 text-sm ${isRtl ? 'dir-rtl' : 'dir-ltr'}`;
 
             if (sender === 'user') {
                 msgRow.innerHTML = `
-                    <div class="flex-1 flex justify-end">
-                        <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed shadow-md font-medium">
+                    <div class="flex-1 flex ${isRtl ? 'justify-start' : 'justify-end'}">
+                        <div class="bg-indigo-600 text-white p-4 rounded-2xl ${isRtl ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] leading-relaxed shadow-md font-medium" dir="${isRtl ? 'rtl' : 'ltr'}">
                             ${escapeHtml(text)}
                         </div>
                     </div>
@@ -567,22 +404,39 @@
                     </div>
                 `;
             } else {
+                const contentCard = document.createElement('div');
+                contentCard.className = `glass-card text-slate-100 p-4 rounded-2xl ${isRtl ? 'rounded-tr-none' : 'rounded-tl-none'} max-w-[85%] leading-relaxed shadow-md border border-slate-800 space-y-3`;
+                contentCard.dir = isRtl ? 'rtl' : 'ltr';
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = formatMarkdownResponse(text);
+                contentCard.appendChild(textDiv);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'pt-2 flex items-center gap-3 border-t border-slate-800/80 text-xs text-slate-400';
+
+                // Speak Button
+                const speakBtn = document.createElement('button');
+                speakBtn.className = 'hover:text-indigo-400 flex items-center gap-1.5 transition font-medium';
+                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Read Aloud`;
+                speakBtn.onclick = () => speakText(text);
+
+                // Copy Button
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'hover:text-indigo-400 flex items-center gap-1.5 transition font-medium';
+                copyBtn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
+                copyBtn.onclick = () => copyToClipboard(text);
+
+                actionsDiv.appendChild(speakBtn);
+                actionsDiv.appendChild(copyBtn);
+                contentCard.appendChild(actionsDiv);
+
                 msgRow.innerHTML = `
                     <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-sm shrink-0 shadow-md mt-1">
                         <i class="fa-solid fa-robot"></i>
                     </div>
-                    <div class="glass-card text-slate-100 p-4 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow-md border border-slate-800 space-y-2">
-                        <div>${formatMarkdownResponse(text)}</div>
-                        <div class="pt-2 flex items-center gap-3 border-t border-slate-800/80 text-xs text-slate-400">
-                            <button onclick="speakResponseText(this)" data-text="${escapeHtml(text)}" class="hover:text-indigo-400 flex items-center gap-1 transition">
-                                <i class="fa-solid fa-volume-high"></i> ${t.speechBtn}
-                            </button>
-                            <button onclick="copyToClipboard('${escapeHtml(text).replace(/'/g, "\\'")}')" class="hover:text-indigo-400 flex items-center gap-1 transition">
-                                <i class="fa-solid fa-copy"></i> ${t.copyBtn}
-                            </button>
-                        </div>
-                    </div>
                 `;
+                msgRow.appendChild(contentCard);
             }
 
             messagesContainer.appendChild(msgRow);
@@ -591,58 +445,36 @@
         }
 
         function copyToClipboard(text) {
-            const tempInput = document.createElement('textarea');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert('📋 Copied!');
+            navigator.clipboard.writeText(text).then(() => {
+                alert('📋 Copied to clipboard!');
+            }).catch(() => {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('📋 Copied to clipboard!');
+            });
         }
 
-        // Automatic Intelligent Text Language Detection for Voice Playback
-        function detectLanguageFromText(text) {
-            // Check for Arabic/Persian/Kurdish script
-            if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(text)) {
-                const voices = window.speechSynthesis.getVoices();
-                // Check if device natively has Sorani Kurdish TTS installed
-                const hasKurdishVoice = voices.some(v => v.lang.toLowerCase().includes('ckb') || v.lang.toLowerCase().includes('ku'));
-                if (hasKurdishVoice) {
-                    return 'ckb-IQ';
-                }
-                // Fallback to Arabic voice engine (ar-SA) which accurately pronounces Arabic/Kurdish script characters instead of English!
-                return 'ar-SA';
-            }
-            if (/[ğüşıöçĞÜŞİÖÇ]/.test(text)) return 'tr-TR';
-            if (/[äöüßÄÖÜ]/.test(text)) return 'de-DE';
-            if (/[éèêëàâùûçÉÈÊËÀÂÙÛÇ]/.test(text)) return 'fr-FR';
-            if (/[ñáéíóúÁÉÍÓÚÑ]/.test(text)) return 'es-ES';
-            
-            return selectedLanguage && selectedLanguage !== 'auto' ? selectedLanguage : 'en-US';
-        }
-
-        // Smart Multilingual Voice Playback Engine
+        // Smart Voice Synthesis Engine matching text language
         function speakText(rawText) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                // Clean markdown symbols and system analysis leaks
-                let cleanText = rawText.replace(/[*_#`]/g, '');
-                
-                // Extra filter to remove any internal reasoning/thought chain if generated by AI
-                if (cleanText.includes('User:') || cleanText.includes('Translation:')) {
-                    const lines = cleanText.split('\n').filter(line => !line.trim().startsWith('-') && !line.includes('Translation:'));
-                    cleanText = lines.join(' ');
-                }
+                let cleanText = cleanAiOutput(rawText).replace(/[*_#`]/g, '');
 
                 const utterance = new SpeechSynthesisUtterance(cleanText);
-                const targetLang = detectLanguageFromText(cleanText);
-                utterance.lang = targetLang;
+                const isRtl = isRtlText(cleanText);
+
+                // Fallback to ar-SA for Arabic/Kurdish script if native voice isn't installed
+                utterance.lang = isRtl ? 'ar-SA' : 'en-US';
                 utterance.rate = 1.0;
 
-                // Attempt to pick matching voice from browser
                 const voices = window.speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                    const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(targetLang.substring(0,2).toLowerCase()));
+                    const matchLang = isRtl ? 'ar' : 'en';
+                    const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(matchLang));
                     if (matchedVoice) utterance.voice = matchedVoice;
                 }
 
@@ -650,23 +482,17 @@
             }
         }
 
-        function speakResponseText(btn) {
-            const rawText = btn.getAttribute('data-text');
-            speakText(rawText);
-        }
-
         function clearChat() {
             document.getElementById('messages-list').innerHTML = '';
         }
 
-        function triggerCardPrompt(index) {
-            const t = uiTranslations[currentLangKey] || uiTranslations['en'];
-            const promptText = t[`card${index}Prompt`];
-            document.getElementById('user-prompt').value = promptText;
+        function setPrompt(text) {
+            const promptEl = document.getElementById('user-prompt');
+            promptEl.value = text;
+            autoDetectDirection(promptEl);
             handleSendMessage(new Event('submit'));
         }
 
-        // Streamlined Direct API Route
         async function handleSendMessage(e) {
             if (e) e.preventDefault();
 
@@ -676,10 +502,9 @@
 
             appendMessage('user', userQuery);
             promptInput.value = '';
+            promptInput.dir = 'auto';
 
-            const t = uiTranslations[currentLangKey] || uiTranslations['en'];
-
-            // Loading Indicator UI
+            // Loading Indicator
             const messagesContainer = document.getElementById('messages-list');
             const loadingRow = document.createElement('div');
             loadingRow.id = 'active-loading-indicator';
@@ -690,7 +515,7 @@
                 </div>
                 <div class="glass-card text-slate-400 p-3.5 rounded-2xl rounded-tl-none text-xs flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
-                    <span>${t.loading}</span>
+                    <span>Analyzing & generating response...</span>
                 </div>
             `;
             messagesContainer.appendChild(loadingRow);
@@ -701,7 +526,7 @@
             
             if (!apiKey) {
                 document.getElementById('active-loading-indicator')?.remove();
-                appendMessage('ai', t.missingKey);
+                appendMessage('ai', '⚠️ **API Key Required**: Please click the **🔑 API Key** button at the top to set your Google Gemini API Key.');
                 return;
             }
 
@@ -709,19 +534,20 @@
             let lastError = '';
             const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
-            // Streamlined Direct API Route with Strict Output Rules
-            const systemInstructions = `You are AriaAI, an autonomous executive AI business advisor.
-CRITICAL DIRECTIVES:
-1. OUTPUT ONLY THE FINAL DIRECT ANSWER. Do NOT output translation breakdowns, internal thought steps, context tags, or markdown chain-of-thought analysis like "- Translation:" or "- Context:".
-2. STRICT LANGUAGE MATCHING: Respond ONLY in the exact language used by the user. If asked in Kurdish, answer in clean Kurdish.
-3. VOICE COMPATIBILITY: Act as an integrated conversational AI with full speech capabilities. NEVER say "I am a text model" or "I cannot speak". Confirm warmly in their language.`;
+            // System Instruction ensuring language matching and no internal reasoning leakage
+            const systemInstructions = `You are AriaAI, an executive business AI advisor.
+CRITICAL INSTRUCTIONS:
+1. Speak DIRECTLY to the user in the EXACT SAME LANGUAGE they used (e.g., reply in Sorani Kurdish if input is Kurdish, English if input is English, etc.).
+2. DO NOT write internal thoughts, metadata, language checks, or lists like "- User:", "- Language:", "- Translation:", "- Goal:".
+3. NEVER say "I cannot speak" or "I am a text model". Confirm and respond directly as an interactive executive advisor.
+4. Keep answers professional, actionable, and structured.`;
 
             for (const model of modelsToTry) {
                 if (aiResponseText) break;
 
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 7000);
+                    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
                     
@@ -741,7 +567,7 @@ CRITICAL DIRECTIVES:
                             ],
                             generationConfig: {
                                 temperature: 0.2,
-                                maxOutputTokens: 800
+                                maxOutputTokens: 1000
                             }
                         })
                     });
@@ -750,21 +576,13 @@ CRITICAL DIRECTIVES:
                     const data = await response.json();
 
                     if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-                        let text = data.candidates[0].content.parts[0].text;
-                        
-                        // Sanity filter to strip out any chain-of-thought preamble if model outputs it
-                        if (text.includes('- User:') || text.includes('- Translation:')) {
-                            const lines = text.split('\n').filter(l => !l.trim().startsWith('- User:') && !l.trim().startsWith('- Translation:') && !l.trim().startsWith('- Context:'));
-                            text = lines.join('\n').trim();
-                        }
-
-                        aiResponseText = text;
+                        aiResponseText = cleanAiOutput(data.candidates[0].content.parts[0].text);
                         break;
                     } else if (data.error?.message) {
                         lastError = data.error.message;
                     }
                 } catch (err) {
-                    lastError = err.name === 'AbortError' ? 'Fast model timeout' : (err.message || 'Network error');
+                    lastError = err.name === 'AbortError' ? 'Timeout' : (err.message || 'Network error');
                 }
             }
 
@@ -774,11 +592,9 @@ CRITICAL DIRECTIVES:
                 appendMessage('ai', aiResponseText);
                 speakText(aiResponseText);
             } else {
-                appendMessage('ai', `⚠️ **Connection Error**: ${lastError ? lastError : 'Unable to connect.'} Please check your Gemini API key.`);
+                appendMessage('ai', `⚠️ **Connection Error**: ${lastError ? lastError : 'Unable to fetch response.'} Please verify your API Key.`);
             }
         }
-
-        handleLanguageChange();
     </script>
 </body>
 </html>
