@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="kmr" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aria - Executive Business & Multilingual Advisory</title>
+    <title>Aria - Multilingual Business Advisory</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Inter & Vazirmatn -->
+    <!-- Google Fonts: Inter & Vazirmatn for Kurdish/Arabic support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,17 +18,17 @@
 
     <style>
         body {
-            font-family: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Vazirmatn', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .glass-header {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -88,10 +88,10 @@
                         <h1 class="font-extrabold text-base sm:text-xl tracking-tight text-white">Aria <span class="text-indigo-400 font-normal text-sm">Advisory</span></h1>
                         <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            Auto Language Detection
+                            Auto Voice & Language
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400 font-medium hidden sm:block">Senior Multilingual Business & Strategy Advisor</p>
+                    <p class="text-xs text-slate-400 font-medium hidden sm:block">ڕاوێژکاری سه‌ره‌كیی بزنس و مارکێتینگ (فرەزمان)</p>
                 </div>
             </div>
 
@@ -100,10 +100,10 @@
                 <!-- Clear Chat -->
                 <button onclick="clearChat()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 font-medium">
                     <i class="fa-solid fa-trash-can"></i>
-                    <span class="hidden md:inline">Clear Chat</span>
+                    <span class="hidden md:inline">سڕینەوەی گفتوگۆ</span>
                 </button>
 
-                <!-- API Key -->
+                <!-- API Key Button -->
                 <button onclick="openSettingsModal()" class="text-xs bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 px-3 py-2 rounded-xl transition flex items-center gap-1.5 font-semibold">
                     <i class="fa-solid fa-key text-amber-400"></i>
                     <span>API Key</span>
@@ -117,36 +117,36 @@
         
         <!-- Welcome Banner -->
         <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-xl border border-slate-800" id="welcome-card">
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-4 dir-rtl">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0">
                     <i class="fa-solid fa-briefcase"></i>
                 </div>
                 <div class="space-y-1 flex-1">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        Welcome to Aria Executive Advisory
+                        بەخێربێیت بۆ ئاریای ڕاوێژکاری بزنس
                     </h2>
                     <p class="text-sm text-slate-300 leading-relaxed">
-                        I am <strong>Aria</strong>, your senior executive advisor for global business growth, financial planning, cross-border marketing, and market penetration strategies. Type or speak in <strong>any language</strong>—I will automatically detect your language and consult with you directly.
+                        من **ئاریا**م، ڕاوێژکاری سه‌ره‌كیی بزنس، پلانی دارایی، مارکێتینگ و گەشەپێدانی پڕۆژەکان. بە **هەر زمانێک** (کوردی، عەرەبی، ئینگلیزی) بنووسیت یان قسە بکەیت، من بە هەمان زمان و بە شێوەیەکی **ئۆتۆماتیکی بە دەنگ و دەق** وەڵامت دەدەمەوە.
                     </p>
                 </div>
             </div>
 
             <!-- Quick Action Prompt Buttons -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <button onclick="setPrompt('Develop a comprehensive business plan and monetization strategy for a high-value service agency')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left dir-ltr transition group">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 dir-rtl">
+                <button onclick="setPrompt('پلانێکی بزنسی گشتگیر و مۆدێلی داهات بۆ ئاژانسێکی دیجیتالی بنووسە')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-right transition group">
                     <div class="text-amber-400 text-xs mb-1 font-semibold flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-line"></i>
-                        <span>Business Plan & Strategy</span>
+                        <span>پلانی بزنس و گەشەپێدان</span>
                     </div>
-                    <div class="text-[11px] text-slate-400">Formulate scalable financial & operational models</div>
+                    <div class="text-[11px] text-slate-400">داڕشتنی ستراتیژیی دارایی و فرۆشتن</div>
                 </button>
 
-                <button onclick="setPrompt('Design a 30-day global marketing and customer acquisition campaign')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-left dir-ltr transition group">
+                <button onclick="setPrompt('پلانی مارکێتینگ و ڕیکلامی ۳۰ ڕۆژە بۆ ڕاکێشانی کڕیاری نوێ بنووسە')" class="p-3 bg-slate-900/80 hover:bg-indigo-950/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl text-right transition group">
                     <div class="text-indigo-400 text-xs mb-1 font-semibold flex items-center gap-1.5">
                         <i class="fa-solid fa-bullhorn"></i>
-                        <span>Marketing & Growth</span>
+                        <span>مارکێتینگ و کەمپین</span>
                     </div>
-                    <div class="text-[11px] text-slate-400">30-day cross-border campaign & ad copy</div>
+                    <div class="text-[11px] text-slate-400">پلانی ٣٠ ڕۆژەی ڕیکلامی فەیسبووک و ئینستاگرام</div>
                 </button>
             </div>
         </div>
@@ -161,25 +161,28 @@
         <div class="max-w-4xl mx-auto space-y-2">
             
             <!-- Recording Indicator -->
-            <div id="voice-indicator" class="hidden flex items-center justify-between text-xs text-amber-300 font-medium px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl animate-pulse">
+            <div id="voice-indicator" class="hidden flex items-center justify-between text-xs text-amber-300 font-medium px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl animate-pulse dir-rtl">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                    <span>Listening... Speak naturally in any language (Auto-detected)</span>
+                    <span>گوێم لێتە... قسە بکە (بە ئۆتۆماتیکی زمانی ئاخاوتن دەستنیشان دەکرێت)</span>
                 </div>
-                <button onclick="stopRecording()" class="text-amber-400 hover:text-white underline text-xs">Stop</button>
+                <button onclick="stopRecording()" class="text-amber-400 hover:text-white underline text-xs">ڕاگرتن</button>
             </div>
+
+            <!-- Toast Alert Box (Replaces Browser Alert) -->
+            <div id="toast-message" class="hidden text-xs text-emerald-300 bg-emerald-950/80 border border-emerald-500/30 px-3 py-2 rounded-xl text-center"></div>
 
             <!-- Input Form -->
             <form onsubmit="handleSendMessage(event)" class="flex items-center gap-2">
                 
                 <!-- Mic Button -->
-                <button type="button" id="mic-button" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shadow-md shrink-0" title="Voice Input">
+                <button type="button" id="mic-button" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-2xl bg-slate-900 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shadow-md shrink-0" title="دەنگ تۆمار بکە">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
 
                 <!-- Text Input -->
                 <div class="relative flex-1">
-                    <input type="text" id="user-prompt" oninput="autoDetectDirection(this)" placeholder="Type your inquiry in any language..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition shadow-inner" autocomplete="off">
+                    <input type="text" id="user-prompt" oninput="autoDetectDirection(this)" placeholder="پرسیارەکەت بە هەر زمانێک دەتەوێت بنووسە یان بڵێ..." class="w-full bg-slate-900/90 border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 outline-none transition shadow-inner dir-rtl" autocomplete="off">
                 </div>
 
                 <!-- Submit Button -->
@@ -190,18 +193,18 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
                 <span>Aria Multilingual Executive Engine</span>
-                <span id="speech-status">Auto Language Detection Active</span>
+                <span id="speech-status">Auto Voice Output: Enabled</span>
             </div>
         </div>
     </footer>
 
     <!-- Settings Modal -->
     <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4 dir-rtl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-slate-100 text-base flex items-center gap-2">
                     <i class="fa-solid fa-key text-amber-400"></i>
-                    <span>API Key Configuration</span>
+                    <span>تۆمارکردنی Gemini API Key</span>
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-sm">
                     <i class="fa-solid fa-xmark"></i>
@@ -209,17 +212,17 @@
             </div>
 
             <p class="text-xs text-slate-300 leading-relaxed">
-                Enter your <strong>Google Gemini API Key</strong> below (Get free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 underline">Google AI Studio</a>):
+                تکایە **Google Gemini API Key** لە خوارەوە بنووسە (دەتوانیت بە خۆڕایی لە <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 underline dir-ltr inline-block">Google AI Studio</a> وەریبگریت):
             </p>
 
-            <div class="space-y-1">
-                <input type="password" id="custom-api-key-input" placeholder="Paste AI Studio API Key (AIzaSy...)" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
+            <div class="space-y-1 dir-ltr">
+                <input type="password" id="custom-api-key-input" placeholder="Paste Gemini Key (AIzaSy...)" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 text-slate-100 text-xs rounded-xl p-3 outline-none">
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2">
-                <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">Cancel</button>
+                <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white transition">داخستن</button>
                 <button onclick="saveCustomApiKey()" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
-                    Save Key
+                    پاشەکەوتکردن
                 </button>
             </div>
         </div>
@@ -228,6 +231,13 @@
     <script>
         let isRecording = false;
         let speechRecognition = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-message');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
 
         function getSavedApiKey() {
             const key = localStorage.getItem('aria_custom_api_key') || localStorage.getItem('aura_custom_api_key') || '';
@@ -247,10 +257,10 @@
             const inputVal = document.getElementById('custom-api-key-input').value.trim();
             if (inputVal.length > 5) {
                 localStorage.setItem('aria_custom_api_key', inputVal);
-                alert('✅ API Key saved successfully!');
+                showToast('✅ API Key بە سەرکەوتوویی پاشەکەوت کرا');
             } else {
                 localStorage.removeItem('aria_custom_api_key');
-                alert('ℹ️ API Key cleared.');
+                showToast('ℹ️ API Key سڕایەوە');
             }
             closeSettingsModal();
         }
@@ -258,7 +268,7 @@
         function autoDetectDirection(inputEl) {
             const val = inputEl.value.trim();
             if (!val) {
-                inputEl.dir = 'auto';
+                inputEl.dir = 'rtl';
                 return;
             }
             const isRtl = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(val.charAt(0));
@@ -303,7 +313,7 @@
 
         function toggleVoiceRecording() {
             if (!speechRecognition) {
-                alert('⚠️ Voice recognition is not supported in this browser. Please use Google Chrome or Safari.');
+                showToast('⚠️ پڕوانەکەرەکەت پشتیوانی ڕاستەوخۆی دەنگ ناکات. Chrome یان Safari بەکاربهێنە.');
                 return;
             }
 
@@ -348,13 +358,6 @@
                     trimmed.startsWith('- Acknowledgment:') || 
                     trimmed.startsWith('- Addressing:') || 
                     trimmed.startsWith('- Professionalism:') || 
-                    trimmed.startsWith('- *Option') || 
-                    trimmed.startsWith('- Option') || 
-                    trimmed.startsWith('- Draft') || 
-                    trimmed.startsWith('- Natural?') || 
-                    trimmed.startsWith('- Concise?') || 
-                    trimmed.startsWith('- Exact language?') || 
-                    trimmed.startsWith('- Persona?') || 
                     trimmed.startsWith('User:') || 
                     trimmed.startsWith('Translation:') ||
                     trimmed.startsWith('Constraint:') ||
@@ -390,7 +393,7 @@
             if (sender === 'user') {
                 msgRow.innerHTML = `
                     <div class="flex-1 flex ${isRtl ? 'justify-start' : 'justify-end'}">
-                        <div class="bg-indigo-600 text-white p-4 rounded-2xl ${isRtl ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] leading-relaxed shadow-md font-medium" dir="${isRtl ? 'rtl' : 'ltr'}">
+                        <div class="bg-indigo-600 text-white p-4 rounded-2xl ${isRtl ? 'rounded-tr-none' : 'rounded-tl-none'} max-w-[85%] leading-relaxed shadow-md font-medium" dir="${isRtl ? 'rtl' : 'ltr'}">
                             ${escapeHtml(text)}
                         </div>
                     </div>
@@ -413,13 +416,13 @@
                 // Speak Button
                 const speakBtn = document.createElement('button');
                 speakBtn.className = 'hover:text-indigo-400 flex items-center gap-1.5 transition font-medium';
-                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Read Aloud`;
+                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> دووبارە خوێندنەوە`;
                 speakBtn.onclick = () => speakText(text);
 
                 // Copy Button
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'hover:text-indigo-400 flex items-center gap-1.5 transition font-medium';
-                copyBtn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
+                copyBtn.innerHTML = `<i class="fa-solid fa-copy"></i> کۆپیکردن`;
                 copyBtn.onclick = () => copyToClipboard(text);
 
                 actionsDiv.appendChild(speakBtn);
@@ -440,17 +443,13 @@
         }
 
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('📋 Copied to clipboard!');
-            }).catch(() => {
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('📋 Copied to clipboard!');
-            });
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('📋 وەڵامەکە کۆپی کرا');
         }
 
         function speakText(rawText) {
@@ -461,6 +460,7 @@
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 const isRtl = isRtlText(cleanText);
 
+                // Set language code based on detected script
                 utterance.lang = isRtl ? 'ar-SA' : 'en-US';
                 utterance.rate = 1.0;
 
@@ -477,6 +477,7 @@
 
         function clearChat() {
             document.getElementById('messages-list').innerHTML = '';
+            window.speechSynthesis?.cancel();
         }
 
         function setPrompt(text) {
@@ -495,19 +496,19 @@
 
             appendMessage('user', userQuery);
             promptInput.value = '';
-            promptInput.dir = 'auto';
+            promptInput.dir = 'rtl';
 
             const messagesContainer = document.getElementById('messages-list');
             const loadingRow = document.createElement('div');
             loadingRow.id = 'active-loading-indicator';
-            loadingRow.className = 'flex items-start gap-3 text-sm animate-pulse';
+            loadingRow.className = 'flex items-start gap-3 text-sm animate-pulse dir-rtl';
             loadingRow.innerHTML = `
                 <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-sm shrink-0 mt-1">
                     <i class="fa-solid fa-spinner fa-spin"></i>
                 </div>
-                <div class="glass-card text-slate-400 p-3.5 rounded-2xl rounded-tl-none text-xs flex items-center gap-2">
+                <div class="glass-card text-slate-400 p-3.5 rounded-2xl rounded-tr-none text-xs flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
-                    <span>Analyzing & preparing response...</span>
+                    <span>ئاریا خەریکی لێکۆڵینەوە و وەڵامدانەوەیە...</span>
                 </div>
             `;
             messagesContainer.appendChild(loadingRow);
@@ -518,29 +519,29 @@
             
             if (!apiKey) {
                 document.getElementById('active-loading-indicator')?.remove();
-                appendMessage('ai', '⚠️ **API Key Required**: Please click the **🔑 API Key** button at the top to set your Google Gemini API Key.');
+                appendMessage('ai', '⚠️ **نیشانەی API Key پێویستە**: تکایە لە سەرەوە کلیک لەسەر دوگمەی **🔑 API Key** بکە بۆ ئەوەی Google Gemini API Key دابنێیت.');
                 openSettingsModal();
                 return;
             }
 
             let aiResponseText = '';
             let lastError = '';
-            // Verified stable Gemini API models
             const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
 
+            // System prompt strictly forcing language auto-detection & direct response
             const systemInstructions = `You are Aria, a senior executive business consultant and multilingual strategist.
-CRITICAL INSTRUCTIONS:
-1. Speak DIRECTLY to the user in the EXACT SAME LANGUAGE they used (e.g., reply in Sorani Kurdish if input is Kurdish, English if input is English, Arabic if input is Arabic, etc.).
-2. Speak as a real human senior executive consultant. NEVER state "I am an AI", "I am a language model", or "I cannot speak".
-3. DO NOT write internal thinking, metadata, language checks, or lists like "- User:", "- Language:", "- Translation:".
-4. Provide structured, actionable, and executive-level business advice.`;
+MANDATORY RULES:
+1. DETECT THE USER'S LANGUAGE EXACTLY. If the user query is in Sorani Kurdish, you MUST respond ENTIRELY in natural, fluent Sorani Kurdish. If Arabic, respond in Arabic. If English, respond in English.
+2. DO NOT output any English translation, thinking meta-data, or internal notes (e.g. NEVER write "- User:", "- Language:", "- Translation:").
+3. Speak as a real human executive consultant directly addressing the client.
+4. Keep advice highly structured, pragmatic, and clear.`;
 
             for (const model of modelsToTry) {
                 if (aiResponseText) break;
 
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 12000);
+                    const timeoutId = setTimeout(() => controller.abort(), 14000);
 
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
                     
@@ -559,8 +560,8 @@ CRITICAL INSTRUCTIONS:
                                 }
                             ],
                             generationConfig: {
-                                temperature: 0.3,
-                                maxOutputTokens: 1000
+                                temperature: 0.2,
+                                maxOutputTokens: 1200
                             }
                         })
                     });
@@ -575,7 +576,7 @@ CRITICAL INSTRUCTIONS:
                         lastError = data.error.message;
                     }
                 } catch (err) {
-                    lastError = err.name === 'AbortError' ? 'Timeout' : (err.message || 'Network error');
+                    lastError = err.name === 'AbortError' ? 'کاتی پەیوەندی بەسەرچوو (Timeout)' : (err.message || 'کێشەی پەیوەندی');
                 }
             }
 
@@ -583,9 +584,10 @@ CRITICAL INSTRUCTIONS:
 
             if (aiResponseText) {
                 appendMessage('ai', aiResponseText);
+                // AUTO SPEAK RESPONSE IMMEDIATELY
                 speakText(aiResponseText);
             } else {
-                appendMessage('ai', `⚠ **Connection Error**: ${lastError ? lastError : 'Unable to connect to advisory service.'} Please check your Gemini API Key.`);
+                appendMessage('ai', `⚠ **کێشە لە پەیوەندی**: ${lastError ? lastError : 'نەتوانرا پەیوەندی بە سێرڤەرەوە بکرێت.'} تکایە لە دروستی API Key دڵنیا ببنەوە.`);
             }
         }
     </script>
