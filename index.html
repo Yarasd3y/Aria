@@ -524,8 +524,14 @@
 
             let aiResponseText = '';
             let lastError = '';
-            // Guaranteed active Google Gemini model endpoints
-            const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+            // Guaranteed active Google Gemini model endpoints with updated models and fallbacks
+            const modelsToTry = [
+                'gemini-2.5-flash',
+                'gemini-2.0-flash',
+                'gemini-1.5-flash-latest',
+                'gemini-1.5-flash',
+                'gemini-1.5-pro'
+            ];
 
             const systemInstructions = `You are Aria, a senior executive business consultant and global growth strategist.
 CRITICAL OPERATIONAL RULES:
@@ -533,6 +539,7 @@ CRITICAL OPERATIONAL RULES:
 2. DO NOT output meta-tags, translation notes, or headers like "- User:" or "- Language:".
 3. Maintain the gravitas, clarity, and authority of a high-ticket C-level human consultant.`;
 
+            let reportedErrors = [];
             for (const model of modelsToTry) {
                 if (aiResponseText) break;
 
@@ -571,9 +578,11 @@ CRITICAL OPERATIONAL RULES:
                         break;
                     } else if (data.error?.message) {
                         lastError = data.error.message;
+                        reportedErrors.push(`${model}: ${data.error.message}`);
                     }
                 } catch (err) {
                     lastError = err.name === 'AbortError' ? 'Connection timed out' : (err.message || 'Network error');
+                    reportedErrors.push(`${model}: ${lastError}`);
                 }
             }
 
@@ -583,7 +592,7 @@ CRITICAL OPERATIONAL RULES:
                 appendMessage('ai', aiResponseText);
                 speakText(aiResponseText);
             } else {
-                appendMessage('ai', `⚠️ **Connection Issue**: ${lastError ? lastError : 'Failed to reach Gemini servers.'} Please ensure your API Key is valid and active.`);
+                appendMessage('ai', `⚠️ **Connection Issue**: ${lastError ? lastError : 'Failed to reach Gemini servers.'}\n\n*Tips:* Please verify your **API Credentials** (Gemini API Key). If using a free Google AI Studio key, ensure Generative Language API is enabled.`);
             }
         }
     </script>
