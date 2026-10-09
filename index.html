@@ -78,8 +78,8 @@
             
             <!-- Brand Identity -->
             <div class="flex items-center gap-3">
-                <div class="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white font-black text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
-                    A
+                <div class="relative flex items-center justify-center px-3 py-1.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white font-black text-sm tracking-wider shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
+                    ARIA
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -127,15 +127,15 @@
             <!-- Welcome Banner Card -->
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                        <i class="fa-solid fa-user-tie"></i>
+                    <div class="px-3 py-2 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-inner">
+                        ARIA
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in any language, and I will automatically analyze your business query and provide high-level strategic advice.
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write, and I will automatically analyze your business query and provide high-level strategic advice.
                         </p>
                     </div>
                 </div>
@@ -185,7 +185,7 @@
             <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold" id="voice-status-text">Listening... Speak in Arabic, Kurdish, or English</span>
+                    <span class="font-semibold" id="voice-status-text">Listening... Speak now</span>
                 </div>
                 <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
             </div>
@@ -219,7 +219,6 @@
 
     </main>
 
-    <!-- Modal Config -->
     <div id="config-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md p-6 rounded-3xl space-y-5 border border-slate-800 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -267,7 +266,7 @@
             window.speechSynthesis.onvoiceschanged = updateVoiceList;
         }
 
-        // Initialize Web Speech Recognition with native Arabic prioritized to eliminate Latin transliteration
+        // Initialize Web Speech Recognition with native Arabic priority
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -309,7 +308,7 @@
                 stopVoiceRecognition();
             } else {
                 try {
-                    // STT Speech language: defaults explicitly to ar-SA to prevent "Marhaba" English phonetic transliteration
+                    // Force ar-SA or browser native language to prevent transliteration issues
                     const userLang = navigator.language || 'ar-SA';
                     recognition.lang = userLang.startsWith('ar') ? 'ar-SA' : 'ar-SA';
                     recognition.start();
@@ -334,15 +333,15 @@
             thread.innerHTML = `
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                        <i class="fa-solid fa-user-tie"></i>
+                    <div class="px-3 py-2 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-inner">
+                        ARIA
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in any language, and I will automatically analyze your business query and provide high-level strategic advice.
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write, and I will automatically analyze your business query and provide high-level strategic advice.
                         </p>
                     </div>
                 </div>
@@ -473,12 +472,18 @@
             try {
                 let responseText = '';
 
-                // Fetch prediction from Railway Flowise endpoint
+                // Fetch prediction with extended timeout tolerance for Railway spin-up
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout for cold starts
+
                 const res = await fetch(flowiseUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: message })
+                    body: JSON.stringify({ question: message }),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!res.ok) {
                     throw new Error(`Server returned HTTP status ${res.status}`);
@@ -503,7 +508,15 @@
             } catch (error) {
                 console.error("Flowise Execution Error:", error);
                 removeLoadingIndicator(loadingId);
-                appendMessage('aria', "I apologize, an error occurred while generating executive insights. Please ensure your Railway backend is active or check your API connection.");
+                
+                let errorMsg = "I apologize, an error occurred while generating executive insights.";
+                if (error.name === 'AbortError') {
+                    errorMsg = "The Railway server is warming up from sleep mode. Please send your question once more to receive immediate insights.";
+                } else {
+                    errorMsg = "I apologize, an error occurred while connecting to the Railway server. Please verify your internet connection or resend your request.";
+                }
+                
+                appendMessage('aria', errorMsg);
             }
         }
 
@@ -527,7 +540,7 @@
                 // Full ARIA Brand Avatar and Badge Header
                 msgDiv.innerHTML = `
                     <div class="flex flex-col items-center gap-1 shrink-0">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-indigo-500/30 border border-white/20 tracking-wider">
+                        <div class="px-2.5 py-1.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-indigo-500/30 border border-white/20 tracking-wider">
                             ARIA
                         </div>
                         <span class="text-[9px] font-extrabold tracking-widest text-amber-400 uppercase">ADVISOR</span>
@@ -555,7 +568,7 @@
             loadingDiv.id = loadingId;
             loadingDiv.className = 'flex gap-3 items-center text-slate-400 text-xs pl-2';
             loadingDiv.innerHTML = `
-                <div class="w-9 h-9 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-black text-xs animate-pulse">
+                <div class="px-2.5 py-1.5 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-black text-xs animate-pulse">
                     ARIA
                 </div>
                 <div class="flex items-center gap-1 font-medium">
