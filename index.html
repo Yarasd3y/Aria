@@ -41,24 +41,24 @@
     </script>
 
     <style>
-        /* Custom Custom Styling for Glassmorphism & Sleek Scrollbar */
+        /* Custom Styling for Glassmorphism & Sleek Scrollbar */
         body {
             font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 40%, #020617 100%);
         }
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-card {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(30, 41, 59, 0.65);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.5);
             background: rgba(30, 41, 59, 0.85);
         }
         /* Custom Scrollbar */
@@ -69,18 +69,18 @@
             background: rgba(15, 23, 42, 0.5);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.4);
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.6);
+            background: rgba(99, 102, 241, 0.7);
         }
         .mic-active {
             animation: mic-pulse 1.2s infinite;
         }
         @keyframes mic-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
+            70% { box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
     </style>
@@ -94,7 +94,7 @@
             
             <!-- Brand Identity -->
             <div class="flex items-center gap-3">
-                <div class="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
+                <div class="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white font-black text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
                     A
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -108,19 +108,19 @@
                             Executive Advisor
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Global Business Strategy & Financial Intelligence</p>
+                    <p class="text-xs text-slate-400 hidden sm:block">Global Strategy & Financial Intelligence</p>
                 </div>
             </div>
 
             <!-- Controls & Settings -->
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Universal Speech Audio Output Toggle -->
-                <button id="tts-toggle" onclick="toggleAudioOutput()" title="Toggle Voice Speech Output" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
+                <!-- Speech Audio Output Toggle -->
+                <button id="tts-toggle" onclick="toggleAudioOutput()" title="Toggle Voice Output" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
                     <i id="tts-icon" class="fa-solid fa-volume-high text-indigo-400"></i>
                     <span id="tts-status" class="hidden sm:inline">Voice: On</span>
                 </button>
 
-                <!-- Flowise / Gemini API Key Config Modal Trigger -->
+                <!-- Settings Modal Trigger -->
                 <button onclick="openConfigModal()" title="API Settings" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-sliders text-amber-400"></i>
                     <span class="hidden sm:inline">Settings</span>
@@ -128,8 +128,8 @@
 
                 <!-- Language Auto-Detect Badge -->
                 <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-950/40 border border-indigo-800/50 text-indigo-300 text-xs font-medium">
-                    <i class="fa-solid fa-language text-indigo-400"></i>
-                    <span>Auto-Language active</span>
+                    <i class="fa-solid fa-earth-americas text-indigo-400"></i>
+                    <span>Universal Multilingual Active</span>
                 </div>
             </div>
         </div>
@@ -145,14 +145,14 @@
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                        <i class="fa-solid fa-briefcase"></i>
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in <strong>Sorani Kurdish, English, Arabic, German</strong> or any language, and I will analyze your query and deliver high-level strategic advice.
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in any language, and I will analyze your business query and provide high-level strategic advice.
                         </p>
                     </div>
                 </div>
@@ -193,17 +193,17 @@
                 </div>
             </div>
 
-            <!-- Dynamic Messages inserted here -->
+            <!-- Messages inserted dynamically -->
         </div>
 
         <!-- Fixed Executive Chat Input Controls -->
         <div class="shrink-0 space-y-2">
             
-            <!-- Voice Status Floating Banner (Hidden by default) -->
-            <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/60 border border-red-500/40 rounded-2xl text-xs text-red-300 animate-pulse">
+            <!-- Voice Status Floating Banner -->
+            <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold">Aria Voice Recognition Active... Speak now</span>
+                    <span class="font-semibold">Voice Recognition Active... Speak now in any language</span>
                 </div>
                 <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline">Cancel</button>
             </div>
@@ -214,17 +214,14 @@
                 <!-- Microphone Button for Voice Input -->
                 <button id="mic-btn" onclick="toggleVoiceInput()" title="Click to Speak / Record Voice Input" class="w-11 h-11 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shrink-0 relative group">
                     <i class="fa-solid fa-microphone" id="mic-icon"></i>
-                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-slate-200 text-[10px] px-2 py-1 rounded-lg border border-slate-800 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-                        Voice Input
-                    </span>
                 </button>
 
                 <!-- Auto-expanding Text Area -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type your business query or speak using the mic..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type your strategic business query or click the mic to speak..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
-                <!-- Submit / Send Button -->
+                <!-- Submit Button -->
                 <button id="send-btn" onclick="sendMessage()" title="Send Question" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
                     <i class="fa-solid fa-paper-plane" id="send-icon"></i>
                 </button>
@@ -232,7 +229,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Encrypted Executive Intelligence Session
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Encrypted C-Level Advisory Session
                 </span>
                 <span>Press <strong>Enter</strong> to send • <strong>Shift+Enter</strong> for line break</span>
             </div>
@@ -245,7 +242,7 @@
         <div class="glass-panel w-full max-w-md p-6 rounded-3xl space-y-5 border border-slate-800 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-indigo-400"></i> Aria Integration Settings
+                    <i class="fa-solid fa-sliders text-indigo-400"></i> Aria Integration Endpoint
                 </h3>
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white p-1">
                     <i class="fa-solid fa-xmark"></i>
@@ -254,15 +251,9 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL (Optional)</label>
-                    <input type="text" id="flowise-url-input" placeholder="http://localhost:3000/api/v1/prediction/your-id" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[10px] text-slate-500 mt-1">Leave empty to use built-in direct Gemini Executive engine.</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Custom Gemini API Key (Optional)</label>
-                    <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[10px] text-slate-500 mt-1">Provide your key if using standalone deployment.</p>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
+                    <input type="text" id="flowise-url-input" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
+                    <p class="text-[10px] text-slate-500 mt-1">Pre-configured with your Railway Flowise backend.</p>
                 </div>
             </div>
 
@@ -274,12 +265,13 @@
     </div>
 
     <script>
-        // Global State Variables
+        // Global Railway Flowise Endpoint
+        const DEFAULT_FLOWISE_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
+        
         let isTtsEnabled = true;
         let isRecording = false;
         let recognition = null;
-        let flowiseUrl = localStorage.getItem('aria_flowise_url') || '';
-        let customApiKey = localStorage.getItem('aria_api_key') || '';
+        let flowiseUrl = localStorage.getItem('aria_flowise_url') || DEFAULT_FLOWISE_URL;
 
         // Speech Recognition Setup
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -287,7 +279,6 @@
             recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'en-US'; // Auto adapts or captures spoken input
 
             recognition.onstart = function() {
                 isRecording = true;
@@ -302,6 +293,7 @@
                 inputEl.value = transcript;
                 autoResizeTextarea(inputEl);
                 stopVoiceRecognition();
+                sendMessage();
             };
 
             recognition.onerror = function(event) {
@@ -317,7 +309,7 @@
         // Toggle Microphone Voice Input
         function toggleVoiceInput() {
             if (!recognition) {
-                alert('Voice recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
+                displaySystemNotification('Speech recognition is not supported on this browser. Please use Google Chrome, Edge, or Safari.');
                 return;
             }
             if (isRecording) {
@@ -355,7 +347,7 @@
             }
         }
 
-        // Quick Action Button prompt setter
+        // Quick Action Prompt setter
         function setPrompt(text) {
             const input = document.getElementById('user-input');
             input.value = text;
@@ -383,11 +375,10 @@
             if (!isTtsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             
-            // Clean text from markdown formatting
             const cleanText = text.replace(/[\*#_`]/g, '');
-            const utterance = new SpeechSynthesisUtterance(cleanText.substring(0, 300));
+            const utterance = new SpeechSynthesisUtterance(cleanText.substring(0, 350));
             utterance.rate = 1.0;
-            utterance.pitch = 1.0;
+            utterance.pitch = 0.95;
             window.speechSynthesis.speak(utterance);
         }
 
@@ -414,31 +405,36 @@
             try {
                 let responseText = '';
 
-                // If Flowise Endpoint is set, call Flowise
-                if (flowiseUrl) {
-                    const res = await fetch(flowiseUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ question: message })
-                    });
-                    const data = await res.json();
-                    responseText = data.text || data.json?.text || JSON.stringify(data);
-                } else {
-                    // Direct Call to Gemini API
-                    responseText = await callGeminiApi(message);
+                const res = await fetch(flowiseUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: message })
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Server returned HTTP status ${res.status}`);
                 }
 
-                // Remove Loading
-                removeLoadingIndicator(loadingId);
+                const data = await res.json();
+                
+                if (data.text) {
+                    responseText = data.text;
+                } else if (data.json && data.json.text) {
+                    responseText = data.json.text;
+                } else if (typeof data === 'string') {
+                    responseText = data;
+                } else {
+                    responseText = JSON.stringify(data);
+                }
 
-                // Append Aria Response
+                removeLoadingIndicator(loadingId);
                 appendMessage('aria', responseText);
                 speakText(responseText);
 
             } catch (error) {
-                console.error(error);
+                console.error("Flowise Execution Error:", error);
                 removeLoadingIndicator(loadingId);
-                appendMessage('aria', "I apologize, an error occurred while generating executive insights. Please check your network connection or API settings.");
+                appendMessage('aria', "I apologize, an error occurred while generating executive insights. Please ensure your Railway backend is running, or check your connection.");
             }
         }
 
@@ -492,7 +488,7 @@
                     <i class="fa-solid fa-brain"></i>
                 </div>
                 <div class="flex items-center gap-1 font-medium">
-                    <span>Aria is analyzing strategy</span>
+                    <span>Aria is evaluating strategy</span>
                     <span class="animate-ping text-indigo-400">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.2s">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.4s">.</span>
@@ -508,41 +504,13 @@
             if (el) el.remove();
         }
 
-        // Gemini API Direct Fetch Logic
-        async function callGeminiApi(promptText) {
-            const apiKey = customApiKey || "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            const systemInstruction = `You are Aria, a Senior Executive Strategy, Financial Modeling, and Global Growth Consultant.
-
-CRITICAL OPERATIONAL RULES:
-1. UNIVERSAL LANGUAGE AUTOMATIC MATCHING: Instantly detect the language used by the user. If they speak or type in Sorani Kurdish, reply completely in fluent executive Sorani Kurdish. If Arabic, reply in Arabic. If English, reply in C-level English.
-2. NEVER mention or admit that you are an AI, language model, or software. Speak with authority, gravitas, and actionable precision like a top-tier C-level human strategy consultant.
-3. Keep strategic frameworks well-structured with bullet points and clear, high-impact ROI recommendations.`;
-
-            const payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemInstruction }] }
-            };
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error('Gemini API Error');
-            }
-
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+        function displaySystemNotification(msg) {
+            appendMessage('aria', msg);
         }
 
         // Modal Handlers
         function openConfigModal() {
             document.getElementById('flowise-url-input').value = flowiseUrl;
-            document.getElementById('api-key-input').value = customApiKey;
             document.getElementById('config-modal').classList.remove('hidden');
         }
 
@@ -551,10 +519,8 @@ CRITICAL OPERATIONAL RULES:
         }
 
         function saveSettings() {
-            flowiseUrl = document.getElementById('flowise-url-input').value.trim();
-            customApiKey = document.getElementById('api-key-input').value.trim();
+            flowiseUrl = document.getElementById('flowise-url-input').value.trim() || DEFAULT_FLOWISE_URL;
             localStorage.setItem('aria_flowise_url', flowiseUrl);
-            localStorage.setItem('aria_api_key', customApiKey);
             closeConfigModal();
         }
     </script>
