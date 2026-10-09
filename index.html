@@ -24,16 +24,6 @@
                             500: '#F59E0B',
                             600: '#D97706',
                         }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { 'box-shadow': '0 0 15px rgba(99, 102, 241, 0.3)' },
-                            '100%': { 'box-shadow': '0 0 30px rgba(99, 102, 241, 0.7)' }
-                        }
                     }
                 }
             }
@@ -70,9 +60,6 @@
             background: rgba(99, 102, 241, 0.4);
             border-radius: 9999px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.7);
-        }
         .mic-active {
             animation: mic-pulse 1.2s infinite;
         }
@@ -86,7 +73,6 @@
 
 <body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Top Executive Navigation Bar -->
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-6 py-3 shrink-0">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             
@@ -110,21 +96,21 @@
                 </div>
             </div>
 
-            <!-- Controls & Settings -->
+            <!-- Header Action Controls -->
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Clear Chat Button -->
-                <button onclick="clearChat()" title="Clear Chat Thread" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span class="hidden sm:inline">Clear</span>
+                <!-- Clear Chat Thread -->
+                <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Reset Chat</span>
                 </button>
 
-                <!-- Speech Audio Output Toggle -->
+                <!-- Voice Output Audio Toggle -->
                 <button id="tts-toggle" onclick="toggleAudioOutput()" title="Toggle Voice Output" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
                     <i id="tts-icon" class="fa-solid fa-volume-high text-indigo-400"></i>
                     <span id="tts-status" class="hidden sm:inline">Voice: On</span>
                 </button>
 
-                <!-- Settings Modal Trigger -->
+                <!-- Settings Trigger -->
                 <button onclick="openConfigModal()" title="API Settings" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-sliders text-amber-400"></i>
                     <span class="hidden sm:inline">Settings</span>
@@ -133,7 +119,6 @@
         </div>
     </header>
 
-    <!-- Main Executive Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
 
         <!-- Chat Conversation Area -->
@@ -150,12 +135,12 @@
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in any language, and I will analyze your business query and provide high-level strategic advice.
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Type or speak your business query in any language, and I will analyze your strategy and deliver C-level insights.
                         </p>
                     </div>
                 </div>
 
-                <!-- Strategic Quick Prompt Action Buttons -->
+                <!-- Strategic Quick Prompts -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <button onclick="setPrompt('Formulate a high-impact revenue growth strategy to double our sales pipeline within 6 months.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-amber-400 text-xs mb-1 font-bold flex items-center gap-2">
@@ -191,13 +176,12 @@
                 </div>
             </div>
 
-            <!-- Messages inserted dynamically -->
+            <!-- Dynamic Messages inserted here -->
         </div>
 
-        <!-- Fixed Executive Chat Input Controls -->
         <div class="shrink-0 space-y-2">
             
-            <!-- Voice Status Floating Banner -->
+            <!-- Voice Status Listening Banner -->
             <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
@@ -206,26 +190,25 @@
                 <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
             </div>
 
-            <!-- Main Input Console -->
+            <!-- Main Input Panel -->
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 
-                <!-- Mic Language Selector Dropdown -->
-                <div class="relative shrink-0">
-                    <select id="mic-lang-select" onchange="changeMicLanguage(this.value)" class="bg-slate-900 border border-slate-800 text-slate-300 text-[11px] rounded-xl px-2 py-2.5 focus:outline-none focus:border-indigo-500 cursor-pointer">
-                        <option value="ckb-IQ">کورد (KU)</option>
+                <!-- Mic Voice Input Button -->
+                <button id="mic-btn" onclick="toggleVoiceInput()" title="Click to Speak" class="w-11 h-11 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shrink-0 relative group">
+                    <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                </button>
+
+                <!-- Mic Language Selector -->
+                <div class="shrink-0">
+                    <select id="mic-lang-select" onchange="changeMicLanguage(this.value)" class="bg-slate-900 border border-slate-800 text-slate-300 text-xs rounded-xl px-2.5 py-2.5 focus:outline-none focus:border-indigo-500 cursor-pointer">
                         <option value="en-US" selected>Eng (US)</option>
                         <option value="ar-SA">عرب (AR)</option>
                     </select>
                 </div>
 
-                <!-- Microphone Button for Voice Input -->
-                <button id="mic-btn" onclick="toggleVoiceInput()" title="Click to Speak" class="w-11 h-11 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shrink-0 relative group">
-                    <i class="fa-solid fa-microphone" id="mic-icon"></i>
-                </button>
-
-                <!-- Auto-expanding Text Area -->
+                <!-- Text Area Input -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type your strategic business query or use mic to speak..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type your query in Sorani Kurdish, English, Arabic..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -244,7 +227,6 @@
 
     </main>
 
-    <!-- Settings Modal -->
     <div id="config-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md p-6 rounded-3xl space-y-5 border border-slate-800 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -272,7 +254,6 @@
     </div>
 
     <script>
-        // Global Railway Flowise Endpoint
         const DEFAULT_FLOWISE_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
         
         let isTtsEnabled = true;
@@ -281,7 +262,6 @@
         let selectedMicLang = 'en-US';
         let flowiseUrl = localStorage.getItem('aria_flowise_url') || DEFAULT_FLOWISE_URL;
 
-        // Ensure browser speech synthesis voices load properly
         let systemVoices = [];
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = function() {
@@ -289,7 +269,7 @@
             };
         }
 
-        // Speech Recognition Setup
+        // Initialize Web Speech Recognition
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -329,10 +309,9 @@
             }
         }
 
-        // Toggle Microphone Voice Input
         function toggleVoiceInput() {
             if (!recognition) {
-                displaySystemNotification('Speech recognition is not supported on this browser. Please use Chrome or Edge.');
+                displaySystemNotification('Speech recognition is not supported on this browser. Please type your query directly into the input box.');
                 return;
             }
             if (isRecording) {
@@ -357,13 +336,10 @@
             document.getElementById('voice-listening-bar').classList.add('hidden');
         }
 
-        // Clear Chat Thread
+        // Reset & Clear Chat Session
         function clearChat() {
             const thread = document.getElementById('chat-thread');
-            thread.innerHTML = '';
-            
-            // Re-render Welcome Card
-            const welcomeHtml = `
+            thread.innerHTML = `
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl shrink-0 shadow-inner">
@@ -374,7 +350,7 @@
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in any language, and I will analyze your business query and provide high-level strategic advice.
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Type or speak your business query in any language, and I will analyze your strategy and deliver C-level insights.
                         </p>
                     </div>
                 </div>
@@ -409,17 +385,14 @@
                     </button>
                 </div>
             </div>`;
-            thread.innerHTML = welcomeHtml;
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
 
-        // Auto Resize Text Area Height
         function autoResizeTextarea(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
         }
 
-        // Handle Enter Key press
         function handleKeyPress(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -427,7 +400,6 @@
             }
         }
 
-        // Quick Action Prompt setter
         function setPrompt(text) {
             const input = document.getElementById('user-input');
             input.value = text;
@@ -435,7 +407,6 @@
             sendMessage();
         }
 
-        // Toggle Audio Speech Output
         function toggleAudioOutput() {
             isTtsEnabled = !isTtsEnabled;
             const statusEl = document.getElementById('tts-status');
@@ -450,7 +421,6 @@
             }
         }
 
-        // Detect language script from response text
         function detectLanguageCode(text) {
             const arabicPattern = /[\u0600-\u06FF]/;
             if (arabicPattern.test(text)) {
@@ -459,7 +429,6 @@
             return 'en-US';
         }
 
-        // Text-to-Speech Engine
         function speakText(text) {
             if (!isTtsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
@@ -491,7 +460,6 @@
             });
         }
 
-        // Main Send Message Function
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const message = input.value.trim();
@@ -542,7 +510,6 @@
             }
         }
 
-        // Append Message HTML to Chat
         function appendMessage(sender, text) {
             const thread = document.getElementById('chat-thread');
             const msgDiv = document.createElement('div');
@@ -580,7 +547,6 @@
             thread.scrollTop = thread.scrollHeight;
         }
 
-        // Loading Indicator
         function appendLoadingIndicator() {
             const thread = document.getElementById('chat-thread');
             const loadingId = 'loading-' + Date.now();
@@ -612,7 +578,6 @@
             appendMessage('aria', msg);
         }
 
-        // Modal Handlers
         function openConfigModal() {
             document.getElementById('flowise-url-input').value = flowiseUrl;
             document.getElementById('config-modal').classList.remove('hidden');
