@@ -223,7 +223,7 @@
 <script>
     const ELEVENLABS_API_KEY = "sk_c28b7d656dd706f1ee4dd5cd553f401835c7369b01e10ef6";
     const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
-    const FLOWISE_URL = const FLOWISE_URL = "https://flowise-production-f571.up.railway.app/api/v1/prediction/38fa80bd-89cb-4f81-8e9a-7ef06e12e107";
+    const FLOWISE_URL = "https://flowise-production-f571.up.railway.app/api/v1/prediction/38fa80bd-89cb-4f81-8e9a-7ef06e12e107";
 
     const chatContainer = document.getElementById('chatContainer');
     const userInput = document.getElementById('userInput');
@@ -268,8 +268,6 @@
     function startMic() {
         isListening = true;
         micBtn.classList.add('listening');
-        
-        // جێگیرکردنی زمانەکە بە پیت و دەنگی ڕۆژهەڵاتی/عەرەبی بۆ ئەوەی بە هیچ شێوەیەک نەنوسێت بە ئینگلیزی
         recognition.lang = 'ar-IQ'; 
         
         try { recognition.start(); } catch(e){ console.error(e); }
