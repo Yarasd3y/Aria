@@ -153,9 +153,9 @@
                     <button onclick="setPrompt('Hello Aria, how are you today? Please give me a brief overview of how you can help scale my business.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-amber-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-comments"></i>
-                            <span>English Introduction</span>
+                            <span>Executive Overview</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Test Aria in fluent English with immediate audio response</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Brief summary of global strategic advisory capabilities</div>
                     </button>
 
                     <button onclick="setPrompt('Formulate a high-impact revenue growth strategy to double our sales pipeline within 6 months.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
@@ -168,10 +168,10 @@
 
                     <button onclick="setPrompt('سڵاو ئاریا، چۆن دەتوانیت یارمەتیم بدەیت بۆ گەشەپێدانی بزنسەکەم؟')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-cyan-400 text-xs mb-1 font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-language"></i>
-                            <span>Sorani Kurdish Support</span>
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span>ڕاوێژی ئاڵوگۆڕی بزنس</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">تەواوی ڕاپرسییەکان بە زمانی کوردیی سۆرانی بەپێی گووتارەکەت</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">داڕشتنی ڕێکاری گەشەپێدان و بەرەوپێشبردنی کارکردن</div>
                     </button>
 
                     <button onclick="setPrompt('Outline a venture-ready pitch deck structure and valuation model for private equity investors.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
@@ -193,9 +193,9 @@
             <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold" id="voice-status-text">گوێم لێیە... قسە بکە (Listening...)</span>
+                    <span class="font-semibold" id="voice-status-text">Listening...</span>
                 </div>
-                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">وەستاندن (Cancel)</button>
+                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
             </div>
 
             <!-- Main Input Panel -->
@@ -208,7 +208,7 @@
 
                 <!-- Text Area Input -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="پرسیارەکەت بنووسە یان بە دەنگ بیڵێ (کوردی، ئینگلیزی، عەرەبی)..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Ask Aria anything..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -219,9 +219,9 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> سیستەمی ڕاوێژکاری پارێزراوی ئاریا
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Aria Secure Suite
                 </span>
-                <span>دابگرە <strong>Enter</strong> بۆ ناردن • <strong>Shift+Enter</strong> بۆ هێڵی نوێ</span>
+                <span><strong>Enter</strong> to send • <strong>Shift+Enter</strong> for new line</span>
             </div>
         </div>
 
@@ -274,42 +274,54 @@
             window.speechSynthesis.onvoiceschanged = updateVoiceList;
         }
 
-        // Initialize Web Speech Recognition with Kurdish Kurdish/Arabic locale support
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        // Initialize Speech Recognition cleanly with multi-browser support
+        function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            if (!SpeechRecognition) return null;
 
-            recognition.onstart = function() {
+            const rec = new SpeechRecognition();
+            rec.continuous = false;
+            rec.interimResults = false;
+
+            rec.onstart = function() {
                 isRecording = true;
-                document.getElementById('mic-btn').classList.add('mic-active', 'bg-red-600', 'text-white', 'border-red-500');
-                document.getElementById('mic-btn').classList.remove('bg-slate-900', 'text-slate-300');
-                document.getElementById('voice-listening-bar').classList.remove('hidden');
+                const micBtn = document.getElementById('mic-btn');
+                if (micBtn) {
+                    micBtn.classList.add('mic-active', 'bg-red-600', 'text-white', 'border-red-500');
+                    micBtn.classList.remove('bg-slate-900', 'text-slate-300');
+                }
+                const listenBar = document.getElementById('voice-listening-bar');
+                if (listenBar) listenBar.classList.remove('hidden');
             };
 
-            recognition.onresult = function(event) {
-                let transcript = event.results[0][0].transcript;
-                
-                // پاککردنەوە و چاککردنی دەقە لاتینییە کوردییەکان (Arabizi / Latin Kurdish Auto-Fix)
-                transcript = cleanAndNormalizeKurdishInput(transcript);
+            rec.onresult = function(event) {
+                if (event.results && event.results[0] && event.results[0][0]) {
+                    let transcript = event.results[0][0].transcript;
+                    transcript = cleanAndNormalizeKurdishInput(transcript);
 
-                const inputEl = document.getElementById('user-input');
-                inputEl.value = transcript;
-                autoResizeTextarea(inputEl);
-                stopVoiceRecognition();
-                sendMessage();
+                    const inputEl = document.getElementById('user-input');
+                    if (inputEl) {
+                        inputEl.value = transcript;
+                        autoResizeTextarea(inputEl);
+                    }
+                    stopVoiceRecognition();
+                    sendMessage();
+                }
             };
 
-            recognition.onerror = function(event) {
+            rec.onerror = function(event) {
                 console.warn('Speech recognition error:', event.error);
                 stopVoiceRecognition();
             };
 
-            recognition.onend = function() {
+            rec.onend = function() {
                 stopVoiceRecognition();
             };
+
+            return rec;
         }
+
+        recognition = initSpeechRecognition();
 
         /**
          * فلتەری زیرەک بۆ گۆڕینی وشە لاتینییەکانی کوردی (Arabizi) بۆ پیتی ڕەسەنی کوردی
@@ -317,7 +329,6 @@
         function cleanAndNormalizeKurdishInput(text) {
             if (!text) return '';
             
-            // نموونەی وشە باوەکان کە مۆبایل بە لاتینی دەیاننووسێت
             const arabiziMap = {
                 'chony': 'چۆنی',
                 'choni': 'چۆنی',
@@ -331,9 +342,7 @@
                 'bazarr': 'بازاڕ',
                 'bazar': 'بازاڕ',
                 'mamosta': 'مامۆستا',
-                'spas': 'سوپاس',
-                'xwa': 'خوا',
-                'xwda':خۆدا'
+                'spas': 'سوپاس'
             };
 
             let cleaned = text.trim();
@@ -343,29 +352,36 @@
                 return arabiziMap[lower];
             }
 
-            // ئەگەر دەقەکە لاتینی بوو و لە ٢ وشە کەمتر بوو، هەوڵدەدات بیکات بە کوردی ئەگەر ناسراو بێت
             return cleaned;
         }
 
         function toggleVoiceInput() {
             if (!recognition) {
-                displaySystemNotification('سیستەمی دەنگ لەم وێبگەڕەدا پشتگیری ناکرێت. تکایە پرسیارەکەت بنووسە.');
+                recognition = initSpeechRecognition();
+            }
+            if (!recognition) {
+                displaySystemNotification('Voice input is not supported on this browser.');
                 return;
             }
+
             if (isRecording) {
                 stopVoiceRecognition();
             } else {
                 try {
                     const selectedLang = document.getElementById('voice-lang-select').value;
-                    if (selectedLang !== 'auto') {
+                    if (selectedLang && selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        // بە دەیفۆڵت کوردیی سۆرانی (ckb-IQ) دادەنێین بۆ ئەوەی ڕاستەوخۆ بە کوردی گوێی لێ بێت
                         recognition.lang = 'ckb-IQ';
                     }
                     recognition.start();
                 } catch(e) {
-                    console.error(e);
+                    console.error('Speech recognition start failed:', e);
+                    // Re-instantiate if invalidated
+                    recognition = initSpeechRecognition();
+                    if (recognition) {
+                        try { recognition.start(); } catch(err){}
+                    }
                 }
             }
         }
@@ -375,9 +391,13 @@
             if (recognition) {
                 try { recognition.stop(); } catch(e){}
             }
-            document.getElementById('mic-btn').classList.remove('mic-active', 'bg-red-600', 'text-white', 'border-red-500');
-            document.getElementById('mic-btn').classList.add('bg-slate-900', 'text-slate-300');
-            document.getElementById('voice-listening-bar').classList.add('hidden');
+            const micBtn = document.getElementById('mic-btn');
+            if (micBtn) {
+                micBtn.classList.remove('mic-active', 'bg-red-600', 'text-white', 'border-red-500');
+                micBtn.classList.add('bg-slate-900', 'text-slate-300');
+            }
+            const listenBar = document.getElementById('voice-listening-bar');
+            if (listenBar) listenBar.classList.add('hidden');
         }
 
         function clearChat() {
