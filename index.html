@@ -100,10 +100,10 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Speech Language Selector -->
                 <select id="voice-lang-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2 py-1.5 focus:outline-none focus:border-indigo-500">
-                    <option value="auto">🌐 Auto Detect</option>
+                    <option value="auto" selected>🌐 Auto Detect (Universal)</option>
                     <option value="en-US">🇬🇧 English</option>
                     <option value="ckb-IQ">🇮🇶 Kurdish (Sorani)</option>
-                    <option value="ar-SA" selected>🇸🇦 Arabic</option>
+                    <option value="ar-SA">🇸🇦 Arabic</option>
                 </select>
 
                 <!-- Clear Chat Thread -->
@@ -338,8 +338,7 @@
                     if (selectedLang && selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        // Default to Arabic or English if auto
-                        recognition.lang = 'ar-SA';
+                        recognition.lang = ''; // Let browser auto-detect speech language
                     }
                     recognition.start();
                 } catch(e) {
@@ -471,7 +470,13 @@
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 65000); // 65 sec limit
 
-                    const enhancedQuery = `[CRITICAL INSTRUCTION: Detect the input text language. Respond 100% naturally and fluently in the EXACT language used by the user. Do not include internal system details.] User Input: ${message}`;
+                    // Strict instruction enforcing 100% natural language mirroring of the user's prompt
+                    const enhancedQuery = `[CRITICAL OPERATIONAL MANDATE]: 
+1. Meticulously analyze the exact language and script of the client's input below.
+2. Respond 100% naturally, fluently, and exclusively in THAT EXACT SAME language (e.g., if input is English, reply in English; if Sorani Kurdish, reply in Sorani Kurdish; if Arabic, reply in Arabic; do not force Arabic unless the user writes in Arabic).
+3. Never state or mention that you are an AI or language model. Maintain C-level human executive gravitas.
+
+Client Input: "${message}"`;
 
                     const res = await fetch(flowiseUrl, {
                         method: 'POST',
@@ -506,7 +511,9 @@
                     retries--;
                     if (retries === 0) {
                         removeLoadingIndicator(loadingId);
-                        let errorMsg = "سێرڤەرەکە لە خەو هەستایەوە! زۆر سوپاس بۆ ئارامگریت، تکایە ڕاستەوخۆ دووبارە پرسیارەکەت بنێرەرەوە.";
+                        let errorMsg = hasArabicScript(message) 
+                            ? "سێرڤەرەکە لە خەو هەستایەوە! زۆر سوپاس بۆ ئارامگریت، تکایە ڕاستەوخۆ دووبارە پرسیارەکەت بنێرەرەوە."
+                            : "Server waking up from sleep mode! Thank you for your patience—please re-send your question now.";
                         appendMessage('aria', errorMsg);
                         return;
                     }
