@@ -268,8 +268,10 @@
     function startMic() {
         isListening = true;
         micBtn.classList.add('listening');
-        // شێوازی تەیارکردنی مایکی زیرەک بێ دیاریکردنی ڕەق بۆ ئەوەی ڕێنووسی نەشێوێت
-        recognition.lang = window.navigator.language || 'ku'; 
+        
+        // هەوڵدان بۆ دیاریکردنی زمانی عەرەبی/کوردی وەک زمانی سەرەکی مایکەکە بۆ ڕێگری لە لاتینی
+        recognition.lang = 'ar-SA'; 
+        
         try { recognition.start(); } catch(e){ console.error(e); }
     }
 
