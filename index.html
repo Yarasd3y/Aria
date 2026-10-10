@@ -1,212 +1,334 @@
 <!DOCTYPE html>
-<html lang="kmr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARIA - Senior Executive Strategy Advisor</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .chat-container {
-      width: 100%;
-      max-width: 600px;
-      background: #1e293b;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .chat-header {
-      border-bottom: 1px solid #334155;
-      padding-bottom: 10px;
-      text-align: center;
-    }
-    .chat-header h2 { margin: 0; color: #38bdf8; }
-    .chat-header p { margin: 5px 0 0; color: #94a3b8; font-size: 0.9em; }
-    .chat-box {
-      height: 400px;
-      overflow-y: auto;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: #0f172a;
-    }
-    .message {
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 80%;
-      line-height: 1.5;
-    }
-    .user-msg {
-      background: #0284c7;
-      color: white;
-      align-self: flex-end;
-    }
-    .bot-msg {
-      background: #334155;
-      color: #f8fafc;
-      align-self: flex-start;
-    }
-    .controls {
-      display: flex;
-      gap: 10px;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: white;
-      outline: none;
-    }
-    button {
-      padding: 12px 20px;
-      border-radius: 8px;
-      border: none;
-      background: #0284c7;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover { background: #0369a1; }
-    .mic-btn { background: #10b981; }
-    .mic-btn:hover { background: #059669; }
-    .mic-btn.recording { background: #ef4444; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIA - Executive Strategy Advisor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --accent-gold: #c5a059;
+            --accent-gold-hover: #d4af37;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(197, 160, 89, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-wrapper {
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            background: rgba(17, 24, 39, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), #8a6d3b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .title-area h2 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+
+        .title-area p {
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top-right-radius: 2px;
+            color: #ffffff;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+            background: rgba(31, 41, 55, 0.6);
+            border: 1px solid var(--border-color);
+            border-top-left-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-box {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-box:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .btn-mic.listening {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
 </head>
 <body>
 
-<div class="chat-container">
-  <div class="chat-header">
-    <h2>ARIA Advisor</h2>
-    <p>Global Strategy & Financial Intelligence</p>
-  </div>
-  
-  <div class="chat-box" id="chatBox">
-    <div class="message bot-msg">
-      سڵاو! من ئاریام، ڕاوێژکاری باڵای ستراتیژیی بازرگانی. چۆن دەتوانم هاوکاریت بکەم؟
+<div class="chat-wrapper">
+    <div class="chat-header">
+        <div class="agent-info">
+            <div class="avatar">A</div>
+            <div class="title-area">
+                <h2>ARIA</h2>
+                <p>Senior Strategy Advisor</p>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="controls">
-    <input type="text" id="userInput" placeholder="پەیامەکەت بنووسە یان مایکەکە بەکاربهێنە..." />
-    <button class="mic-btn" id="micBtn">🎤</button>
-    <button id="sendBtn">بنێرە</button>
-  </div>
+    <div class="chat-messages" id="chatContainer">
+        <div class="message assistant">
+            Hello! I am ARIA, your Senior Strategy Advisor. How may I assist your business objectives today?
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <form class="input-form" id="chatForm" onsubmit="event.preventDefault(); handleSend();">
+            <input type="text" id="userInput" class="input-box" placeholder="Ask ARIA a question..." autocomplete="off">
+            <button type="button" class="btn btn-mic" id="micBtn" onclick="toggleMic()">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button type="submit" class="btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
 </div>
 
 <script>
-  const ELEVENLABS_API_KEY = "sk_c28b7d656dd706f1ee4dd5cd553f401835c7369b01e10ef6";
-  const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // دەنگی فرەزمان
-  const FLOWISE_URL = "https://flowise-production-4c8d.up.railway.app/api/v1/prediction/YOUR_CHATFLOW_ID"; // بەستەری Flowiseـەکەت
+    const ELEVENLABS_API_KEY = "sk_c28b7d656dd706f1ee4dd5cd553f401835c7369b01e10ef6";
+    const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Multilingual Voice
+    const FLOWISE_URL = "https://flowise-production-4c8d.up.railway.app/api/v1/prediction/38fa80bd-89cb-4f81-8e9a-7ef06e12e107";
 
-  const chatBox = document.getElementById('chatBox');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const micBtn = document.getElementById('micBtn');
+    const chatContainer = document.getElementById('chatContainer');
+    const userInput = document.getElementById('userInput');
+    const micBtn = document.getElementById('micBtn');
 
-  // فەنکشنی پەخشکردنی دەنگ بە ElevenLabs
-  async function speakWithElevenLabs(text) {
-    try {
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-        method: "POST",
-        headers: {
-          "Accept": "audio/mpeg",
-          "Content-Type": "application/json",
-          "xi-api-key": ELEVENLABS_API_KEY
-        },
-        body: JSON.stringify({
-          text: text,
-          model_id: "eleven_multilingual_v2",
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-        })
-      });
+    let recognition = null;
+    let isListening = false;
 
-      if (response.ok) {
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        audio.play();
-      }
-    } catch (err) {
-      console.error("ElevenLabs Error:", err);
+    // Auto-detect browser speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            stopMic();
+            handleSend();
+        };
+
+        recognition.onerror = () => stopMic();
+        recognition.onend = () => stopMic();
     }
-  }
 
-  function appendMessage(sender, text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', sender === 'user' ? 'user-msg' : 'bot-msg');
-    msgDiv.textContent = text;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const text = userInput.value.trim();
-    if (!text) return;
-
-    appendMessage('user', text);
-    userInput.value = '';
-
-    try {
-      const res = await fetch(FLOWISE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text })
-      });
-      const data = await res.json();
-      const reply = data.text || data.json?.text || "ببورە، وەڵامەکە بەردەست نەبوو.";
-      
-      appendMessage('bot', reply);
-      speakWithElevenLabs(reply); // تریگەرکردنی دەنگی ElevenLabs
-    } catch (err) {
-      appendMessage('bot', "خەتا لە بەستەرەکەدا ڕوویدا.");
+    function toggleMic() {
+        if (!recognition) {
+            alert("Speech recognition is not supported in this browser.");
+            return;
+        }
+        if (isListening) {
+            stopMic();
+        } else {
+            startMic();
+        }
     }
-  }
 
-  sendBtn.addEventListener('click', sendMessage);
-  userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    function startMic() {
+        isListening = true;
+        micBtn.classList.add('listening');
+        recognition.start();
+    }
 
-  // بەشی مایک
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    function stopMic() {
+        isListening = false;
+        micBtn.classList.remove('listening');
+        try { recognition.stop(); } catch(e){}
+    }
 
-    micBtn.addEventListener('click', () => {
-      recognition.start();
-      micBtn.classList.add('recording');
-    });
+    async function speakWithElevenLabs(text) {
+        try {
+            const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+                method: "POST",
+                headers: {
+                    "Accept": "audio/mpeg",
+                    "Content-Type": "application/json",
+                    "xi-api-key": ELEVENLABS_API_KEY
+                },
+                body: JSON.stringify({
+                    text: text,
+                    model_id: "eleven_multilingual_v2",
+                    voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+                })
+            });
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      userInput.value = transcript;
-      micBtn.classList.remove('recording');
-      sendMessage();
-    };
+            if (response.ok) {
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            }
+        } catch (err) {
+            console.error("ElevenLabs Error:", err);
+        }
+    }
 
-    recognition.onerror = () => micBtn.classList.remove('recording');
-    recognition.onend = () => micBtn.classList.remove('recording');
-  } else {
-    micBtn.style.display = 'none';
-  }
+    function appendMessage(sender, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender);
+        msgDiv.textContent = text;
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function handleSend() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        appendMessage('user', text);
+        userInput.value = '';
+
+        try {
+            const res = await fetch(FLOWISE_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: text })
+            });
+            const data = await res.json();
+            const reply = data.text || data.json?.text || "No response received.";
+            
+            appendMessage('assistant', reply);
+            speakWithElevenLabs(reply);
+        } catch (err) {
+            appendMessage('assistant', "Sorry, I encountered a connection issue.");
+        }
+    }
 </script>
 
 </body>
