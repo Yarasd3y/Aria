@@ -223,7 +223,9 @@
 <script>
     const ELEVENLABS_API_KEY = "sk_c28b7d656dd706f1ee4dd5cd553f401835c7369b01e10ef6";
     const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
-    const FLOWISE_URL = "https://flowise-production-f571.up.railway.app/api/v1/prediction/38fa80bd-89cb-4f81-8e9a-7ef06e12e107";
+    
+    // بەستەری فەرمی و نوێی چاتفڵۆوەکەت لە Flowise
+    const FLOWISE_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
 
     const chatContainer = document.getElementById('chatContainer');
     const userInput = document.getElementById('userInput');
@@ -331,9 +333,7 @@
             });
             
             if (!res.ok) {
-                throw_error = `Server responded with status: ${res.status}`;
-                console.error(throw_error);
-                throw new Error(throw_error);
+                throw new Error(`Server status: ${res.status}`);
             }
 
             const data = await res.json();
