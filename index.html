@@ -463,55 +463,61 @@
             appendMessage('user', message);
             const loadingId = appendLoadingIndicator();
 
-            try {
-                let responseText = '';
+            let retries = 2; // Auto-retry up to 2 times for cold-start server warmup
+            let responseText = '';
 
-                const controller = new AbortController();
-                // Extended timeout to 90 seconds to allow Railway container warmup
-                const timeoutId = setTimeout(() => controller.abort(), 90000);
+            while (retries > 0) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 65000); // 65 sec limit
 
-                const enhancedQuery = `[CRITICAL INSTRUCTION: Detect the input text language. Respond 100% naturally and fluently in the EXACT language used by the user. Do not include internal system details.] User Input: ${message}`;
+                    const enhancedQuery = `[CRITICAL INSTRUCTION: Detect the input text language. Respond 100% naturally and fluently in the EXACT language used by the user. Do not include internal system details.] User Input: ${message}`;
 
-                const res = await fetch(flowiseUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: enhancedQuery }),
-                    signal: controller.signal
-                });
+                    const res = await fetch(flowiseUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question: enhancedQuery }),
+                        signal: controller.signal
+                    });
 
-                clearTimeout(timeoutId);
+                    clearTimeout(timeoutId);
 
-                if (!res.ok) {
-                    throw new Error(`Server returned HTTP status ${res.status}`);
+                    if (!res.ok) {
+                        throw new Error(`Server returned HTTP status ${res.status}`);
+                    }
+
+                    const data = await res.json();
+                    
+                    if (data.text) {
+                        responseText = data.text;
+                    } else if (data.json && data.json.text) {
+                        responseText = data.json.text;
+                    } else if (typeof data === 'string') {
+                        responseText = data;
+                    } else {
+                        responseText = JSON.stringify(data);
+                    }
+
+                    // Success! Exit loop
+                    break;
+
+                } catch (error) {
+                    console.warn(`Attempt failed (${retries} left):`, error);
+                    retries--;
+                    if (retries === 0) {
+                        removeLoadingIndicator(loadingId);
+                        let errorMsg = "سێرڤەرەکە لە خەو هەستایەوە! زۆر سوپاس بۆ ئارامگریت، تکایە ڕاستەوخۆ دووبارە پرسیارەکەت بنێرەرەوە.";
+                        appendMessage('aria', errorMsg);
+                        return;
+                    }
+                    // Wait 3 seconds before auto retrying
+                    await new Promise(r => setTimeout(r, 3000));
                 }
-
-                const data = await res.json();
-                
-                if (data.text) {
-                    responseText = data.text;
-                } else if (data.json && data.json.text) {
-                    responseText = data.json.text;
-                } else if (typeof data === 'string') {
-                    responseText = data;
-                } else {
-                    responseText = JSON.stringify(data);
-                }
-
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', responseText);
-                speakText(responseText);
-
-            } catch (error) {
-                console.error("Flowise Execution Error:", error);
-                removeLoadingIndicator(loadingId);
-                
-                let errorMsg = "Unable to connect to advisory engine. Please check your connection and retry.";
-                if (error.name === 'AbortError') {
-                    errorMsg = "Server connection timed out while warming up. Please resubmit your inquiry.";
-                }
-                
-                appendMessage('aria', errorMsg);
             }
+
+            removeLoadingIndicator(loadingId);
+            appendMessage('aria', responseText);
+            speakText(responseText);
         }
 
         function appendMessage(sender, text) {
