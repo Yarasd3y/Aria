@@ -269,7 +269,6 @@
         isListening = true;
         micBtn.classList.add('listening');
         recognition.lang = 'ar-IQ'; 
-        
         try { recognition.start(); } catch(e){ console.error(e); }
     }
 
@@ -331,6 +330,12 @@
                 body: JSON.stringify({ question: text })
             });
             
+            if (!res.ok) {
+                throw_error = `Server responded with status: ${res.status}`;
+                console.error(throw_error);
+                throw new Error(throw_error);
+            }
+
             const data = await res.json();
             
             let reply = "";
@@ -347,7 +352,7 @@
             appendMessage('assistant', reply);
             speakWithElevenLabs(reply);
         } catch (err) {
-            console.error("Flowise Connection Error:", err);
+            console.error("Flowise Connection Detailed Error:", err);
             appendMessage('assistant', "Sorry, I encountered a connection issue.");
         }
     }
