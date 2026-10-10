@@ -102,7 +102,8 @@
                 <select id="voice-lang-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2 py-1.5 focus:outline-none focus:border-indigo-500">
                     <option value="auto">🌐 Auto Language</option>
                     <option value="en-US">🇬🇧 English</option>
-                    <option value="ar-SA">🇸🇦 Arabic / Kurdish</option>
+                    <option value="ckb-IQ" selected>🇮🇶 کوردیی سۆرانی (Kurdish)</option>
+                    <option value="ar-SA">🇸🇦 Arabic</option>
                 </select>
 
                 <!-- Clear Chat Thread -->
@@ -192,9 +193,9 @@
             <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold" id="voice-status-text">Listening... Speak now</span>
+                    <span class="font-semibold" id="voice-status-text">گوێم لێیە... قسە بکە (Listening...)</span>
                 </div>
-                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
+                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">وەستاندن (Cancel)</button>
             </div>
 
             <!-- Main Input Panel -->
@@ -207,7 +208,7 @@
 
                 <!-- Text Area Input -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type or speak your executive query (English, Kurdish, Arabic)..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="پرسیارەکەت بنووسە یان بە دەنگ بیڵێ (کوردی، ئینگلیزی، عەرەبی)..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -218,9 +219,9 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Encrypted C-Level Advisory Session
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> سیستەمی ڕاوێژکاری پارێزراوی ئاریا
                 </span>
-                <span>Press <strong>Enter</strong> to send • <strong>Shift+Enter</strong> for line break</span>
+                <span>دابگرە <strong>Enter</strong> بۆ ناردن • <strong>Shift+Enter</strong> بۆ هێڵی نوێ</span>
             </div>
         </div>
 
@@ -241,13 +242,13 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
                     <input type="text" id="flowise-url-input" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[10px] text-slate-500 mt-1">Pre-configured with your Railway Flowise backend.</p>
+                    <p class="text-[10px] text-slate-500 mt-1">بەستەری فلوایسی ڕەیلوەی (Railway Flowise Endpoint).</p>
                 </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">Cancel</button>
-                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Save Settings</button>
+                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">پاشگەزبوونەوە</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">پاشەکەوتکردن</button>
             </div>
         </div>
     </div>
@@ -273,7 +274,7 @@
             window.speechSynthesis.onvoiceschanged = updateVoiceList;
         }
 
-        // Initialize Web Speech Recognition with dynamic multi-language handling
+        // Initialize Web Speech Recognition with Kurdish Kurdish/Arabic locale support
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -288,7 +289,11 @@
             };
 
             recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
+                let transcript = event.results[0][0].transcript;
+                
+                // پاککردنەوە و چاککردنی دەقە لاتینییە کوردییەکان (Arabizi / Latin Kurdish Auto-Fix)
+                transcript = cleanAndNormalizeKurdishInput(transcript);
+
                 const inputEl = document.getElementById('user-input');
                 inputEl.value = transcript;
                 autoResizeTextarea(inputEl);
@@ -306,9 +311,45 @@
             };
         }
 
+        /**
+         * فلتەری زیرەک بۆ گۆڕینی وشە لاتینییەکانی کوردی (Arabizi) بۆ پیتی ڕەسەنی کوردی
+         */
+        function cleanAndNormalizeKurdishInput(text) {
+            if (!text) return '';
+            
+            // نموونەی وشە باوەکان کە مۆبایل بە لاتینی دەیاننووسێت
+            const arabiziMap = {
+                'chony': 'چۆنی',
+                'choni': 'چۆنی',
+                'chaw': 'چاو',
+                'salaam': 'سڵاو',
+                'slaw': 'سڵاو',
+                'aria': 'ئاریا',
+                'arya': 'ئاریا',
+                'bizns': 'بزنس',
+                'bznis': 'بزنس',
+                'bazarr': 'بازاڕ',
+                'bazar': 'بازاڕ',
+                'mamosta': 'مامۆستا',
+                'spas': 'سوپاس',
+                'xwa': 'خوا',
+                'xwda':خۆدا'
+            };
+
+            let cleaned = text.trim();
+            const lower = cleaned.toLowerCase();
+
+            if (arabiziMap[lower]) {
+                return arabiziMap[lower];
+            }
+
+            // ئەگەر دەقەکە لاتینی بوو و لە ٢ وشە کەمتر بوو، هەوڵدەدات بیکات بە کوردی ئەگەر ناسراو بێت
+            return cleaned;
+        }
+
         function toggleVoiceInput() {
             if (!recognition) {
-                displaySystemNotification('Speech recognition is not supported on this browser. Please type your query directly.');
+                displaySystemNotification('سیستەمی دەنگ لەم وێبگەڕەدا پشتگیری ناکرێت. تکایە پرسیارەکەت بنووسە.');
                 return;
             }
             if (isRecording) {
@@ -319,8 +360,8 @@
                     if (selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        // Use navigator browser preference as primary default instead of hardcoded ar-SA
-                        recognition.lang = navigator.language || 'en-US';
+                        // بە دەیفۆڵت کوردیی سۆرانی (ckb-IQ) دادەنێین بۆ ئەوەی ڕاستەوخۆ بە کوردی گوێی لێ بێت
+                        recognition.lang = 'ckb-IQ';
                     }
                     recognition.start();
                 } catch(e) {
@@ -401,17 +442,24 @@
             if (!isTtsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             
-            let cleanText = text.replace(/[*#_`~]/g, '').replace(/---/g, '').trim();
-            if (!cleanText) return;
+            // لابردنی وەرگێڕانی فرەزمان لە دەنگی ناوخۆیی (TTS) بۆ ئەوەی تەنها بە کوردی قسە بکات ئەگەر پرسیارەکە کوردی بوو
+            let cleanText = text;
+            if (cleanText.includes('بۆ زمانی کوردی') || cleanText.includes('In Kurdish')) {
+                const parts = cleanText.split(/بۆ زمانی کوردی|In Kurdish/);
+                cleanText = parts[parts.length - 1]; // تەنها بەشی کوردییەکەی دەخوێنێتەوە
+            }
+
+            let speechClean = cleanText.replace(/[*#_`~]/g, '').replace(/---/g, '').trim();
+            if (!speechClean) return;
 
             const voices = systemVoices.length ? systemVoices : window.speechSynthesis.getVoices();
-            const isArabicScript = hasArabicScript(cleanText);
+            const isArabicScript = hasArabicScript(speechClean);
             const targetLang = isArabicScript ? 'ar-SA' : 'en-US';
 
             const langPrefix = targetLang.split('-')[0];
             const matchingVoice = voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
 
-            const utterance = new SpeechSynthesisUtterance(cleanText);
+            const utterance = new SpeechSynthesisUtterance(speechClean);
             utterance.lang = targetLang;
             if (matchingVoice) {
                 utterance.voice = matchingVoice;
@@ -424,8 +472,11 @@
 
         async function sendMessage() {
             const input = document.getElementById('user-input');
-            const message = input.value.trim();
+            let message = input.value.trim();
             if (!message) return;
+
+            // دڵنیابوونەوە لە پاکی و نەبوونی لاتینی ناتەواو
+            message = cleanAndNormalizeKurdishInput(message);
 
             input.value = '';
             autoResizeTextarea(input);
@@ -442,10 +493,13 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000);
 
+                // زیادکردنی ڕێنمایی ڕوون بۆ فلوایس بۆ ئەوەی تەنها بە زمانی پرسیارەکە وەڵام بداتەوە
+                const enhancedQuery = `[CRITICAL: Respond ONLY in the exact language the user used. If the user used Sorani Kurdish, reply ONLY in natural Sorani Kurdish without adding English or Arabic translations.] User Query: ${message}`;
+
                 const res = await fetch(flowiseUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: message }),
+                    body: JSON.stringify({ question: enhancedQuery }),
                     signal: controller.signal
                 });
 
@@ -475,11 +529,9 @@
                 console.error("Flowise Execution Error:", error);
                 removeLoadingIndicator(loadingId);
                 
-                let errorMsg = "I apologize, an error occurred while generating executive insights.";
+                let errorMsg = "بمبورە، کێشەیەک لە بەستنەوە بە سێرڤەر ڕوویدا.";
                 if (error.name === 'AbortError') {
-                    errorMsg = "The Railway server is warming up from sleep mode. Please send your question once more to receive immediate insights.";
-                } else {
-                    errorMsg = "I apologize, an error occurred while connecting to the Railway server. Please verify your internet connection or resend your request.";
+                    errorMsg = "سێرڤەرەکە خەریکە هەڵدەستێتەوە (Warm up). تکایە جارێکی تر پرسیارەکەت بنێرە.";
                 }
                 
                 appendMessage('aria', errorMsg);
@@ -497,7 +549,7 @@
                 msgDiv.innerHTML = `
                     <div class="max-w-[85%] sm:max-w-[75%] bg-indigo-600/90 text-white p-4 rounded-3xl rounded-tr-none shadow-xl border border-indigo-500/30 text-xs sm:text-sm leading-relaxed">
                         <div class="font-semibold text-[10px] text-indigo-200 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-user"></i> Executive Client
+                            <i class="fa-solid fa-user"></i> کڕیاری بەڕێز
                         </div>
                         <div>${formattedText}</div>
                     </div>
@@ -513,9 +565,9 @@
                     <div class="max-w-[88%] sm:max-w-[80%] glass-card p-4 sm:p-5 rounded-3xl rounded-tl-none text-slate-200 text-xs sm:text-sm leading-relaxed shadow-2xl border border-slate-800">
                         <div class="font-bold text-xs text-indigo-400 mb-2 flex items-center justify-between border-b border-slate-800 pb-1.5">
                             <span class="flex items-center gap-1.5">
-                                <i class="fa-solid fa-award text-amber-400"></i> Aria Senior Strategy Advisor
+                                <i class="fa-solid fa-award text-amber-400"></i> ئاریای ڕاوێژکاری باڵا
                             </span>
-                            <span class="text-[10px] text-slate-500 font-normal">C-Level Executive Analysis</span>
+                            <span class="text-[10px] text-slate-500 font-normal">شیکاری جێبەجێکار</span>
                         </div>
                         <div class="space-y-2 text-slate-100">${formattedText}</div>
                     </div>
@@ -537,7 +589,7 @@
                     ARIA
                 </div>
                 <div class="flex items-center gap-1 font-medium">
-                    <span>Aria is evaluating strategy</span>
+                    <span>ئاریا خەریکی لێکدانەوەی ستراتیژە</span>
                     <span class="animate-ping text-indigo-400">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.2s">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.4s">.</span>
