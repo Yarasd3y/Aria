@@ -237,6 +237,9 @@
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
+        
+        // ڕێکخستنی زمانی مایکەکە بۆ کوردی/عەرەبی
+        recognition.lang = 'ckb-IQ'; // زمانی کوردی سۆرانی (ئەگەر لە ئامێرەکە پشتگیری نەکرێت دەچێتە سەر ar-SA)
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
@@ -245,7 +248,14 @@
             handleSend();
         };
 
-        recognition.onerror = () => stopMic();
+        recognition.onerror = (e) => {
+            // ئەگەر زمانی کوردی لە وێبگەڕەکەت نەبوو، دەچێتە سەر عەرەبی/ئینگلیزی
+            if (recognition.lang === 'ckb-IQ') {
+                recognition.lang = 'ar-SA';
+            }
+            stopMic();
+        };
+        
         recognition.onend = () => stopMic();
     }
 
@@ -264,7 +274,7 @@
     function startMic() {
         isListening = true;
         micBtn.classList.add('listening');
-        recognition.start();
+        try { recognition.start(); } catch(e){}
     }
 
     function stopMic() {
