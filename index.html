@@ -92,6 +92,17 @@
             letter-spacing: 1.5px;
         }
 
+        .lang-select {
+            background: var(--bg-primary);
+            color: var(--accent-gold);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
         .chat-messages {
             flex: 1;
             padding: 24px;
@@ -199,6 +210,10 @@
                 <p>Senior Strategy Advisor</p>
             </div>
         </div>
+        <select id="micLang" class="lang-select">
+            <option value="ar-IQ">Kurdish / Arabic (کوردی / عربي)</option>
+            <option value="en-US">English</option>
+        </select>
     </div>
 
     <div class="chat-messages" id="chatContainer">
@@ -228,6 +243,7 @@
     const chatContainer = document.getElementById('chatContainer');
     const userInput = document.getElementById('userInput');
     const micBtn = document.getElementById('micBtn');
+    const micLang = document.getElementById('micLang');
 
     let recognition = null;
     let isListening = false;
@@ -268,6 +284,7 @@
     function startMic() {
         isListening = true;
         micBtn.classList.add('listening');
+        recognition.lang = micLang.value; // وەرگرتنی زمانی دیاریکراو
         try { recognition.start(); } catch(e){ console.error(e); }
     }
 
@@ -323,7 +340,9 @@
         try {
             const res = await fetch(FLOWISE_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ question: text })
             });
             
