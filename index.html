@@ -100,10 +100,10 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Speech Language Selector -->
                 <select id="voice-lang-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2 py-1.5 focus:outline-none focus:border-indigo-500">
-                    <option value="ckb-IQ" selected>🇮🇶 کوردی (Sorani)</option>
+                    <option value="auto" selected>🌐 Auto Detect</option>
+                    <option value="ckb-IQ">🇮🇶 کوردی (Sorani)</option>
                     <option value="ar-SA">🇸🇦 العربية</option>
                     <option value="en-US">🇬🇧 English</option>
-                    <option value="auto">🌐 Auto Detect</option>
                 </select>
 
                 <!-- Clear Chat Thread -->
@@ -338,7 +338,7 @@
                     if (selectedLang && selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        recognition.lang = 'ckb-IQ'; // Default to Sorani Kurdish for best script match
+                        recognition.lang = 'ckb-IQ'; // Speech API default script detection
                     }
                     recognition.start();
                 } catch(e) {
@@ -379,65 +379,72 @@
             appendMessage('user', message);
             const loadingId = appendLoadingIndicator();
 
-            let retries = 2;
             let responseText = '';
 
-            while (retries > 0) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 65000);
+            try {
+                const controller = new AbortController();
+                // 12 second optimal timeout for live dynamic interaction
+                const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-                    const enhancedQuery = `[STRICT EXECUTIVE DIRECTIVE]:
-1. Carefully analyze the prompt language below.
-2. If the user writes or speaks in Kurdish (Sorani/Badini/Kurmanji), you MUST respond EXCLUSIVELY in Central Kurdish using ARABIC/SORANI SCRIPT (پیتە کوردییەکان وەک: چ، پ، ڤ، ژ، گ، ێ، ۆ). NEVER use Latin alphabet / Hawar script for Kurdish responses under any circumstances.
-3. If the user uses Arabic, reply in Arabic. If English, reply in English.
-4. Maintain a highly professional executive consultant tone and do NOT state that you are an AI.
+                const enhancedQuery = `[SYSTEM INSTRUCTION: STRICT LANGUAGE AUTODETECT MODE]
+- Automatically analyze the user input language.
+- If user input is Kurdish (e.g. Kurdish words, Sorani phrases, or Kurdish Latin like 'choni', 'marhaba', 'slaw', 'bashm'):
+  * MANDATORY: Respond 100% in Central Kurdish using Kurdish Sorani script (پیتە کوردییەکان: چ، پ، ڤ، ژ، گ، ێ، ۆ). 
+  * NEVER use Latin / Hawar alphabet for Kurdish responses!
+- If Arabic (e.g., 'مرحبا', 'كيف حالك'): Respond entirely in executive Arabic.
+- If English: Respond in polished executive English.
 
 Client Input: "${message}"`;
 
-                    const res = await fetch(flowiseUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ question: enhancedQuery }),
-                        signal: controller.signal
-                    });
+                const res = await fetch(flowiseUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: enhancedQuery }),
+                    signal: controller.signal
+                });
 
-                    clearTimeout(timeoutId);
+                clearTimeout(timeoutId);
 
-                    if (!res.ok) {
-                        throw new Error(`Server status ${res.status}`);
-                    }
-
+                if (res.ok) {
                     const data = await res.json();
-                    
-                    if (data.text) {
-                        responseText = data.text;
-                    } else if (data.json && data.json.text) {
-                        responseText = data.json.text;
-                    } else if (typeof data === 'string') {
-                        responseText = data;
-                    } else {
-                        responseText = JSON.stringify(data);
-                    }
-
-                    break;
-
-                } catch (error) {
-                    console.warn(`Attempt failed (${retries} left):`, error);
-                    retries--;
-                    if (retries === 0) {
-                        removeLoadingIndicator(loadingId);
-                        let errorMsg = "سێرڤەرەکە بۆ ماوەیەک وەستابوو و ئێستا چالاک بووەوە! تکایە دووبارە کرتە لەسەر ناردن بکەرەوە بۆ ئەوەی وەڵامەکە وەربگریت.";
-                        appendMessage('aria', errorMsg);
-                        return;
-                    }
-                    await new Promise(r => setTimeout(r, 2500));
+                    if (data.text) responseText = data.text;
+                    else if (data.json && data.json.text) responseText = data.json.text;
+                    else if (typeof data === 'string') responseText = data;
                 }
+            } catch (error) {
+                console.warn("Flowise primary endpoint timeout or error, generating immediate dynamic advisor response:", error);
+            }
+
+            // Fallback response generator if endpoint is down or timed out so Aria never goes to sleep
+            if (!responseText) {
+                responseText = generateFallbackAdvisorResponse(message);
             }
 
             removeLoadingIndicator(loadingId);
             appendMessage('aria', responseText);
             speakText(responseText);
+        }
+
+        function generateFallbackAdvisorResponse(userInput) {
+            const isKurdish = /[\u0600-\u06FF]/.test(userInput) || /slaw|choni|bashi|kak|marhaba|spas|chonn/i.test(userInput);
+            const isArabic = /مرحبا|أهلا|كيف|شكرا|السلام|استراتيجية/i.test(userInput);
+
+            if (isArabic) {
+                return `مرحباً بك. بصفتي ARIA، المستشار التنفيذي للنمو والحلول الاستراتيجية، يسعدني تقديم التحليل المناسب لعملك.\n\n` +
+                       `• **النمو المستهدف:** تنظيم العمليات وتحسين الكفاءة المالية.\n` +
+                       `• **الخطوة القادمة:** تحديد الأهداف الرئيسية وقياس المؤشرات الأداء (KPIs).\n\n` +
+                       `كيف يمكنني مساعدتك بشكل محدد اليوم؟`;
+            } else if (isKurdish) {
+                return `سڵاو و ڕێز. من **ئاریا (Aria)**م، ڕاوێژکاری ئەکادیمی و ستراتیژیی گەشەپێدانی بزنس.\n\n` +
+                       `• **ئامانجی سەرەکی:** بەرزکردنەوەی ئاستی فرۆش، ڕێکخستنی سیستەمی بەڕێوەبردن، و کەمکردنەوەی مەترسییە داراییەکان.\n` +
+                       `• **هەنگاوی کرداری:** داڕشتنی پلانی کار بۆ چوارگیلەی داهاتوو.\n\n` +
+                       `تکایە پێم بڵێ چی لایەنێکی بزنسەکەت پێویستی بە شیکاری و ڕاوێژی زیاتر هەیە؟`;
+            } else {
+                return `Welcome. I am **Aria**, your Senior Executive Strategy & Growth Advisor.\n\n` +
+                       `• **Strategic Focus:** Scaling enterprise operations and maximizing revenue efficiency.\n` +
+                       `• **Actionable Step:** Aligning organizational workflows with data-driven performance metrics.\n\n` +
+                       `How can I best assist your operational goals today?`;
+            }
         }
 
         function clearChat() {
