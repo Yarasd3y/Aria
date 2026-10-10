@@ -64,16 +64,18 @@
         }
 
         .avatar {
-            width: 48px;
+            min-width: 60px;
             height: 48px;
-            border-radius: 50%;
+            padding: 0 12px;
+            border-radius: 24px;
             background: linear-gradient(135deg, var(--accent-gold), #8a6d3b);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             color: #000;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
         }
 
@@ -191,7 +193,7 @@
 <div class="chat-wrapper">
     <div class="chat-header">
         <div class="agent-info">
-            <div class="avatar">A</div>
+            <div class="avatar">ARIA</div>
             <div class="title-area">
                 <h2>ARIA</h2>
                 <p>Senior Strategy Advisor</p>
@@ -230,7 +232,6 @@
     let recognition = null;
     let isListening = false;
 
-    // Auto-detect browser speech recognition
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
@@ -273,6 +274,7 @@
     }
 
     async function speakWithElevenLabs(text) {
+        if (!text) return;
         try {
             const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
                 method: "POST",
@@ -320,12 +322,24 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: text })
             });
-            const data = await res.json();
-            const reply = data.text || data.json?.text || "No response received.";
             
+            const data = await res.json();
+            
+            let reply = "";
+            if (typeof data === 'string') {
+                reply = data;
+            } else if (data.text) {
+                reply = data.text;
+            } else if (data.json && data.json.text) {
+                reply = data.json.text;
+            } else {
+                reply = JSON.stringify(data);
+            }
+
             appendMessage('assistant', reply);
             speakWithElevenLabs(reply);
         } catch (err) {
+            console.error("Flowise Connection Error:", err);
             appendMessage('assistant', "Sorry, I encountered a connection issue.");
         }
     }
