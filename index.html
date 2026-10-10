@@ -100,9 +100,9 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Speech Language Selector -->
                 <select id="voice-lang-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2 py-1.5 focus:outline-none focus:border-indigo-500">
-                    <option value="auto">🌐 Auto Language</option>
-                    <option value="en-US">🇬🇧 English</option>
-                    <option value="ckb-IQ" selected>🇮🇶 کوردیی سۆرانی (Kurdish)</option>
+                    <option value="auto">🌐 Auto Detect</option>
+                    <option value="en-US" selected>🇬🇧 English</option>
+                    <option value="ckb-IQ">🇮🇶 Kurdish (Sorani)</option>
                     <option value="ar-SA">🇸🇦 Arabic</option>
                 </select>
 
@@ -143,38 +143,38 @@
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in English, Arabic, or Kurdish—I will answer in your exact language with live voice audio!
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Ask questions or speak in any language—I will respond with tailored strategic analysis and live voice support.
                         </p>
                     </div>
                 </div>
 
-                <!-- Strategic Quick Prompts -->
+                <!-- Strategic Quick Prompts (All English) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <button onclick="setPrompt('Hello Aria, how are you today? Please give me a brief overview of how you can help scale my business.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Hello Aria, please give me a brief executive overview of how you can assist in scaling my business operations.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-amber-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-comments"></i>
-                            <span>Executive Overview</span>
+                            <span>Executive Capabilities</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Brief summary of global strategic advisory capabilities</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Brief summary of strategic growth & operational capabilities</div>
                     </button>
 
-                    <button onclick="setPrompt('Formulate a high-impact revenue growth strategy to double our sales pipeline within 6 months.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Formulate a high-impact revenue growth strategy to scale our sales pipeline over the next two quarters.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-indigo-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-chart-line"></i>
                             <span>Revenue Growth Strategy</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Scale sales pipeline & launch conversion campaigns</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Scale sales pipeline & optimize conversion frameworks</div>
                     </button>
 
-                    <button onclick="setPrompt('سڵاو ئاریا، چۆنی؟')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Analyze market expansion opportunities and risk mitigation models for international business growth.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-cyan-400 text-xs mb-1 font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-briefcase"></i>
-                            <span>سڵاو و پرسیار (کوردی)</span>
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Global Market Expansion</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">ئاریا چۆنی؟ چۆن دەتوانیت یارمەتیم بدەیت؟</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Cross-border market entry strategy & operational model</div>
                     </button>
 
-                    <button onclick="setPrompt('Outline a venture-ready pitch deck structure and valuation model for private equity investors.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Outline a venture-ready pitch deck structure and financial valuation model for investors.')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-emerald-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-vault"></i>
                             <span>Investor Pitch & Valuation</span>
@@ -193,9 +193,9 @@
             <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold" id="voice-status-text">گوێم لێیە... قسە بکە (Listening...)</span>
+                    <span class="font-semibold" id="voice-status-text">Listening... Speak now</span>
                 </div>
-                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">وەستاندن (Cancel)</button>
+                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
             </div>
 
             <!-- Main Input Panel -->
@@ -206,9 +206,9 @@
                     <i class="fa-solid fa-microphone" id="mic-icon"></i>
                 </button>
 
-                <!-- Text Area Input -->
+                <!-- Text Area Input (English Placeholder) -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="پرسیارەکەت لێرە بنووسە یان قسە بکە..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type your strategic prompt or click the microphone to speak..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -221,7 +221,7 @@
                 <span class="flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved text-emerald-500"></i> Aria Secure Suite
                 </span>
-                <span><strong>Enter</strong> بۆ ناردن • <strong>Shift+Enter</strong> بۆ دێڕی نوێ</span>
+                <span>Press <strong>Enter</strong> to send • <strong>Shift+Enter</strong> for new line</span>
             </div>
         </div>
 
@@ -242,13 +242,13 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
                     <input type="text" id="flowise-url-input" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[10px] text-slate-500 mt-1">بەستەری فلوایسی ڕەیلوەی (Railway Flowise Endpoint).</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Railway Flowise prediction endpoint URL.</p>
                 </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">پاشگەزبوونەوە</button>
-                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">پاشەکەوتکردن</button>
+                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Save Changes</button>
             </div>
         </div>
     </div>
@@ -274,7 +274,6 @@
             window.speechSynthesis.onvoiceschanged = updateVoiceList;
         }
 
-        // Initialize Speech Recognition cleanly with multi-browser support
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return null;
@@ -296,8 +295,7 @@
 
             rec.onresult = function(event) {
                 if (event.results && event.results[0] && event.results[0][0]) {
-                    let transcript = event.results[0][0].transcript;
-                    transcript = cleanAndNormalizeKurdishInput(transcript);
+                    let transcript = event.results[0][0].transcript.trim();
 
                     const inputEl = document.getElementById('user-input');
                     if (inputEl) {
@@ -323,52 +321,6 @@
 
         recognition = initSpeechRecognition();
 
-        /**
-         * فلتەری توندوتۆڵ بۆ گۆڕینی وشە لاتینی و هەڵە دەنگییەکانی مایک (وەک patio furniture, with them Johnny، چۆنی، هتد) بۆ کوردیی ڕەسەن
-         */
-        function cleanAndNormalizeKurdishInput(text) {
-            if (!text) return '';
-            
-            let cleaned = text.trim();
-            const lower = cleaned.toLowerCase();
-
-            // خشتەی پاککردنەوەی هەڵەکانی مایک (مشتری و گۆڕینی بە کوردیی ڕەسەن)
-            const exactMap = {
-                'patio furniture': 'ئاریا چۆنی؟',
-                'patio furniture.': 'ئاریا چۆنی؟',
-                'with them johnny': 'ئاریا چۆنی؟ چۆن دەتوانیت یارمەتیم بدەیت؟',
-                'with them johnny.': 'ئاریا چۆنی؟ چۆن دەتوانیت یارمەتیم بدەیت؟',
-                'chony': 'چۆنی',
-                'choni': 'چۆنی',
-                'chaw': 'چاو',
-                'salaam': 'سڵاو',
-                'slaw': 'سڵاو',
-                'aria': 'ئاریا',
-                'arya': 'ئاریا',
-                'bizns': 'بزنس',
-                'bznis': 'بزنس',
-                'bazar': 'بازاڕ'
-            };
-
-            if (exactMap[lower]) {
-                return exactMap[lower];
-            }
-
-            // ئەگەر دەنگەکە وشەی بیانی یان لاتینی هەڵەی تێدا بوو کە هاوشێوەی پرسیاری کوردی بوو
-            if (lower.includes('patio') || lower.includes('furniture') || lower.includes('johnny') || lower.includes('with them')) {
-                return 'سڵاو ئاریا، چۆنی؟ چۆن دەتوانیت یارمەتیم بدەیت بۆ گەشەپێدانی بزنسەکەم؟';
-            }
-
-            // گۆڕینی تاکی لاتینی بۆ کوردی ئەگەر تەنها ئەلفوبێی لاتینی بێت
-            if (/^[a-zA-Z\s\.\?]+$/.test(cleaned) && cleaned.length < 25) {
-                if (lower.includes('chony') || lower.includes('choni')) {
-                    return 'ئاریا چۆنی؟';
-                }
-            }
-
-            return cleaned;
-        }
-
         function toggleVoiceInput() {
             if (!recognition) {
                 recognition = initSpeechRecognition();
@@ -386,7 +338,7 @@
                     if (selectedLang && selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        recognition.lang = 'ckb-IQ';
+                        recognition.lang = 'en-US';
                     }
                     recognition.start();
                 } catch(e) {
@@ -426,7 +378,7 @@
                             Welcome to Aria Executive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Speak or write in English, Arabic, or Kurdish—I will answer in your exact language with live voice audio!
+                            I am <strong>Aria</strong>, your Senior Executive Strategy & Global Growth Consultant. Ask questions or speak in any language—I will respond with tailored strategic analysis and live voice support.
                         </p>
                     </div>
                 </div>
@@ -475,13 +427,7 @@
             if (!isTtsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             
-            let cleanText = text;
-            if (cleanText.includes('بۆ زمانی کوردی') || cleanText.includes('In Kurdish')) {
-                const parts = cleanText.split(/بۆ زمانی کوردی|In Kurdish/);
-                cleanText = parts[parts.length - 1];
-            }
-
-            let speechClean = cleanText.replace(/[*#_`~]/g, '').replace(/---/g, '').trim();
+            let speechClean = text.replace(/[*#_`~]/g, '').replace(/---/g, '').trim();
             if (!speechClean) return;
 
             const voices = systemVoices.length ? systemVoices : window.speechSynthesis.getVoices();
@@ -507,8 +453,6 @@
             let message = input.value.trim();
             if (!message) return;
 
-            message = cleanAndNormalizeKurdishInput(message);
-
             input.value = '';
             autoResizeTextarea(input);
 
@@ -524,7 +468,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-                const enhancedQuery = `[CRITICAL INSTRUCTION: Detect the user's language. If the user spoke Sorani Kurdish (e.g. "چۆنی" or Kurdish text), reply ONLY and 100% in natural Sorani Kurdish without any English or Arabic preamble or translation. Do NOT add meta tags or translated headers.] User Query: ${message}`;
+                const enhancedQuery = `[CRITICAL INSTRUCTION: Detect the user's input language. Respond 100% naturally and fluently in the EXACT language used by the user. Do not add meta descriptions or language labels.] User Query: ${message}`;
 
                 const res = await fetch(flowiseUrl, {
                     method: 'POST',
@@ -559,9 +503,9 @@
                 console.error("Flowise Execution Error:", error);
                 removeLoadingIndicator(loadingId);
                 
-                let errorMsg = "بمبورە، کێشەیەک لە بەستنەوە بە سێرڤەر ڕوویدا.";
+                let errorMsg = "Unable to connect to advisory engine. Please check your connection and retry.";
                 if (error.name === 'AbortError') {
-                    errorMsg = "سێرڤەرەکە خەریکە هەڵدەستێتەوە (Warm up). تکایە جارێکی تر پرسیارەکەت بنێرە.";
+                    errorMsg = "Server connection timed out while warming up. Please resubmit your inquiry.";
                 }
                 
                 appendMessage('aria', errorMsg);
@@ -579,7 +523,7 @@
                 msgDiv.innerHTML = `
                     <div class="max-w-[85%] sm:max-w-[75%] bg-indigo-600/90 text-white p-4 rounded-3xl rounded-tr-none shadow-xl border border-indigo-500/30 text-xs sm:text-sm leading-relaxed">
                         <div class="font-semibold text-[10px] text-indigo-200 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-user"></i> کڕیاری بەڕێز
+                            <i class="fa-solid fa-user"></i> Executive Client
                         </div>
                         <div>${formattedText}</div>
                     </div>
@@ -595,9 +539,9 @@
                     <div class="max-w-[88%] sm:max-w-[80%] glass-card p-4 sm:p-5 rounded-3xl rounded-tl-none text-slate-200 text-xs sm:text-sm leading-relaxed shadow-2xl border border-slate-800">
                         <div class="font-bold text-xs text-indigo-400 mb-2 flex items-center justify-between border-b border-slate-800 pb-1.5">
                             <span class="flex items-center gap-1.5">
-                                <i class="fa-solid fa-award text-amber-400"></i> ئاریای ڕاوێژکاری باڵا
+                                <i class="fa-solid fa-award text-amber-400"></i> Aria Senior Executive
                             </span>
-                            <span class="text-[10px] text-slate-500 font-normal">شیکاری جێبەجێکار</span>
+                            <span class="text-[10px] text-slate-500 font-normal">Strategic Briefing</span>
                         </div>
                         <div class="space-y-2 text-slate-100">${formattedText}</div>
                     </div>
@@ -619,7 +563,7 @@
                     ARIA
                 </div>
                 <div class="flex items-center gap-1 font-medium">
-                    <span>ئاریا خەریکی لێکدانەوەی ستراتیژە</span>
+                    <span>Aria is analyzing strategy</span>
                     <span class="animate-ping text-indigo-400">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.2s">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.4s">.</span>
@@ -647,8 +591,6 @@
         function closeConfigModal() {
             document.getElementById('config-modal').classList.add('hidden');
         }
-
-        function saveStats() {}
 
         function saveSettings() {
             flowiseUrl = document.getElementById('flowise-url-input').value.trim() || DEFAULT_FLOWISE_URL;
