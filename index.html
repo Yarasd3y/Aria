@@ -84,6 +84,7 @@
 
 <body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden selection:bg-indigo-500 selection:text-white">
 
+    <!-- Header -->
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-6 py-3 shrink-0">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -106,13 +107,6 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                <select id="voice-name-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-500">
-                    <option value="Zephyr" selected>🎙️ Voice: Zephyr (Natural)</option>
-                    <option value="Puck">🎙️ Voice: Puck (Upbeat)</option>
-                    <option value="Charon">🎙️ Voice: Charon (Executive)</option>
-                    <option value="Kore">🎙️ Voice: Kore (Professional)</option>
-                </select>
-
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span class="hidden sm:inline">Reset</span>
@@ -139,7 +133,7 @@
                         <span>Live Voice Session Active</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in Sorani Kurdish, Arabic, or English.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in your preferred language...</p>
                 </div>
             </div>
 
@@ -165,10 +159,10 @@
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                            Aria Interactive Advisory Suite
+                            Aria Executive Strategic Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Click the microphone button to activate real-time speech input or type your strategic inquiry. Aria automatically matches Sorani Kurdish, Arabic, or English.
+                            Aria dynamically detects and responds in your query language with pure strategic insights.
                         </p>
                     </div>
                 </div>
@@ -180,17 +174,17 @@
                                 <i class="fa-solid fa-microphone"></i>
                                 <span>Start Live Voice Call</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Hands-free natural multilingual voice conversation</div>
+                            <div class="text-[11px] text-slate-300">Natural voice interaction</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
 
-                    <button onclick="setPrompt('How can I optimize our operational margins and accelerate international revenue growth?')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Analyze our Q3 expansion strategy and market risks.')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-indigo-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-chart-line"></i>
-                            <span>Revenue Growth Inquiry</span>
+                            <span>Strategic Business Inquiry</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">How can I optimize operational margins and accelerate revenue?</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Analyze our Q3 expansion strategy...</div>
                     </button>
                 </div>
             </div>
@@ -215,7 +209,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Executive Gemini AI • Auto-Language Detection Active
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Dynamic Intelligence • Intelligent Voice Loop Prevention
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -237,8 +231,8 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Google Gemini API Key (Optional)</label>
-                    <input type="password" id="gemini-api-key-input" placeholder="Enter custom API key (leave empty for default)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Gemini API Key (Optional)</label>
+                    <input type="password" id="gemini-api-key-input" placeholder="Enter custom API key if available" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
                 </div>
             </div>
 
@@ -267,7 +261,7 @@
                 return true;
             } catch (err) {
                 console.error("Microphone access denied:", err);
-                alert("Microphone permission was denied. Please allow microphone access in your browser settings.");
+                alert("Microphone permission was denied.");
                 return false;
             }
         }
@@ -282,16 +276,18 @@
             const rec = new SpeechRecognition();
             rec.continuous = true;
             rec.interimResults = true;
-            rec.lang = ''; // Auto-detect language (Kurdish, Arabic, English)
+            rec.lang = ''; // Speech engine auto-detects language
 
             rec.onstart = function() {
                 document.getElementById('listening-indicator').innerText = "Listening...";
-                document.getElementById('mic-status-text').innerText = "Speak naturally in Sorani Kurdish, Arabic, or English.";
+                document.getElementById('mic-status-text').innerText = "Speak naturally in your preferred language...";
             };
 
             rec.onresult = function(event) {
-                // Ignore input completely if Aria is speaking or processing to prevent self-feeding loops!
-                if (isSpeaking || isProcessingUtterance) return;
+                if (isSpeaking || isProcessingUtterance) {
+                    transcriptBuffer = "";
+                    return;
+                }
 
                 let interim = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -303,10 +299,10 @@
                 }
 
                 const fullText = (transcriptBuffer + " " + interim).trim();
+
                 if (fullText.length > 0) {
                     document.getElementById('user-input').value = fullText;
 
-                    // Debounce silence timer for natural human-like pause detection (2 seconds)
                     clearTimeout(silenceTimer);
                     silenceTimer = setTimeout(() => {
                         const textToSend = transcriptBuffer.trim() || fullText;
@@ -315,7 +311,7 @@
                             document.getElementById('user-input').value = "";
                             processLiveUserUtterance(textToSend);
                         }
-                    }, 2000);
+                    }, 1800);
                 }
             };
 
@@ -324,8 +320,7 @@
             };
 
             rec.onend = function() {
-                // Restart only if live call is still active and Aria is NOT currently speaking
-                if (isLiveCallActive && !isSpeaking) {
+                if (isLiveCallActive && !isSpeaking && !isProcessingUtterance) {
                     try { rec.start(); } catch(err) {}
                 }
             };
@@ -356,18 +351,13 @@
             document.getElementById('live-btn-text').innerText = "Stop Call";
             document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone-slash text-sm";
 
-            try {
-                speechRecognitionEngine.start();
-            } catch (err) {
-                console.warn("Speech start note:", err);
-            }
-
-            // Greet once at the start of call
             if (!hasWelcomed) {
                 hasWelcomed = true;
-                const introText = "Hello. I am Aria, your Senior Executive Strategy Advisor. How can I guide your strategy today?";
+                const introText = "Hello. I am Aria. How may I assist your strategic objectives today?";
                 appendMessage('aria', introText);
                 speakText(introText);
+            } else {
+                try { speechRecognitionEngine.start(); } catch(e) {}
             }
         }
 
@@ -390,7 +380,6 @@
 
             isProcessingUtterance = true;
 
-            // Immediately abort speech recognition while processing and speaking to prevent echo!
             if (speechRecognitionEngine) {
                 try { speechRecognitionEngine.abort(); } catch(e) {}
             }
@@ -416,23 +405,17 @@
         async function queryAriaBrain(userInput) {
             chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
 
+            const systemPrompt = "You are Aria, a Senior Executive Strategy Advisor. DETECT and MATCH the user's language strictly without adding hardcoded greeting templates. Respond fluently and directly in the language used by the client.";
+
             const payload = {
                 contents: chatConversationHistory,
                 systemInstruction: {
-                    parts: [{
-                        text: "You are Aria, a Senior Executive Strategy Advisor. Automatically detect the user's input language (Sorani Kurdish, Arabic, or English) and reply 100% fluently and naturally in that exact same language. Provide robust, executive-level insights directly without echoing the user's prompt or repeating your introduction."
-                    }]
+                    parts: [{ text: systemPrompt }]
                 }
             };
 
             const targetKey = geminiApiKey || "";
-            const endpoint = targetKey 
-                ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${targetKey}`
-                : null;
-
-            if (!endpoint) {
-                return generateFallbackAdvisorResponse(userInput);
-            }
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${targetKey}`;
 
             try {
                 const response = await fetch(endpoint, {
@@ -445,14 +428,18 @@
 
                 const data = await response.json();
                 const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text) throw new Error("Empty response");
+                if (!text) throw new Error("Empty response from AI");
 
                 chatConversationHistory.push({ role: "model", parts: [{ text: text }] });
                 return text;
             } catch (err) {
-                console.warn("API fallback triggered:", err);
-                return generateFallbackAdvisorResponse(userInput);
+                console.warn("API Call Exception:", err);
+                return generateContextualFallbackResponse(userInput);
             }
+        }
+
+        function generateContextualFallbackResponse(userInput) {
+            return "System processing active. Please configure or verify your connection to resume direct executive intelligence feedback.";
         }
 
         function speakText(text) {
@@ -469,7 +456,7 @@
             utterance.pitch = 1.0;
 
             if (/[\u0600-\u06FF]/.test(text)) {
-                utterance.lang = 'ar-SA'; // Arabic/Kurdish script voice fallback
+                utterance.lang = 'ar-SA';
             } else {
                 utterance.lang = 'en-US';
             }
@@ -495,7 +482,7 @@
                             speechRecognitionEngine.start();
                         }
                     } catch(e) {}
-                }, 600);
+                }, 800);
             }
         }
 
@@ -548,7 +535,7 @@
                     </div>
                     <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-400 text-xs flex items-center gap-2 border border-slate-800">
                         <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-                        <span>Analyzing executive strategy...</span>
+                        <span>Analyzing context & responding...</span>
                     </div>
                 </div>
             `;
@@ -601,10 +588,10 @@
                         </div>
                         <div class="space-y-1.5 flex-1">
                             <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                                Aria Interactive Advisory Suite
+                                Aria Executive Strategic Suite
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Click the microphone button to activate real-time speech input or type your strategic inquiry.
+                                Click microphone or type your query in any language.
                             </p>
                         </div>
                     </div>
@@ -625,15 +612,6 @@
             geminiApiKey = key;
             localStorage.setItem('aria_gemini_key', key);
             closeConfigModal();
-        }
-
-        function generateFallbackAdvisorResponse(userInput) {
-            const isKurdish = /[\u0600-\u06FF]/.test(userInput);
-            if (isKurdish) {
-                return "سڵاو و ڕێز. بۆ پەرەپێدانی بازرگانی و زیادکردنی قازانج، پێویستە ستراتیژیی فرۆشتن و تێچووەکانمان بە وردی ڕێکبخەینەوە و تەرکیز بخەینە سەر کڕیاری نوێ.";
-            } else {
-                return "To optimize operational margins and accelerate revenue growth, we should focus on high-yield customer acquisition and streamlining overhead.";
-            }
         }
 
         function escapeHtml(text) {
