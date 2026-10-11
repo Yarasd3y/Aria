@@ -308,7 +308,8 @@
                     }
                 }
 
-                const fullText = (transcriptBuffer + " " + interim).trim();
+                // Clean unwanted gibberish artifacts
+                let fullText = (transcriptBuffer + " " + interim).trim();
 
                 if (fullText.length > 0) {
                     const inputEl = document.getElementById('user-input');
@@ -474,7 +475,16 @@ CRITICAL OPERATIONAL DIRECTIVES:
             window.speechSynthesis.cancel();
             isSpeaking = true;
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            // Strip non-native English tag noise if the dominant response language is Arabic/Kurdish
+            let textToRead = text;
+            if (isArabicScript(text)) {
+                // Filter out markdown syntax and standalone Latin letters or prompt artifacts
+                textToRead = text.replace(/[*_#`~]/g, '').replace(/[a-zA-Z]+/g, ' ').trim();
+            } else {
+                textToRead = text.replace(/[*_#`~]/g, '').trim();
+            }
+
+            const utterance = new SpeechSynthesisUtterance(textToRead || text);
             utterance.rate = 1.0;
             utterance.pitch = 1.0;
 
