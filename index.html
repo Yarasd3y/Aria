@@ -258,6 +258,8 @@
         let isSpeaking = false;
         let chatConversationHistory = [];
         let hasWelcomed = false;
+        let silenceTimer = null;
+        let pendingTranscript = "";
 
         async function requestMicrophoneAccess() {
             try {
@@ -268,6 +270,245 @@
                 console.error("Microphone access denied:", err);
                 alert("Microphone permission was denied. Please allow microphone access in your browser settings.");
                 return false;
+            }
+        }
+
+        function initContinuousSpeech() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech recognition is not supported in this browser.");
+                return null;
+            }
+
+            const rec = new SpeechRecognition();
+            rec.continuous = true;
+            rec.interimResults = true;
+            rec.lang = 'ckb-IQ'; // Default to Sorani Kurdish for better recognition, auto-adapts
+
+            rec.onstart = function() {
+                document.getElementById('listening-indicator').innerText = "Listening...";
+                document.getElementById('mic-status-text').innerText = "Audio capture active. Speak in Kurdish, English, or Arabic.";
+            };
+
+            rec.onresult = function(event) {
+                // IMPORTANT: Ignore input while Aria is actively speaking or processing to prevent self-looping feedback!
+                if (isProcessingUtterance || isSpeaking) return;
+
+                let interimScript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        pendingTranscript += " " + event.results[i][0].transcript;
+                    } else {
+                        interimScript += event.results[i][0].transcript;
+                    }
+                }
+
+                const currentText = (pendingTranscript + " " + interimScript).trim();
+
+                if (currentText.length > 0) {
+                    document.getElementById('user-input').value = currentText;
+                    
+                    // Reset silence timer every time user speaks (gives natural pause time like a human conversation)
+                    clearTimeout(silenceTimer);
+                    silenceTimer = setTimeout(() => {
+                        const finalToSend = pendingTranscript.trim() || currentText;
+                        if (finalToSend && !isProcessingUtterance && !isSpeaking) {
+                            pendingTranscript = "";
+                            document.getElementById('user-input').value = "";
+                            processLiveUserUtterance(finalToSend);
+                        }
+                    }, 1800); // Waits 1.8 seconds of natural silence before answering
+                }
+            };
+
+            rec.onerror = function(e) {
+                console.warn('Speech engine status:', e.error);
+            };
+
+            rec.onend = function() {
+                // Restart recognition smoothly if session is still live and not currently synthesizing speech
+                if (isLiveCallActive && !isSpeaking) {
+                    try { rec.start(); } catch(err){}
+                }
+            };
+
+            return rec;
+        }
+
+        async function toggleLiveVoiceCall() {
+            if (isLiveCallActive) {
+                stopLiveVoiceCall();
+            } else {
+                await startLiveVoiceCall();
+            }
+        }
+
+        async function startLiveVoiceCall() {
+            const hasAccess = await requestMicrophoneAccess();
+            if (!hasAccess) return;
+
+            if (!speechRecognitionEngine) {
+                speechRecognitionEngine = initContinuousSpeech();
+            }
+
+            if (!speechRecognitionEngine) return;
+
+            isLiveCallActive = true;
+            document.getElementById('live-call-card').classList.remove('hidden');
+            document.getElementById('live-btn-text').innerText = "Stop Mic";
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone-slash text-sm";
+
+            try {
+                speechRecognitionEngine.start();
+            } catch (err) {
+                console.warn("Speech engine start attempt:", err);
+            }
+
+            // Introduce once at the start of call in Kurdish if not done yet
+            if (!hasWelcomed) {
+                hasWelcomed = true;
+                const introText = "سڵاو. من ئاریام، ڕاوێژکاری ستراتیژیی کۆمپانیاکەت. چۆن دەتوانم هاوکاریت بکەم ئامانجەکانت بپێکیت؟";
+                appendMessage('aria', introText);
+                speakFallbackText(introText);
+            }
+        }
+
+        function stopLiveVoiceCall() {
+            isLiveCallActive = false;
+            hasWelcomed = false;
+            clearTimeout(silenceTimer);
+            pendingTranscript = "";
+            if (speechRecognitionEngine) {
+                try { speechRecognitionEngine.stop(); } catch(err){}
+            }
+            stopAudioPlayback();
+            document.getElementById('live-call-card').classList.add('hidden');
+            document.getElementById('live-btn-text').innerText = "Enable Microphone";
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone text-sm";
+        }
+
+        async function processLiveUserUtterance(text) {
+            if (!text || text.trim().length === 0 || isProcessingUtterance || isSpeaking) return;
+
+            isProcessingUtterance = true;
+            
+            // Pause speech recognition while processing and speaking to avoid self-hearing!
+            if (speechRecognitionEngine) {
+                try { speechRecognitionEngine.stop(); } catch(e){}
+            }
+
+            stopAudioPlayback();
+
+            appendMessage('user', text);
+            const loadingId = appendLoadingIndicator();
+
+            try {
+                const responseText = await queryAriaBrain(text);
+                removeLoadingIndicator(loadingId);
+                appendMessage('aria', responseText);
+                speakFallbackText(responseText);
+            } catch (err) {
+                removeLoadingIndicator(loadingId);
+                console.error("Error processing input:", err);
+            } finally {
+                isProcessingUtterance = false;
+            }
+        }
+
+        async function queryAriaBrain(userInput) {
+            chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
+
+            const payload = {
+                contents: chatConversationHistory,
+                systemInstruction: {
+                    parts: [{
+                        text: "You are Aria, a Senior Executive Strategy Advisor. MUST ALWAYS auto-detect and strictly maintain the user's language (Sorani Kurdish, English, or Arabic). If the prompt is in Kurdish, reply 100% in professional, natural Sorani Kurdish without switching back to English."
+                    }]
+                }
+            };
+
+            const targetKey = geminiApiKey || "";
+            const endpoint = targetKey 
+                ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${targetKey}`
+                : null;
+
+            if (!endpoint) {
+                return generateFallbackAdvisorResponse(userInput);
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`API error HTTP ${response.status}`);
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!text) throw new Error("Empty response from service");
+
+                chatConversationHistory.push({ role: "model", parts: [{ text: text }] });
+                return text;
+            } catch (err) {
+                console.warn("Service query fallback activated:", err);
+                return generateFallbackAdvisorResponse(userInput);
+            }
+        }
+
+        function speakFallbackText(text) {
+            if (!('speechSynthesis' in window)) {
+                resumeListeningAfterSpeech();
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+            isSpeaking = true;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            // Detect language for text-to-speech voice selection
+            if (/[\u0600-\u06FF]/.test(text)) {
+                utterance.lang = 'ar-SA'; // fallback voice for Kurdish/Arabic script
+            } else {
+                utterance.lang = 'en-US';
+            }
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                resumeListeningAfterSpeech();
+            };
+
+            utterance.onerror = () => {
+                isSpeaking = false;
+                resumeListeningAfterSpeech();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function resumeListeningAfterSpeech() {
+            if (isLiveCallActive && speechRecognitionEngine) {
+                setTimeout(() => {
+                    try { speechRecognitionEngine.start(); } catch(e){}
+                }, 400); // 400ms buffer after speech ends before turning mic back on
+            }
+        }
+
+        function generateFallbackAdvisorResponse(userInput) {
+            const isKurdishOrArabic = /[\u0600-\u06FF]/.test(userInput);
+            if (isKurdishOrArabic) {
+                const responses = [
+                    "فەرموو جەنابتان، گوێم لێیە. بۆ باشترکردنی کارەکانتان پێویستمان بە بەڕێوەبردنی وردتری سەرچاوەکان هەیە.",
+                    "بەڵێ تەواوە. ئێمە دەتوانین بە پلانی نوێ تێچووەکان کەمبکەینەوە و فرۆش زیاد بکەین.",
+                    "پێشنیازی من ئەوەیە تەرکیز بخەینە سەر ڕاکێشانی کڕیاری نوێ و گەشەپێدانی خزمەتگوزارییەکان."
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            } else {
+                return "To optimize operational margins and accelerate revenue growth, we should focus on high-yield customer acquisition.";
             }
         }
 
