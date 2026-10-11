@@ -86,7 +86,6 @@
 
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-6 py-3 shrink-0">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            
             <div class="flex items-center gap-3">
                 <div class="relative flex items-center justify-center px-3 py-1.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white font-black text-sm tracking-wider shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
                     ARIA
@@ -130,6 +129,7 @@
 
     <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
 
+        <!-- Live Voice Call Status Card -->
         <div id="live-call-card" class="hidden glass-card p-4 sm:p-5 rounded-3xl border border-emerald-500/40 shadow-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div class="relative flex items-center justify-center p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 live-active">
@@ -140,7 +140,7 @@
                         <span>Live Mic Active</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally into your microphone.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in English, Kurdish, or Arabic.</p>
                 </div>
             </div>
 
@@ -157,8 +157,8 @@
             </button>
         </div>
 
+        <!-- Chat Thread -->
         <div id="chat-thread" class="flex-1 overflow-y-auto pr-1 space-y-4 sm:space-y-6">
-            
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
                     <div class="px-3.5 py-2 rounded-2xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-lg">
@@ -169,7 +169,7 @@
                             Aria Interactive Advisory Suite
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Click the microphone button to activate real-time speech input or type your strategic inquiry.
+                            Click the microphone button to activate real-time speech input or type your strategic inquiry in English, Kurdish, or Arabic.
                         </p>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                                 <i class="fa-solid fa-microphone"></i>
                                 <span>Activate Microphone</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Hands-free speech input session</div>
+                            <div class="text-[11px] text-slate-300">Hands-free multilingual speech input session</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
@@ -195,18 +195,18 @@
                     </button>
                 </div>
             </div>
-
         </div>
 
+        <!-- Input Panel -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 <button id="live-call-btn" onclick="toggleLiveVoiceCall()" title="Toggle Microphone" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
-                    <i class="fa-solid fa-microphone text-sm group-hover:animate-bounce" id="mic-btn-icon"></i>
-                    <span id="live-btn-text" class="hidden sm:inline">Enable Microphone</span>
+                    <i class="fa-solid fa-microphone text-sm" id="mic-btn-icon"></i>
+                    <span id="live-btn-text">Enable Microphone</span>
                 </button>
 
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type your query or activate microphone..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type your query or speak into microphone..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
@@ -216,7 +216,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Executive Gemini AI • Microphone Enabled
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i> Executive Gemini AI • Multilingual Voice Active
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -224,6 +224,7 @@
 
     </main>
 
+    <!-- Settings Modal -->
     <div id="config-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md p-6 rounded-3xl space-y-5 border border-slate-800 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -239,7 +240,6 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Google Gemini API Key (Optional)</label>
                     <input type="password" id="gemini-api-key-input" placeholder="Enter custom API key (or leave empty)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[10px] text-slate-500 mt-1">Leave blank to use default runtime connection.</p>
                 </div>
             </div>
 
@@ -252,22 +252,20 @@
 
     <script>
         let isLiveCallActive = false;
-        let activeSources = new Set();
         let geminiApiKey = localStorage.getItem('aria_gemini_key') || "";
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
         let isSpeaking = false;
         let chatConversationHistory = [];
+        let hasWelcomed = false;
 
-        // Request microphone permissions explicitly on interaction
         async function requestMicrophoneAccess() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                // Stop tracks immediately after securing permission
                 stream.getTracks().forEach(track => track.stop());
                 return true;
             } catch (err) {
-                console.error("Microphone access denied or error:", err);
+                console.error("Microphone access denied:", err);
                 alert("Microphone permission was denied. Please allow microphone access in your browser settings.");
                 return false;
             }
@@ -276,36 +274,28 @@
         function initContinuousSpeech() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.");
+                alert("Speech recognition is not supported in this browser.");
                 return null;
             }
 
             const rec = new SpeechRecognition();
             rec.continuous = true;
             rec.interimResults = true;
-            rec.lang = ''; // Browser auto-detects dialect
+            rec.lang = ''; // Auto-detect language (Kurdish, Arabic, English)
 
             rec.onstart = function() {
                 document.getElementById('listening-indicator').innerText = "Listening...";
-                document.getElementById('mic-status-text').innerText = "Audio capture active. Speak clearly.";
+                document.getElementById('mic-status-text').innerText = "Audio capture active. Speak in English, Kurdish, or Arabic.";
             };
 
             rec.onresult = function(event) {
                 if (isProcessingUtterance || isSpeaking) return;
 
-                let interimScript = '';
                 let finalScript = '';
-
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
                     if (event.results[i].isFinal) {
                         finalScript += event.results[i][0].transcript;
-                    } else {
-                        interimScript += event.results[i][0].transcript;
                     }
-                }
-
-                if (interimScript) {
-                    document.getElementById('listening-indicator').innerText = "Capturing...";
                 }
 
                 const cleanFinal = finalScript.trim();
@@ -316,10 +306,6 @@
 
             rec.onerror = function(e) {
                 console.warn('Speech engine status:', e.error);
-                if (e.error === 'not-allowed') {
-                    stopLiveVoiceCall();
-                    alert("Microphone permission denied. Enable microphone access to use live voice.");
-                }
             };
 
             rec.onend = function() {
@@ -351,7 +337,7 @@
 
             isLiveCallActive = true;
             document.getElementById('live-call-card').classList.remove('hidden');
-            document.getElementById('live-btn-text').innerText = "Disable Microphone";
+            document.getElementById('live-btn-text').innerText = "Stop Mic";
             document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone-slash text-sm";
 
             try {
@@ -359,17 +345,26 @@
             } catch (err) {
                 console.warn("Speech engine start attempt:", err);
             }
+
+            // Introduce once at the start of call if not done yet
+            if (!hasWelcomed) {
+                hasWelcomed = true;
+                const introText = "Hello. I am Aria, your Senior Executive Strategy Advisor. How can I guide your strategy today?";
+                appendMessage('aria', introText);
+                speakFallbackText(introText);
+            }
         }
 
         function stopLiveVoiceCall() {
             isLiveCallActive = false;
+            hasWelcomed = false;
             if (speechRecognitionEngine) {
                 try { speechRecognitionEngine.stop(); } catch(err){}
             }
             stopAudioPlayback();
             document.getElementById('live-call-card').classList.add('hidden');
             document.getElementById('live-btn-text').innerText = "Enable Microphone";
-            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone text-sm group-hover:animate-bounce";
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone text-sm";
         }
 
         async function processLiveUserUtterance(text) {
@@ -401,7 +396,7 @@
                 contents: chatConversationHistory,
                 systemInstruction: {
                     parts: [{
-                        text: "You are Aria, a Senior Executive Strategy Advisor. Automatically detect the language of the prompt and respond with authoritative, structured business guidance in that same language."
+                        text: "You are Aria, a Senior Executive Strategy Advisor. Automatically detect the language of the prompt (English, Sorani Kurdish, or Arabic) and respond fluently, naturally, and professionally in that exact same language. Provide robust, executive-level insights without repeating introductory greetings."
                     }]
                 }
             };
@@ -453,18 +448,14 @@
         function generateFallbackAdvisorResponse(userInput) {
             const isKurdish = /[\u0600-\u06FF]/.test(userInput);
             if (isKurdish) {
-                return "سڵاو و ڕێز. من ئاریام، ڕاوێژکاری ستراتیژیی کۆمپانیاکەت. پێم بڵێ چۆن دەتوانم لە ئامانجە بازرگانییەکانتدا هاوکار بم؟";
+                return "سڵاو و ڕێز. بۆ پەرەپێدانی بازرگانی و زیادکردنی قازانج، پێویستە ستراتیژیی فرۆشتن و تێچووەکانمان بە وردی ڕێکبخەینەوە.";
             } else {
-                return "Welcome. I am Aria, your Senior Executive Strategy Advisor. How can I assist you with your business goals today?";
+                return "To optimize operational margins and accelerate revenue growth, we should focus on high-yield customer acquisition and streamlining overhead.";
             }
         }
 
         function stopAudioPlayback() {
             isSpeaking = false;
-            activeSources.forEach(src => {
-                if (src.pause) src.pause();
-            });
-            activeSources.clear();
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
 
@@ -555,6 +546,7 @@
 
         function clearChat() {
             chatConversationHistory = [];
+            hasWelcomed = false;
             const chatThread = document.getElementById('chat-thread');
             chatThread.innerHTML = `
                 <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
