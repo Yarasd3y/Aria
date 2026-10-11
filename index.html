@@ -100,10 +100,10 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Speech Language Selector -->
                 <select id="voice-lang-select" class="bg-slate-900 border border-slate-800 text-xs text-indigo-300 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-500">
-                    <option value="auto" selected>🌐 Auto Detect</option>
+                    <option value="auto" selected>🌐 Auto-Detect Language</option>
                     <option value="ckb-IQ">🇮🇶 کوردی (Sorani)</option>
-                    <option value="ar-SA">🇸🇦 العربية</option>
                     <option value="en-US">🇬🇧 English</option>
+                    <option value="ar-SA">🇸🇦 العربية</option>
                 </select>
 
                 <!-- Clear Chat Session -->
@@ -132,7 +132,7 @@
         <!-- Conversation Scroll View -->
         <div id="chat-thread" class="flex-1 overflow-y-auto pr-1 space-y-4 sm:space-y-6">
             
-            <!-- English Welcome Banner Card -->
+            <!-- Executive Welcome Banner -->
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
                     <div class="px-3 py-2 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-inner">
@@ -143,27 +143,27 @@
                             Welcome to Aria Executive Advisory
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your C-level strategist for global business scaling, financial intelligence, and enterprise operations. Feel free to speak in any language—I adapt naturally to Kurdish, Arabic, English, or global scripts.
+                            I am <strong>Aria</strong>, your C-level Executive Advisor for business scaling, corporate strategy, and financial modeling. You can communicate with me in English, Kurdish, Arabic, or any global language via text or voice.
                         </p>
                     </div>
                 </div>
 
                 <!-- Strategic Quick Prompts -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <button onclick="setPrompt('سڵاو ئاریا، تکایە ڕوونیکەرەوە چۆن دەتوانیت یارمەتیم بدەیت لە گەشەپێدانی بزنسەکەمدا؟')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('How can you assist in scaling my enterprise business and optimizing cash flow?')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-amber-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-comments"></i>
-                            <span>Executive Capabilities</span>
+                            <span>Enterprise Scaling Strategy</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">سڵاو ئاریا، چۆن دەتوانیت یارمەتیم بدەیت لە گەشەی بزنسەکەم؟</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">How can you assist in scaling my enterprise business?</div>
                     </button>
 
-                    <button onclick="setPrompt('چۆن دەتوانم فرۆشی کۆمپانیاکەم لە چوارگیلەی داهاتوودا دوو بەرامبەر بکەم؟')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('How can I optimize operational cost and increase profit margins next quarter?')" class="p-3.5 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-indigo-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-chart-line"></i>
-                            <span>Revenue Expansion Plan</span>
+                            <span>Revenue Acceleration</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">چۆن فرۆشی کۆمپانیاکەم لە چوارگیلەی داهاتوو دوو بەرامبەر بکەم؟</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">How can I optimize operational cost and increase profit margins?</div>
                     </button>
                 </div>
             </div>
@@ -171,29 +171,33 @@
             <!-- Dynamic Messages inserted here -->
         </div>
 
-        <!-- Input Dock Area -->
         <div class="shrink-0 space-y-2">
             
             <!-- Voice Listening Active Indicator Banner -->
-            <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2 bg-red-950/70 border border-red-500/50 rounded-2xl text-xs text-red-200 animate-pulse">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="font-semibold" id="voice-status-text">Listening... Speak now</span>
+            <div id="voice-listening-bar" class="hidden flex items-center justify-between px-4 py-2.5 bg-red-950/80 border border-red-500/60 rounded-2xl text-xs text-red-100 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-red-500 animate-ping"></span>
+                    <span class="font-bold text-sm" id="voice-status-text">Listening... Speak now (click Send when finished)</span>
                 </div>
-                <button onclick="stopVoiceRecognition()" class="text-xs text-red-200 hover:underline font-bold">Cancel</button>
+                <div class="flex items-center gap-2">
+                    <button onclick="finishAndSendVoice()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-check"></i> Send
+                    </button>
+                    <button onclick="stopVoiceRecognition()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium">Cancel</button>
+                </div>
             </div>
 
             <!-- Main Input Bar -->
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 
                 <!-- Microphone Voice Toggle -->
-                <button id="mic-btn" onclick="toggleVoiceInput()" title="Press to Speak" class="w-11 h-11 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shrink-0 relative group">
+                <button id="mic-btn" onclick="toggleVoiceInput()" title="Click to Speak" class="w-11 h-11 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 hover:text-indigo-400 flex items-center justify-center text-lg transition shrink-0 relative group">
                     <i class="fa-solid fa-microphone" id="mic-icon"></i>
                 </button>
 
                 <!-- Input Field -->
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type your strategic query or press mic to speak..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type your strategic prompt or click the microphone..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -202,7 +206,7 @@
                 </button>
             </div>
 
-            <!-- Footer Details -->
+            <!-- Footer Details (Completely in English) -->
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved text-emerald-500"></i> Aria Executive AI
@@ -247,6 +251,7 @@
         let recognition = null;
         let flowiseUrl = localStorage.getItem('aria_flowise_url') || DEFAULT_FLOWISE_URL;
         let systemVoices = [];
+        let speechBuffer = '';
         
         function updateVoiceList() {
             if ('speechSynthesis' in window) {
@@ -259,7 +264,6 @@
             window.speechSynthesis.onvoiceschanged = updateVoiceList;
         }
 
-        // 🧠 LATIN TO KURDISH SCRIPT CONVERTER (AUTOMATIC LATIN INPUT FIX)
         function forceKurdishScript(text) {
             if (!text) return text;
 
@@ -279,6 +283,15 @@
                 'chonn': 'چۆنن',
                 'chone': 'چۆنە',
                 'bashm': 'باشم',
+                'mamosta': 'مامۆستا',
+                'walla': 'وەڵا',
+                'bo': 'بۆ',
+                'chibka': 'چی بکەم',
+                'biznis': 'بزنس',
+                'kord': 'کورد',
+                'kurdi': 'کوردی',
+                'slemani': 'سلێمانی',
+                'hawler': 'هەولێر',
             };
 
             for (let [latin, sorani] of Object.entries(wordMap)) {
@@ -294,11 +307,12 @@
             if (!SpeechRecognition) return null;
 
             const rec = new SpeechRecognition();
-            rec.continuous = false;
-            rec.interimResults = false;
+            rec.continuous = true;
+            rec.interimResults = true;
 
             rec.onstart = function() {
                 isRecording = true;
+                speechBuffer = '';
                 const micBtn = document.getElementById('mic-btn');
                 if (micBtn) {
                     micBtn.classList.add('mic-active', 'bg-red-600', 'text-white', 'border-red-500');
@@ -309,27 +323,34 @@
             };
 
             rec.onresult = function(event) {
-                if (event.results && event.results[0] && event.results[0][0]) {
-                    let transcript = event.results[0][0].transcript.trim();
-                    transcript = forceKurdishScript(transcript);
+                let currentTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    currentTranscript += event.results[i][0].transcript;
+                }
+                
+                if (currentTranscript.trim()) {
+                    speechBuffer = currentTranscript.trim();
+                    let formatted = forceKurdishScript(speechBuffer);
 
                     const inputEl = document.getElementById('user-input');
                     if (inputEl) {
-                        inputEl.value = transcript;
+                        inputEl.value = formatted;
                         autoResizeTextarea(inputEl);
                     }
-                    stopVoiceRecognition();
-                    sendMessage();
                 }
             };
 
             rec.onerror = function(event) {
-                console.warn('Speech recognition error:', event.error);
-                stopVoiceRecognition();
+                console.warn('Speech recognition status:', event.error);
+                if (event.error === 'not-allowed') {
+                    displaySystemNotification('Please enable microphone access in your browser settings.');
+                }
             };
 
             rec.onend = function() {
-                stopVoiceRecognition();
+                if (isRecording) {
+                    try { rec.start(); } catch(e){}
+                }
             };
 
             return rec;
@@ -347,14 +368,14 @@
             }
 
             if (isRecording) {
-                stopVoiceRecognition();
+                finishAndSendVoice();
             } else {
                 try {
                     const selectedLang = document.getElementById('voice-lang-select').value;
                     if (selectedLang && selectedLang !== 'auto') {
                         recognition.lang = selectedLang;
                     } else {
-                        recognition.lang = 'ckb-IQ';
+                        recognition.lang = 'en-US';
                     }
                     recognition.start();
                 } catch(e) {
@@ -364,6 +385,14 @@
                         try { recognition.start(); } catch(err){}
                     }
                 }
+            }
+        }
+
+        function finishAndSendVoice() {
+            stopVoiceRecognition();
+            const inputEl = document.getElementById('user-input');
+            if (inputEl && inputEl.value.trim().length > 0) {
+                sendMessage();
             }
         }
 
@@ -403,15 +432,15 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-                const enhancedQuery = `[SYSTEM INSTRUCTION: STRICT LANGUAGE AUTODETECT MODE]
-- Automatically analyze the user input language.
-- If user input is Kurdish (e.g. Kurdish words, Sorani phrases, or Kurdish Latin like 'choni', 'marhaba', 'slaw', 'bashm'):
-  * MANDATORY: Respond 100% in Central Kurdish using Kurdish Sorani script (پیتە کوردییەکان: چ، پ، ڤ، ژ، گ، ێ، ۆ). 
-  * NEVER use Latin alphabet for Kurdish responses!
-- If Arabic: Respond entirely in executive Arabic.
-- If English: Respond in polished executive English.
+                const enhancedQuery = `[SYSTEM DIRECTIVE: AUTOMATIC LANGUAGE MATCHING & EXECUTIVE TONE]
+Analyze the input text below.
+1. Automatically detect the language of the input (whether Sorani Kurdish, English, Arabic, German, French, etc.):
+   - MANDATORY: Respond 100% fluently in the exact same language as the input.
+   - If Kurdish: Respond in Sorani Kurdish script.
+   - If English: Respond in polished executive English.
+2. Maintain a C-level executive persona at all times.
 
-Client Input: "${message}"`;
+User Prompt: "${message}"`;
 
                 const res = await fetch(flowiseUrl, {
                     method: 'POST',
@@ -429,7 +458,7 @@ Client Input: "${message}"`;
                     else if (typeof data === 'string') responseText = data;
                 }
             } catch (error) {
-                console.warn("Flowise endpoint timeout or error, generating immediate dynamic response:", error);
+                console.warn("Flowise endpoint timeout or offline, utilizing fast executive brain fallback:", error);
             }
 
             if (!responseText) {
@@ -444,19 +473,19 @@ Client Input: "${message}"`;
         }
 
         function generateFallbackAdvisorResponse(userInput) {
-            const isKurdish = /[\u0600-\u06FF]/.test(userInput) || /slaw|choni|bashi|kak|marhaba|spas|chonn/i.test(userInput);
+            const isKurdish = /[\u0600-\u06FF]/.test(userInput) || /slaw|choni|bashi|kak|marhaba|spas|chonn|باشم|سڵاو|چۆنی/i.test(userInput);
             const isArabic = /مرحبا|أهلا|كيف|شكرا|السلام|استراتيجية/i.test(userInput);
 
-            if (isArabic) {
-                return `مرحباً بك. بصفتي ARIA، المستشار التنفيذي للنمو والحلول الاستراتيجية، يسعدني تقديم التحليل المناسب لعملك.\n\n` +
-                       `• **النمو المستهدف:** تنظيم العمليات وتحسين الكفاءة المالية.\n` +
-                       `• **الخطوة القادمة:** تحديد الأهداف الرئيسية وقياس المؤشرات الأداء (KPIs).\n\n` +
-                       `كيف يمكنني مساعدتك بشكل محدد اليوم؟`;
-            } else if (isKurdish) {
+            if (isKurdish) {
                 return `سڵاو و ڕێز. من **ئاریا (Aria)**م، ڕاوێژکاری ئەکادیمی و ستراتیژیی گەشەپێدانی بزنس.\n\n` +
                        `• **ئامانجی سەرەکی:** بەرزکردنەوەی ئاستی فرۆش، ڕێکخستنی سیستەمی بەڕێوەبردن، و کەمکردنەوەی مەترسییە داراییەکان.\n` +
                        `• **هەنگاوی کرداری:** داڕشتنی پلانی کار بۆ چوارگیلەی داهاتوو.\n\n` +
                        `تکایە پێم بڵێ چی لایەنێکی بزنسەکەت پێویستی بە شیکاری و ڕاوێژی زیاتر هەیە؟`;
+            } else if (isArabic) {
+                return `مرحباً بك. بصفتي ARIA، المستشار التنفيذي للنمو والحلول الاستراتيجية، يسعدني تقديم التحليل المناسب لعملك.\n\n` +
+                       `• **النمو المستهدف:** تنظيم العمليات وتحسين الكفاءة المالية.\n` +
+                       `• **الخطوة القادمة:** تحديد الأهداف الرئيسية وقياس المؤشرات الأداء (KPIs).\n\n` +
+                       `كيف يمكنني مساعدتك بشكل محدد اليوم؟`;
             } else {
                 return `Welcome. I am **Aria**, your Senior Executive Strategy & Growth Advisor.\n\n` +
                        `• **Strategic Focus:** Scaling enterprise operations and maximizing revenue efficiency.\n` +
@@ -478,7 +507,7 @@ Client Input: "${message}"`;
                             Welcome to Aria Executive Advisory
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            I am <strong>Aria</strong>, your C-level strategist for global business scaling and financial intelligence.
+                            I am <strong>Aria</strong>, your C-level Executive Advisor for business scaling, corporate strategy, and financial modeling.
                         </p>
                     </div>
                 </div>
@@ -606,7 +635,7 @@ Client Input: "${message}"`;
                     ARIA
                 </div>
                 <div class="flex items-center gap-1 font-medium">
-                    <span>Aria is analyzing strategy</span>
+                    <span>Aria is evaluating strategic response</span>
                     <span class="animate-ping text-indigo-400">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.2s">.</span>
                     <span class="animate-ping text-indigo-400" style="animation-delay: 0.4s">.</span>
