@@ -145,7 +145,7 @@
                             Aria Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome to Aria Executive Advisory Suite. Enabled with automatic multi-language detection and Gemini voice synthesis.
+                            Welcome to Aria Executive Advisory Suite. Enabled with automatic multi-language detection, phonetic routing, and deep male executive voice synthesis.
                         </p>
                     </div>
                 </div>
@@ -157,7 +157,7 @@
                                 <i class="fa-solid fa-microphone"></i>
                                 <span>Start Live AI Voice Call</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Continuous voice conversation with AI Voice Engine</div>
+                            <div class="text-[11px] text-slate-300">Continuous voice conversation with deep male voice engine</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
@@ -192,7 +192,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Automatic Speech Recognition & Audio Synthesizer
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Executive Speech Recognition & Deep Male Audio Synthesizer
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -236,8 +236,9 @@
         let transcriptBuffer = "";
         let currentAudioElement = null;
 
-        function isArabicScript(text) {
-            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
+        function isArabicOrKurdishScript(text) {
+            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text) ||
+                   /(sllaw|silaw|choni|staxer|bashm|merhaba|kayf|halak|mamosta|hawre|baxer)/i.test(text);
         }
 
         async function requestMicrophoneAccess() {
@@ -262,10 +263,11 @@
             const rec = new SpeechRecognition();
             rec.continuous = true;
             rec.interimResults = true;
+            rec.lang = 'en-US'; // Multilingual fallback that catches phonetic inputs correctly
 
             rec.onstart = function() {
                 document.getElementById('listening-indicator').innerText = "Listening...";
-                document.getElementById('mic-status-text').innerText = "Aria is ready. Speak in Kurdish, Arabic, French, or English...";
+                document.getElementById('mic-status-text').innerText = "Aria is listening. Speak in any language (Kurdish, Arabic, French...)";
             };
 
             rec.onresult = function(event) {
@@ -289,7 +291,7 @@
                     const inputEl = document.getElementById('user-input');
                     inputEl.value = fullText;
                     
-                    if (isArabicScript(fullText)) {
+                    if (isArabicOrKurdishScript(fullText)) {
                         inputEl.classList.add('rtl-text');
                         inputEl.classList.remove('ltr-text');
                     } else {
@@ -305,7 +307,7 @@
                             document.getElementById('user-input').value = "";
                             processLiveUserUtterance(textToSend);
                         }
-                    }, 1600);
+                    }, 1800);
                 }
             };
 
@@ -381,7 +383,7 @@
                 const responseText = await queryAriaBrain(text);
                 removeLoadingIndicator(loadingId);
                 appendMessage('aria', responseText);
-                await speakWithGeminiTTS(responseText);
+                await speakWithGeminiTTS(responseText, text);
             } catch (err) {
                 removeLoadingIndicator(loadingId);
                 console.error("Processing error:", err);
@@ -393,9 +395,9 @@
         async function queryAriaBrain(userInput) {
             chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
 
-            const systemPrompt = `You are Aria, a Senior Executive Strategic Business Advisor.
+            const systemPrompt = `You are Aria, a Senior Executive Strategic Business Advisor operating at an international level.
 CRITICAL OPERATIONAL DIRECTIVES:
-1. UNIVERSAL AUTOMATIC LANGUAGE MATCHING: Dynamically detect the client's input language—whether Sorani Kurdish, French, Arabic, German, Spanish, Chinese, Turkish, Japanese, or English—and respond 100% fluently, naturally, and professionally in that exact language.
+1. UNIVERSAL AUTOMATIC LANGUAGE MATCHING: Dynamically detect the exact language of the user input—whether Sorani Kurdish, Arabic, French, Spanish, German, English, or any other global language (including Latin-script Kurdish variants)—and reply 100% fluently and naturally in that exact language.
 2. NEVER state or reveal that you are an AI, language model, or virtual assistant. Speak with authority, clarity, and gravitas as a high-ticket C-level strategic consultant.
 3. Keep spoken voice responses concise (2-4 sentences max) to ensure natural fluid dialogue.`;
 
@@ -431,8 +433,8 @@ CRITICAL OPERATIONAL DIRECTIVES:
         }
 
         function generateFallbackResponse(userInput) {
-            if (isArabicScript(userInput)) {
-                return "پەیوەندی بە سێرڤەر ڕاوەستاوە. تکایە کلیلی Gemini API لە بەشی Settings بنووسە تا وەڵامی ڕاستەوخۆ وەربگریت.";
+            if (isArabicOrKurdishScript(userInput)) {
+                return "سڵاو و ڕێز. تکایە کلیلی ڕاستەقینەی Gemini API لە بەشی Settings بنووسە تا وەڵامی ڕاستەوخۆ و زیرەکانە وەربگریت.";
             }
             return "System online. Please configure your Gemini API key in Settings to activate full strategic analysis.";
         }
@@ -479,21 +481,22 @@ CRITICAL OPERATIONAL DIRECTIVES:
             }
         }
 
-        async function speakWithGeminiTTS(text) {
+        async function speakWithGeminiTTS(text, originalInput) {
             stopAudioPlayback();
             isSpeaking = true;
 
             const cleanText = text.replace(/[*_#`~]/g, '').trim();
 
+            // Enforce deep executive male voice 'Charon'
             const payload = {
                 contents: [{
-                    parts: [{ text: `Say clearly and naturally in native voice: ${cleanText}` }]
+                    parts: [{ text: `Speak in a deep, authoritative executive male voice: ${cleanText}` }]
                 }],
                 generationConfig: {
                     responseModalities: ["AUDIO"],
                     speechConfig: {
                         voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: "Aoede" }
+                            prebuiltVoiceConfig: { voiceName: "Charon" }
                         }
                     }
                 }
@@ -536,15 +539,15 @@ CRITICAL OPERATIONAL DIRECTIVES:
                     };
                     await currentAudioElement.play();
                 } else {
-                    fallbackBrowserTTS(cleanText);
+                    fallbackBrowserTTS(cleanText, originalInput);
                 }
             } catch (err) {
                 console.warn("Gemini TTS failed, falling back to browser speech synthesizer:", err);
-                fallbackBrowserTTS(cleanText);
+                fallbackBrowserTTS(cleanText, originalInput);
             }
         }
 
-        function fallbackBrowserTTS(text) {
+        function fallbackBrowserTTS(text, originalInput) {
             if (!('speechSynthesis' in window)) {
                 isSpeaking = false;
                 resumeListeningAfterSpeech();
@@ -555,9 +558,9 @@ CRITICAL OPERATIONAL DIRECTIVES:
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 1.0;
 
-            if (isArabicScript(text)) {
+            if (isArabicOrKurdishScript(originalInput) || /[\u0600-\u06FF]/.test(text)) {
                 utterance.lang = 'ar-SA';
-            } else if (/[àâçéèêëîïôûùüÿñæœ]/i.test(text)) {
+            } else if (/bonjour|comment|merci|français/i.test(originalInput) || /[àâçéèêëîïôûùüÿñæœ]/i.test(text)) {
                 utterance.lang = 'fr-FR';
             } else {
                 utterance.lang = 'en-US';
@@ -605,7 +608,7 @@ CRITICAL OPERATIONAL DIRECTIVES:
             const messageDiv = document.createElement('div');
             messageDiv.className = `flex gap-3 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
 
-            const isRtl = isArabicScript(text);
+            const isRtl = isArabicOrKurdishScript(text);
             const textDirectionClass = isRtl ? 'rtl-text' : 'ltr-text';
 
             if (sender === 'user') {
@@ -644,7 +647,7 @@ CRITICAL OPERATIONAL DIRECTIVES:
                     </div>
                     <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-400 text-xs flex items-center gap-2 border border-slate-800">
                         <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-                        <span>Analyzing dynamic language and generating voice...</span>
+                        <span>Analyzing dynamic language and generating deep executive voice...</span>
                     </div>
                 </div>
             `;
@@ -699,7 +702,7 @@ CRITICAL OPERATIONAL DIRECTIVES:
                                 Aria Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. Speak or type in any global language to initiate a new session.
+                                Session reset. Speak or type in any global language to initiate a new executive session.
                             </p>
                         </div>
                     </div>
