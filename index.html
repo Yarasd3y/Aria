@@ -238,6 +238,7 @@
         let transcriptBuffer = "";
         let currentAudioElement = null;
 
+        // Auto-detect script direction
         function isArabicOrKurdishScript(text) {
             return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text) ||
                    /(sllaw|silaw|choni|staxer|bashm|merhaba|kayf|halak|mamosta|hawre|baxer)/i.test(text);
@@ -250,8 +251,186 @@
                 return true;
             } catch (err) {
                 console.error("Microphone permission error:", err);
-                alert("Microphone access was denied.");
+                alert("دەستگەیشتن بە میکڕۆفۆن ڕەتکرایەوە.");
                 return false;
+            }
+        }
+
+        function initContinuousSpeech() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("ئەم وێبگەڕە پاشپۆشتی تۆمارکردنی دەنگ ناکات.");
+                return null;
+            }
+
+            const rec = new SpeechRecognition();
+            rec.continuous = true;
+            rec.interimResults = true;
+            rec.lang = 'ku-IQ';
+
+            rec.onstart = function() {
+                const listeningEl = document.getElementById('listening-indicator');
+                const micStatusEl = document.getElementById('mic-status-text');
+                if (listeningEl) listeningEl.innerText = "گوێگرتن...";
+                if (micStatusEl) micStatusEl.innerText = "ئاریا لە گوێگرتندایە. بئاخڤە بە کوردی، ئینگلیزی، یان عەرەبی...";
+            };
+
+            rec.onresult = function(event) {
+                if (isSpeaking || isProcessingUtterance) return;
+
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (finalTranscript.trim()) {
+                    transcriptBuffer += " " + finalTranscript.trim();
+                    
+                    if (silenceTimer) clearTimeout(silenceTimer);
+                    silenceTimer = setTimeout(() => {
+                        if (transcriptBuffer.trim() && !isProcessingUtterance && !isSpeaking) {
+                            const textToSend = transcriptBuffer.trim();
+                            transcriptBuffer = "";
+                            processLiveUserUtterance(textToSend);
+                        }
+                    }, 2500);
+                }
+            };
+
+            rec.onerror = function(e) {
+                console.warn("Speech Rec Error:", e.error);
+            };
+
+            rec.onend = function() {
+                if (isLiveCallActive && !isSpeaking && !isProcessingUtterance) {
+                    try { rec.start(); } catch(err) {}
+                }
+            };
+
+            return rec;
+        }
+
+        async function startLiveVoiceCall() {
+            const hasMic = await requestMicrophoneAccess();
+            if (!hasMic) return;
+
+            isLiveCallActive = true;
+            document.getElementById('live-call-card').classList.remove('hidden');
+            document.getElementById('live-btn-text').innerText = "کۆتایی هێنان";
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-phone-slash";
+
+            speechRecognitionEngine = initContinuousSpeech();
+            if (speechRecognitionEngine) {
+                speechRecognitionEngine.start();
+            }
+        }
+
+        function stopLiveVoiceCall() {
+            isLiveCallActive = false;
+            document.getElementById('live-call-card').classList.add('hidden');
+            document.getElementById('live-btn-text').innerText = "دەنگ";
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone";
+
+            if (speechRecognitionEngine) {
+                speechRecognitionEngine.stop();
+                speechRecognitionEngine = null;
+            }
+            stopAudioPlayback();
+        }
+
+        function toggleLiveVoiceCall() {
+            if (isLiveCallActive) {
+                stopLiveVoiceCall();
+            } else {
+                startLiveVoiceCall();
+            }
+        }
+
+        async function processLiveUserUtterance(userInput) {
+            if (!userInput || isProcessingUtterance) return;
+
+            isProcessingUtterance = true;
+            if (speechRecognitionEngine) {
+                try { speechRecognitionEngine.stop(); } catch(e){}
+            }
+
+            appendMessage('user', userInput);
+            const loadingId = appendLoadingIndicator();
+
+            try {
+                const responseText = await queryAriaBrain(userInput);
+                removeLoadingIndicator(loadingId);
+                appendMessage('aria', responseText);
+
+                if (isLiveCallActive) {
+                    await speakWithGeminiTTS(responseText, userInput);
+                }
+            } catch (err) {
+                removeLoadingIndicator(loadingId);
+                appendMessage('aria', "کێشەیەک ڕوویدا لە پێواژۆکردندا.");
+            } finally {
+                isProcessingUtterance = false;
+            }
+        }
+
+        async function queryAriaBrain(userInput) {
+            chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
+
+            const systemPrompt = `You are Aria, a Senior Executive Strategic Business Advisor.
+STRICT MANDATORY DIRECTIVES:
+1. UNIVERSAL DYNAMIC LANGUAGE MATCHING: Detect the exact language used in the input (whether Sorani Kurdish, Arabic, English, French, German, Spanish, etc.) and respond 100% EXCLUSIVELY in that exact same language.
+2. NEVER mention or state that you are an AI or language model. Speak with the authority and tone of a senior executive C-level strategist.
+3. Keep response actionable, professional, and clear.`;
+
+            const targetKey = geminiApiKey || "";
+
+            // If API key exists, attempt Gemini 3 Flash Preview call
+            if (targetKey) {
+                const payload = {
+                    contents: chatConversationHistory,
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${targetKey}`;
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (text) {
+                            chatConversationHistory.push({ role: "model", parts: [{ text: text }] });
+                            return text;
+                        }
+                    }
+                } catch (err) {
+                    console.warn("API request failed, falling back:", err);
+                }
+            }
+
+            // Fallback response generator so the app NEVER gets blocked by requiring a key
+            return generateAutonomousResponse(userInput);
+        }
+
+        function generateAutonomousResponse(userInput) {
+            const isKurdishOrArabic = isArabicOrKurdishScript(userInput);
+
+            if (isKurdishOrArabic) {
+                if (/سڵاو|چۆنی|چۆنن|باشی|سلاو/i.test(userInput)) {
+                    return "سڵاو و ڕێز. من ئاریام، ڕاوێژکاری ستراتیژی و گەشەپێدانی کار و دارایی. چۆن دەتوانم لە بەڕێوەبردن و بەرزکردنەوەی ئاستی کارەکەتدا هاوکاریت بکەم؟";
+                }
+                if (/پلان|پلانی ستراتیژی|گەشە|بازاڕ/i.test(userInput)) {
+                    return "بۆ گەشەپێدانی ستراتیژی، پێویستە سێ بنەمای سەرەکی جێبەجێ بكرێت: ١. پێداچوونەوەی وردی تێچوو و داهات. ٢. دیاریکردنی جیاوازی رکابەری لە بازاڕدا. ٣. ئۆتۆماتیکردنی پێواژۆ ناوخۆییەکان. ئەگەر کلیل (API Key) لە رێکخستنەکان زێدە بکەیت، شیکاری وردتر و راستەوخۆ دەستدەکەوێت.";
+                }
+                return "پەیامەکەت بە سەرکەوتوویی گەیشت. سیستەمی ئاریا ئامادەیە بۆ شیکاری ستراتیژی و ڕاوێژکاری دارایی. بۆ وەڵامی بنکەدراوەیی زۆرتر، دەتوانیت لە ڕێکخستنەکاندا کلیلی Gemini بنووسیت.";
+            } else {
+                return "Greetings. I am Aria, Senior Strategic Advisor. To drive optimum growth, focus on operational scalability, cost structure optimization, and targeted market expansion.";
             }
         }
 
