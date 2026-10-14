@@ -145,7 +145,7 @@
                             Aria Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, your Senior Strategic Executive Advisor. I am directly connected to your Railway Flowise engine.
+                            Welcome. I am Aria, your Senior Strategic Executive Advisor. Ready for global operations and multi-language strategy.
                         </p>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                 </button>
 
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type or speak your message..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed ltr-text" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type or speak in Kurdish, Arabic, English..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed ltr-text" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
@@ -191,7 +191,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5" id="connection-status-label">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Railway Flowise Engine
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Railway Flowise Engine (120B)
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -215,7 +215,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
-                    <input type="text" id="flowise-url-input" placeholder="https://flowise-production-439f.up.railway.app/api/v1/prediction/..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
+                    <input type="text" id="flowise-url-input" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
                     <p class="text-[10px] text-slate-400 mt-1">Directly configured to your live Railway deployment.</p>
                 </div>
             </div>
@@ -228,7 +228,6 @@
     </div>
 
     <script>
-        // Exact hardcoded Railway Flowise API URL provided by user
         const DEFAULT_FLOWISE_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
         let flowiseApiUrl = localStorage.getItem('aria_flowise_url') || DEFAULT_FLOWISE_URL;
 
@@ -236,18 +235,34 @@
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
 
-        function isArabicOrKurdishScript(text) {
-            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
+        function detectLanguageScript(text) {
+            if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text)) {
+                // Check if Kurdish specific characters exist or default to Arabic/Kurdish
+                if (/[چپگڤۆڵۆیژئ]/.test(text)) {
+                    return 'ku';
+                }
+                return 'ar';
+            }
+            return 'en';
         }
 
         async function queryAriaBrain(userInput) {
             const endpoint = flowiseApiUrl.trim() || DEFAULT_FLOWISE_URL;
 
+            // Enforce language instruction prefix to prevent model language drift
+            const langCode = detectLanguageScript(userInput);
+            let explicitPrompt = userInput;
+            if (langCode === 'ku') {
+                explicitPrompt = "[System Directive: Respond 100% in Sorani Kurdish (کوردی)]: " + userInput;
+            } else if (langCode === 'ar') {
+                explicitPrompt = "[System Directive: Respond 100% in Arabic (العربية)]: " + userInput;
+            }
+
             try {
                 const response = await fetch(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ question: userInput })
+                    body: JSON.stringify({ question: explicitPrompt })
                 });
 
                 if (!response.ok) {
@@ -255,7 +270,11 @@
                 }
 
                 const data = await response.json();
-                return data.text || data.json?.text || "وەڵام وەرنگیرایەوە.";
+                let replyText = data.text || data.json?.text || data.output || "No response received.";
+                
+                // Clean up potential echo loops or prompt artifacts
+                replyText = replyText.replace(/\[System Directive.*?\]:/gi, '').trim();
+                return replyText;
             } catch (err) {
                 console.error("Flowise connection error:", err);
                 return "کێشەیەک لە پەیوەندیکردن بە سێرڤەری Flowise ڕوویدا. تکایە دڵنیابەرەوە لینکەکە ئۆنلاینە.";
@@ -293,7 +312,8 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 1.0;
 
-            if (isArabicOrKurdishScript(originalInput) || /[\u0600-\u06FF]/.test(text)) {
+            const lang = detectLanguageScript(text);
+            if (lang === 'ku' || lang === 'ar') {
                 utterance.lang = 'ar-SA';
             } else {
                 utterance.lang = 'en-US';
@@ -306,14 +326,14 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             
             if (!SpeechRecognition) {
-                alert("وێبگەڕەکەت پشتگیری مایکڕۆفۆن ناکات. تکایە Google Chrome بەکاربهێنە.");
+                alert("Browser does not support speech recognition.");
                 return null;
             }
 
             const recognition = new SpeechRecognition();
-            recognition.continuous = true;
+            recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'ku-IQ'; // Supports Arabic/English/Kurdish fallback dynamically
+            recognition.lang = 'ar-IQ'; 
 
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
@@ -327,10 +347,6 @@
 
             recognition.onerror = function(event) {
                 console.warn("Speech recognition event:", event.error);
-                if (event.error === 'not-allowed') {
-                    alert("تکایە ڕێگە بدە مایکڕۆفۆن لە وێبگەڕەکەتدا کار بکات (Allow Microphone).");
-                    stopLiveVoiceCall();
-                }
             };
 
             recognition.onend = function() {
@@ -392,8 +408,8 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `flex gap-3 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
 
-            const isRtl = isArabicOrKurdishScript(text);
-            const textDirectionClass = isRtl ? 'rtl-text' : 'ltr-text';
+            const lang = detectLanguageScript(text);
+            const textDirectionClass = (lang === 'ku' || lang === 'ar') ? 'rtl-text' : 'ltr-text';
 
             if (sender === 'user') {
                 messageDiv.innerHTML = `
@@ -448,7 +464,7 @@
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value.trim();
-            if (!text) return;
+            if (!text || isProcessingUtterance) return;
 
             input.value = '';
             autoResizeTextarea(input);
