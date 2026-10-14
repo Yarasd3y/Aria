@@ -160,6 +160,7 @@
             </div>
         </div>
 
+        <!-- Input Bar -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Toggle Voice" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
@@ -195,12 +196,11 @@
         let selectedMaleVoice = null;
         let interactionCounter = 0;
 
-        // Force initialize and lock deep male voice on load across browsers
+        // Voice initialization logic for Deep Male voice allocation
         function initVoiceSelection() {
             if ('speechSynthesis' in window) {
                 const loadVoices = () => {
                     const voices = window.speechSynthesis.getVoices();
-                    // Prioritize clear deep male voices
                     selectedMaleVoice = voices.find(v => 
                         (v.name.toLowerCase().includes('male') || 
                          v.name.toLowerCase().includes('david') || 
@@ -220,14 +220,19 @@
         }
         window.addEventListener('DOMContentLoaded', initVoiceSelection);
 
+        // Pre-processing to prevent recognition misinterpretations like "in voice" -> "invoice"
+        function sanitizeSpeechTranscript(text) {
+            let cleaned = text.replace(/\binvoice\b/gi, "in voice");
+            cleaned = cleaned.replace(/\bvoice language\b/gi, "spoken voice");
+            return cleaned;
+        }
+
         async function queryAriaBrain(userInput) {
             try {
-                // Strict directive preventing repetitive greetings & preventing false claims about voice capability
-                const directive = interactionCounter > 1 
-                    ? "[SYSTEM DIRECTIVE: Respond directly to the user's question. DO NOT introduce yourself or repeat greetings. Maintain a male executive persona ('مستشار تنفيذي'). You DO have full spoken voice capability through the user's web interface, so never claim you cannot speak. Respond in the exact input language used by the user.]" 
-                    : "[SYSTEM DIRECTIVE: Respond in the user's exact input language. Maintain a male executive persona ('مستشار تنفيذي'). Note that you HAVE active voice text-to-speech output in this interface.]";
+                // System directive that explicitly instructs Aria about his voice capability and language matching
+                const directive = `[SYSTEM DIRECTIVE: You are Aria, a senior male executive advisor ('مستشار تنفيذي'). You ARE ALREADY connected to a real-time spoken voice interface on the user's screen. NEVER claim you cannot speak or give tutorials on how to turn on TTS settings. Respond directly and concisely to the user in their EXACT input language. Do not repeat greetings or self-introductions if this is an ongoing session.]`;
 
-                const finalQuestion = `${directive} ${userInput}`;
+                const finalQuestion = `${directive}\n\nClient Input: ${userInput}`;
 
                 const response = await fetch(FLOWISE_API_URL, {
                     method: "POST",
@@ -244,7 +249,7 @@
                 return replyText.trim();
             } catch (err) {
                 console.error("Flowise connection error:", err);
-                return "Connection error encountered. Please try again.";
+                return "Connection error encountered. Please verify network access.";
             }
         }
 
@@ -262,7 +267,7 @@
                 removeLoadingIndicator(loadingId);
                 appendMessage('aria', responseText);
 
-                // Speak response in live voice mode OR whenever synthesized voice is triggered
+                // Speak response in live voice mode or text interface
                 speakAriaResponse(responseText);
             } catch (err) {
                 removeLoadingIndicator(loadingId);
@@ -277,14 +282,14 @@
 
             window.speechSynthesis.cancel();
             
-            // Clean markdown syntax for smooth speech output
-            const cleanText = text.replace(/[*#_`]/g, '').trim();
+            // Clean markdown markup for smooth TTS reading
+            const cleanText = text.replace(/[*#_`>]/g, '').trim();
             const utterance = new SpeechSynthesisUtterance(cleanText);
             
             utterance.rate = 0.95;
-            utterance.pitch = 0.85; // Deep male pitch standard
+            utterance.pitch = 0.85; // Deep male pitch threshold
 
-            // Detect language for proper TTS accent allocation
+            // Detect language for TTS engine selection
             if (/[\u0600-\u06FF]/.test(cleanText)) {
                 utterance.lang = 'ar-SA';
             } else {
@@ -311,9 +316,10 @@
 
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
-                const transcript = event.results[lastIndex][0].transcript.trim();
+                let transcript = event.results[lastIndex][0].transcript.trim();
                 
                 if (transcript && !isProcessingUtterance) {
+                    transcript = sanitizeSpeechTranscript(transcript);
                     document.getElementById('user-input').value = transcript;
                     processUserUtterance(transcript);
                 }
@@ -417,7 +423,7 @@
                     </div>
                     <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-400 text-xs flex items-center gap-2 border border-slate-800">
                         <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-                        <span>Aria is processing...</span>
+                        <span>Aria is analyzing...</span>
                     </div>
                 </div>
             `;
@@ -472,7 +478,7 @@
                                 Aria - Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. Male executive engine ready.
+                                Session reset. Senior Executive engine active.
                             </p>
                         </div>
                     </div>
