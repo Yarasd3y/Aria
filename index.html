@@ -74,7 +74,7 @@
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         ARIA
                         <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                            International Executive Intelligence
+                            Senior Executive Intelligence
                         </span>
                     </h1>
                     <p class="text-xs text-slate-400 hidden sm:block">Senior Global Strategic Advisory Engine</p>
@@ -92,6 +92,7 @@
 
     <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
 
+        <!-- Live Voice Session Indicator Banner -->
         <div id="live-call-card" class="hidden glass-card p-4 sm:p-5 rounded-3xl border border-emerald-500/40 shadow-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div class="relative flex items-center justify-center p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 live-active">
@@ -119,6 +120,7 @@
             </button>
         </div>
 
+        <!-- Scrollable Thread Container -->
         <div id="chat-thread" class="flex-1 overflow-y-auto pr-1 space-y-4 sm:space-y-6">
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
@@ -127,10 +129,10 @@
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                            Aria - International Executive Advisor
+                            Aria - Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, your Senior Executive Strategic Advisor. I specialize in international enterprise strategy, global expansion, and high-level business consultation.
+                            Welcome. I am Aria, your Senior Executive Advisor. Speak or write naturally, and I will assist you with executive-level guidance.
                         </p>
                     </div>
                 </div>
@@ -140,33 +142,34 @@
                         <div>
                             <div class="text-emerald-400 text-xs mb-1 font-bold flex items-center gap-2">
                                 <i class="fa-solid fa-microphone"></i>
-                                <span>Start Microphone Voice Call</span>
+                                <span>Start Hands-Free Voice Session</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Hands-free real-time strategic session</div>
+                            <div class="text-[11px] text-slate-300">Live conversation mode</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
 
-                    <button onclick="setPrompt('Analyze international market expansion strategies for tech scale-ups.')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('Could you please assist me in formulating an international business growth strategy?')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-indigo-400 text-xs mb-1 font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line"></i>
+                            <i class="fa-solid fa-comments"></i>
                             <span>Sample Strategic Query</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Analyze international market expansion strategies...</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">Could you please assist me...</div>
                     </button>
                 </div>
             </div>
         </div>
 
+        <!-- Input Control Panel -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
-                <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Toggle Microphone" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
+                <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Toggle Voice" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
                     <i class="fa-solid fa-microphone text-sm" id="mic-btn-icon"></i>
                     <span id="live-btn-text">Voice</span>
                 </button>
 
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type professional strategic query..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Write your message here..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
@@ -176,7 +179,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5" id="connection-status-label">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Railway Flowise Pipeline (120B)
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Flowise Live Engine Connected (Male Executive Persona)
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -190,13 +193,34 @@
         let isLiveCallActive = false;
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
+        let selectedMaleVoice = null;
+
+        // Force initialize and lock deep male voice on load
+        if ('speechSynthesis' in window) {
+            const loadVoices = () => {
+                const voices = window.speechSynthesis.getVoices();
+                selectedMaleVoice = voices.find(v => 
+                    (v.name.toLowerCase().includes('male') || 
+                     v.name.toLowerCase().includes('david') || 
+                     v.name.toLowerCase().includes('george') || 
+                     v.name.toLowerCase().includes('daniel') ||
+                     v.name.toLowerCase().includes('oliver') ||
+                     v.name.toLowerCase().includes('ryan')) && !v.name.toLowerCase().includes('female')
+                ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+            };
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
 
         async function queryAriaBrain(userInput) {
             try {
+                // System directive explicitly locking the male executive persona
+                const finalQuestion = `[SYSTEM MANDATE: Respond in the user's exact input language. Maintain a professional male executive tone with deep authority.] ${userInput}`;
+
                 const response = await fetch(FLOWISE_API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ question: userInput })
+                    body: JSON.stringify({ question: finalQuestion })
                 });
 
                 if (!response.ok) {
@@ -208,7 +232,7 @@
                 return replyText.trim();
             } catch (err) {
                 console.error("Flowise connection error:", err);
-                return "A connection error occurred while communicating with the advisory server. Please verify network status.";
+                return "Connection error encountered. Please try again.";
             }
         }
 
@@ -230,7 +254,7 @@
                 }
             } catch (err) {
                 removeLoadingIndicator(loadingId);
-                appendMessage('aria', "An error occurred during response processing.");
+                appendMessage('aria', "An error occurred during processing.");
             } finally {
                 isProcessingUtterance = false;
             }
@@ -241,12 +265,12 @@
 
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 1.0;
-            
-            // Prefer executive female English voice if available
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Google US English')));
-            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 0.95;
+            utterance.pitch = 0.85; // Deep male executive voice pitch
+
+            if (selectedMaleVoice) {
+                utterance.voice = selectedMaleVoice;
+            }
 
             window.speechSynthesis.speak(utterance);
         }
@@ -370,7 +394,7 @@
                     </div>
                     <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-400 text-xs flex items-center gap-2 border border-slate-800">
                         <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-                        <span>Synthesizing strategic advisory...</span>
+                        <span>Aria is processing...</span>
                     </div>
                 </div>
             `;
@@ -395,6 +419,7 @@
         }
 
         function handleKeyPress(e) {
+            5;
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
@@ -421,10 +446,10 @@
                         </div>
                         <div class="space-y-1.5 flex-1">
                             <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                                Aria - International Executive Advisor
+                                Aria - Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. Dedicated global pipeline active.
+                                Session reset. Male executive advisory engine ready.
                             </p>
                         </div>
                     </div>
