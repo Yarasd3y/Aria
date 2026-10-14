@@ -145,7 +145,7 @@
                             Aria Executive Strategic Advisory
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, Senior Strategic Business Advisor. I automatically detect and respond in your exact input language (Kurdish, English, Arabic, French, etc.) with high-level data-driven advisory.
+                            Welcome. I am Aria, Senior Strategic Business Advisor. I automatically detect and respond in your exact input language with high-level data-driven advisory.
                         </p>
                     </div>
                 </div>
@@ -192,7 +192,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Autonomous Multilingual Engine Enabled
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Flowise Engine
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -206,7 +206,7 @@
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
                     <i class="fa-solid fa-sliders text-indigo-400"></i>
-                    <span>Engine Settings</span>
+                    <span>Flowise Connection Settings</span>
                 </h3>
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white p-1">
                     <i class="fa-solid fa-xmark"></i>
@@ -215,9 +215,16 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Gemini API Key (Required)</label>
-                    <input type="password" id="gemini-api-key-input" placeholder="Paste key here (AIzaSy...)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
+                    <input type="text" id="flowise-url-input" placeholder="http://localhost:3000/api/v1/prediction/YOUR_CHATFLOW_ID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
+                    <p class="text-[10px] text-slate-400 mt-1">Lینکەکە لە بەشی API Endpoints (ئایکۆنی &lt;/&gt;) لە Flowise کۆپی بکە و لێرە پەیستی بکە.</p>
                 </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">باشە / Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">پاشەکەوتکردن / Save</button>
+            </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -229,488 +236,67 @@
 
     <script>
         let isLiveCallActive = false;
-        let geminiApiKey = localStorage.getItem('aria_gemini_key') || "";
+        // Pre-configured directly with your exact Railway Flowise instance API
+        let flowiseApiUrl = localStorage.getItem('aria_flowise_url') || "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
         let isSpeaking = false;
         let chatConversationHistory = [];
-        let silenceTimer = null;
-        let transcriptBuffer = "";
-        let currentAudioElement = null;
 
-        // Auto-detect script direction
         function isArabicOrKurdishScript(text) {
-            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text) ||
-                   /(sllaw|silaw|choni|staxer|bashm|merhaba|kayf|halak|mamosta|hawre|baxer)/i.test(text);
-        }
-
-        async function requestMicrophoneAccess() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                stream.getTracks().forEach(track => track.stop());
-                return true;
-            } catch (err) {
-                console.error("Microphone permission error:", err);
-                alert("دەستگەیشتن بە میکڕۆفۆن ڕەتکرایەوە.");
-                return false;
-            }
-        }
-
-        function initContinuousSpeech() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("ئەم وێبگەڕە پاشپۆشتی تۆمارکردنی دەنگ ناکات.");
-                return null;
-            }
-
-            const rec = new SpeechRecognition();
-            rec.continuous = true;
-            rec.interimResults = true;
-            rec.lang = 'ku-IQ';
-
-            rec.onstart = function() {
-                const listeningEl = document.getElementById('listening-indicator');
-                const micStatusEl = document.getElementById('mic-status-text');
-                if (listeningEl) listeningEl.innerText = "گوێگرتن...";
-                if (micStatusEl) micStatusEl.innerText = "ئاریا لە گوێگرتندایە. بئاخڤە بە کوردی، ئینگلیزی، یان عەرەبی...";
-            };
-
-            rec.onresult = function(event) {
-                if (isSpeaking || isProcessingUtterance) return;
-
-                let finalTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    }
-                }
-
-                if (finalTranscript.trim()) {
-                    transcriptBuffer += " " + finalTranscript.trim();
-                    
-                    if (silenceTimer) clearTimeout(silenceTimer);
-                    silenceTimer = setTimeout(() => {
-                        if (transcriptBuffer.trim() && !isProcessingUtterance && !isSpeaking) {
-                            const textToSend = transcriptBuffer.trim();
-                            transcriptBuffer = "";
-                            processLiveUserUtterance(textToSend);
-                        }
-                    }, 2500);
-                }
-            };
-
-            rec.onerror = function(e) {
-                console.warn("Speech Rec Error:", e.error);
-            };
-
-            rec.onend = function() {
-                if (isLiveCallActive && !isSpeaking && !isProcessingUtterance) {
-                    try { rec.start(); } catch(err) {}
-                }
-            };
-
-            return rec;
-        }
-
-        async function startLiveVoiceCall() {
-            const hasMic = await requestMicrophoneAccess();
-            if (!hasMic) return;
-
-            isLiveCallActive = true;
-            document.getElementById('live-call-card').classList.remove('hidden');
-            document.getElementById('live-btn-text').innerText = "کۆتایی هێنان";
-            document.getElementById('mic-btn-icon').className = "fa-solid fa-phone-slash";
-
-            speechRecognitionEngine = initContinuousSpeech();
-            if (speechRecognitionEngine) {
-                speechRecognitionEngine.start();
-            }
-        }
-
-        function stopLiveVoiceCall() {
-            isLiveCallActive = false;
-            document.getElementById('live-call-card').classList.add('hidden');
-            document.getElementById('live-btn-text').innerText = "دەنگ";
-            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone";
-
-            if (speechRecognitionEngine) {
-                speechRecognitionEngine.stop();
-                speechRecognitionEngine = null;
-            }
-            stopAudioPlayback();
-        }
-
-        function toggleLiveVoiceCall() {
-            if (isLiveCallActive) {
-                stopLiveVoiceCall();
-            } else {
-                startLiveVoiceCall();
-            }
-        }
-
-        async function processLiveUserUtterance(userInput) {
-            if (!userInput || isProcessingUtterance) return;
-
-            isProcessingUtterance = true;
-            if (speechRecognitionEngine) {
-                try { speechRecognitionEngine.stop(); } catch(e){}
-            }
-
-            appendMessage('user', userInput);
-            const loadingId = appendLoadingIndicator();
-
-            try {
-                const responseText = await queryAriaBrain(userInput);
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', responseText);
-
-                if (isLiveCallActive) {
-                    await speakWithGeminiTTS(responseText, userInput);
-                }
-            } catch (err) {
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', "کێشەیەک ڕوویدا لە پێواژۆکردندا.");
-            } finally {
-                isProcessingUtterance = false;
-            }
+            return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
         }
 
         async function queryAriaBrain(userInput) {
-            chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
-
-            const systemPrompt = `You are Aria, a Senior Executive Strategic Business Advisor.
-STRICT MANDATORY DIRECTIVES:
-1. UNIVERSAL DYNAMIC LANGUAGE MATCHING: Detect the exact language used in the input (whether Sorani Kurdish, Arabic, English, French, German, Spanish, etc.) and respond 100% EXCLUSIVELY in that exact same language.
-2. NEVER mention or state that you are an AI or language model. Speak with the authority and tone of a senior executive C-level strategist.
-3. Keep response actionable, professional, and clear.`;
-
-            const targetKey = geminiApiKey || "";
-
-            // If API key exists, attempt Gemini 3 Flash Preview call
-            if (targetKey) {
-                const payload = {
-                    contents: chatConversationHistory,
-                    systemInstruction: { parts: [{ text: systemPrompt }] }
-                };
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${targetKey}`;
-
-                try {
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (text) {
-                            chatConversationHistory.push({ role: "model", parts: [{ text: text }] });
-                            return text;
-                        }
-                    }
-                } catch (err) {
-                    console.warn("API request failed, falling back:", err);
-                }
+            if (!flowiseApiUrl) {
+                return "تکایە سەرەتا URLی چاتفلۆکەی Flowise لە ڕێکخستنەکاندا (Settings) دابنێ.";
             }
-
-            // Fallback response generator so the app NEVER gets blocked by requiring a key
-            return generateAutonomousResponse(userInput);
-        }
-
-        function generateAutonomousResponse(userInput) {
-            const isKurdishOrArabic = isArabicOrKurdishScript(userInput);
-
-            if (isKurdishOrArabic) {
-                if (/سڵاو|چۆنی|چۆنن|باشی|سلاو/i.test(userInput)) {
-                    return "سڵاو و ڕێز. من ئاریام، ڕاوێژکاری ستراتیژی و گەشەپێدانی کار و دارایی. چۆن دەتوانم لە بەڕێوەبردن و بەرزکردنەوەی ئاستی کارەکەتدا هاوکاریت بکەم؟";
-                }
-                if (/پلان|پلانی ستراتیژی|گەشە|بازاڕ/i.test(userInput)) {
-                    return "بۆ گەشەپێدانی ستراتیژی، پێویستە سێ بنەمای سەرەکی جێبەجێ بكرێت: ١. پێداچوونەوەی وردی تێچوو و داهات. ٢. دیاریکردنی جیاوازی رکابەری لە بازاڕدا. ٣. ئۆتۆماتیکردنی پێواژۆ ناوخۆییەکان. ئەگەر کلیل (API Key) لە رێکخستنەکان زێدە بکەیت، شیکاری وردتر و راستەوخۆ دەستدەکەوێت.";
-                }
-                return "پەیامەکەت بە سەرکەوتوویی گەیشت. سیستەمی ئاریا ئامادەیە بۆ شیکاری ستراتیژی و ڕاوێژکاری دارایی. بۆ وەڵامی بنکەدراوەیی زۆرتر، دەتوانیت لە ڕێکخستنەکاندا کلیلی Gemini بنووسیت.";
-            } else {
-                return "Greetings. I am Aria, Senior Strategic Advisor. To drive optimum growth, focus on operational scalability, cost structure optimization, and targeted market expansion.";
-            }
-        }
-
-        function initContinuousSpeech() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("Speech recognition is not supported in this browser.");
-                return null;
-            }
-
-            const rec = new SpeechRecognition();
-            rec.continuous = true;
-            rec.interimResults = true;
-            rec.lang = 'ku-IQ';
-
-            rec.onstart = function() {
-                document.getElementById('listening-indicator').innerText = "Listening...";
-                document.getElementById('mic-status-text').innerText = "Aria is listening. Speak in Kurdish, English, Arabic, or French...";
-            };
-
-            rec.onresult = function(event) {
-                if (isSpeaking || isProcessingUtterance) return;
-
-                let finalTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    }
-                }
-
-                if (finalTranscript.trim()) {
-                    transcriptBuffer += " " + finalTranscript.trim();
-                    
-                    if (silenceTimer) clearTimeout(silenceTimer);
-                    silenceTimer = setTimeout(() => {
-                        if (transcriptBuffer.trim() && !isProcessingUtterance && !isSpeaking) {
-                            const textToSend = transcriptBuffer.trim();
-                            transcriptBuffer = "";
-                            processLiveUserUtterance(textToSend);
-                        }
-                    }, 2800);
-                }
-            };
-
-            rec.onerror = function(e) {
-                console.warn("Speech Rec Error:", e.error);
-            };
-
-            rec.onend = function() {
-                if (isLiveCallActive && !isSpeaking && !isProcessingUtterance) {
-                    try { rec.start(); } catch(err) {}
-                }
-            };
-
-            return rec;
-        }
-
-        async function startLiveVoiceCall() {
-            const hasMic = await requestMicrophoneAccess();
-            if (!hasMic) return;
-
-            isLiveCallActive = true;
-            document.getElementById('live-call-card').classList.remove('hidden');
-            document.getElementById('live-btn-text').innerText = "End Call";
-            document.getElementById('mic-btn-icon').className = "fa-solid fa-phone-slash";
-
-            speechRecognitionEngine = initContinuousSpeech();
-            if (speechRecognitionEngine) {
-                speechRecognitionEngine.start();
-            }
-        }
-
-        function stopLiveVoiceCall() {
-            isLiveCallActive = false;
-            document.getElementById('live-call-card').classList.add('hidden');
-            document.getElementById('live-btn-text').innerText = "Voice";
-            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone";
-
-            if (speechRecognitionEngine) {
-                speechRecognitionEngine.stop();
-                speechRecognitionEngine = null;
-            }
-            stopAudioPlayback();
-        }
-
-        function toggleLiveVoiceCall() {
-            if (isLiveCallActive) {
-                stopLiveVoiceCall();
-            } else {
-                startLiveVoiceCall();
-            }
-        }
-
-        async function processLiveUserUtterance(userInput) {
-            if (!userInput || isProcessingUtterance) return;
-
-            isProcessingUtterance = true;
-            if (speechRecognitionEngine) {
-                try { speechRecognitionEngine.stop(); } catch(e){}
-            }
-
-            appendMessage('user', userInput);
-            const loadingId = appendLoadingIndicator();
 
             try {
-                const responseText = await queryAriaBrain(userInput);
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', responseText);
-
-                if (isLiveCallActive) {
-                    await speakWithGeminiTTS(responseText, userInput);
-                }
-            } catch (err) {
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', "Error processing query. Please verify your settings.");
-            } finally {
-                isProcessingUtterance = false;
-            }
-        }
-
-        async function queryAriaBrain(userInput) {
-            chatConversationHistory.push({ role: "user", parts: [{ text: userInput }] });
-
-            const systemPrompt = `You are Aria, a Senior Executive Strategic Business Advisor.
-STRICT MANDATORY DIRECTIVES:
-1. UNIVERSAL DYNAMIC LANGUAGE MATCHING: Detect the exact language used in the input (whether Sorani Kurdish, Arabic, English, French, German, Spanish, etc.) and respond 100% EXCLUSIVELY in that exact same language.
-2. NEVER mention or state that you are an AI or language model. Speak with the authority and tone of a senior executive C-level strategist.
-3. Keep spoken replies short, powerful, dynamic, and fluent (2 to 3 sentences max).`;
-
-            const payload = {
-                contents: chatConversationHistory,
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            const targetKey = geminiApiKey || "";
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${targetKey}`;
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const response = await fetch(flowiseApiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: userInput })
                 });
 
-                if (!response.ok) throw new Error(`API HTTP error ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
 
                 const data = await response.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text) throw new Error("Received empty model response");
-
-                chatConversationHistory.push({ role: "model", parts: [{ text: text }] });
-                return text;
+                return data.text || data.json?.text || "وەڵام وەرنگیرایەوە.";
             } catch (err) {
-                console.warn("API Call Exception:", err);
-                return generateFallbackResponse(userInput);
+                console.error("Flowise error:", err);
+                return "کێشەیەک لە پەیوەندیکردن بە Flowise ڕوویدا. تکایە دڵنیابەرەوە لە ڕاستیی لینکەکە.";
             }
         }
 
-        function generateFallbackResponse(userInput) {
-            if (isArabicOrKurdishScript(userInput)) {
-                return "سڵاو و ڕێز. تکایە کلیلی ڕاستەقینەی Gemini API لە بەشی ڕێکخستنەکان (Settings) بنووسە تا وەڵامی ڕاستەوخۆ وەربگریت.";
-            }
-            return "System active. Please configure your Gemini API key in Settings to activate full strategic analysis.";
-        }
+        async function processLiveUserUtterance(userInput) {
+            if (!userInput || isProcessingUtterance) return;
 
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
+            isProcessingUtterance = true;
 
-        function pcmToWav(pcm16Data, sampleRate) {
-            const buffer = new ArrayBuffer(44 + pcm16Data.length * 2);
-            const view = new DataView(buffer);
-
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcm16Data.length * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, pcm16Data.length * 2, true);
-
-            let offset = 44;
-            for (let i = 0; i < pcm16Data.length; i++, offset += 2) {
-                view.setInt16(offset, pcm16Data[i], true);
-            }
-
-            return new Blob([buffer], { type: 'audio/wav' });
-        }
-
-        function writeString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
-            }
-        }
-
-        async function speakWithGeminiTTS(text, originalInput) {
-            stopAudioPlayback();
-            isSpeaking = true;
-
-            const cleanText = text.replace(/[*_#`~]/g, '').trim();
-
-            const payload = {
-                contents: [{
-                    parts: [{ text: `${cleanText}` }]
-                }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: "Puck" }
-                        }
-                    }
-                }
-            };
-
-            const targetKey = geminiApiKey || "";
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${targetKey}`;
+            appendMessage('user', userInput);
+            const loadingId = appendLoadingIndicator();
 
             try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const responseText = await queryAriaBrain(userInput);
+                removeLoadingIndicator(loadingId);
+                appendMessage('aria', responseText);
 
-                if (!response.ok) throw new Error("TTS API Error");
-
-                const result = await response.json();
-                const part = result?.candidates?.[0]?.content?.parts?.[0];
-                const audioData = part?.inlineData?.data;
-                const mimeType = part?.inlineData?.mimeType;
-
-                if (audioData && mimeType) {
-                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
-                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
-                    
-                    const pcmBuffer = base64ToArrayBuffer(audioData);
-                    const pcm16 = new Int16Array(pcmBuffer);
-                    const wavBlob = pcmToWav(pcm16, sampleRate);
-                    const audioUrl = URL.createObjectURL(wavBlob);
-
-                    currentAudioElement = new Audio(audioUrl);
-                    currentAudioElement.onended = () => {
-                        isSpeaking = false;
-                        resumeListeningAfterSpeech();
-                    };
-                    currentAudioElement.onerror = () => {
-                        isSpeaking = false;
-                        resumeListeningAfterSpeech();
-                    };
-                    await currentAudioElement.play();
-                } else {
-                    fallbackBrowserTTS(cleanText, originalInput);
+                if (isLiveCallActive) {
+                    fallbackBrowserTTS(responseText, userInput);
                 }
             } catch (err) {
-                console.warn("Gemini TTS failed, falling back to browser speech synthesizer:", err);
-                fallbackBrowserTTS(cleanText, originalInput);
+                removeLoadingIndicator(loadingId);
+                appendMessage('aria', "ئێرۆرێک لە پێواژۆکردن ڕوویدا.");
+            } finally {
+                isProcessingUtterance = false;
             }
         }
 
         function fallbackBrowserTTS(text, originalInput) {
-            if (!('speechSynthesis' in window)) {
-                isSpeaking = false;
-                resumeListeningAfterSpeech();
-                return;
-            }
+            if (!('speechSynthesis' in window)) return;
 
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
@@ -718,44 +304,11 @@ STRICT MANDATORY DIRECTIVES:
 
             if (isArabicOrKurdishScript(originalInput) || /[\u0600-\u06FF]/.test(text)) {
                 utterance.lang = 'ar-SA';
-            } else if (/bonjour|comment|merci|français/i.test(originalInput) || /[àâçéèêëîïôûùüÿñæœ]/i.test(text)) {
-                utterance.lang = 'fr-FR';
             } else {
                 utterance.lang = 'en-US';
             }
 
-            utterance.onend = () => {
-                isSpeaking = false;
-                resumeListeningAfterSpeech();
-            };
-
-            utterance.onerror = () => {
-                isSpeaking = false;
-                resumeListeningAfterSpeech();
-            };
-
             window.speechSynthesis.speak(utterance);
-        }
-
-        function resumeListeningAfterSpeech() {
-            if (isLiveCallActive && speechRecognitionEngine) {
-                setTimeout(() => {
-                    try {
-                        if (!isSpeaking && !isProcessingUtterance) {
-                            speechRecognitionEngine.start();
-                        }
-                    } catch(e) {}
-                }, 1000);
-            }
-        }
-
-        function stopAudioPlayback() {
-            isSpeaking = false;
-            if (currentAudioElement) {
-                currentAudioElement.pause();
-                currentAudioElement = null;
-            }
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
 
         function appendMessage(sender, text) {
@@ -860,7 +413,7 @@ STRICT MANDATORY DIRECTIVES:
                                 Aria Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. You may speak or type in any language to continue.
+                                Session reset.
                             </p>
                         </div>
                     </div>
@@ -869,8 +422,8 @@ STRICT MANDATORY DIRECTIVES:
         }
 
         function openConfigModal() {
-            const input = document.getElementById('gemini-api-key-input');
-            if (input) input.value = geminiApiKey;
+            const input = document.getElementById('flowise-url-input');
+            if (input) input.value = flowiseApiUrl;
             document.getElementById('config-modal').classList.remove('hidden');
         }
 
@@ -879,9 +432,9 @@ STRICT MANDATORY DIRECTIVES:
         }
 
         function saveSettings() {
-            const key = document.getElementById('gemini-api-key-input').value.trim();
-            geminiApiKey = key;
-            localStorage.setItem('aria_gemini_key', key);
+            const url = document.getElementById('flowise-url-input').value.trim();
+            flowiseApiUrl = url;
+            localStorage.setItem('aria_flowise_url', url);
             closeConfigModal();
         }
 
