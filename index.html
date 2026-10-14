@@ -77,7 +77,7 @@
                             Senior Executive Intelligence
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Senior Global Strategic Advisory Engine</p>
+                    <p class="text-xs text-slate-400 hidden sm:block">Senior Global Strategic Advisory Engine (Male Persona)</p>
                 </div>
             </div>
 
@@ -92,7 +92,7 @@
 
     <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
 
-        <!-- Live Voice Session Indicator Banner -->
+        <!-- Live Voice Session Banner -->
         <div id="live-call-card" class="hidden glass-card p-4 sm:p-5 rounded-3xl border border-emerald-500/40 shadow-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div class="relative flex items-center justify-center p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 live-active">
@@ -103,7 +103,7 @@
                         <span>Live Voice Advisory Session</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally. Microphone is live.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally. Continuous audio & voice response enabled.</p>
                 </div>
             </div>
 
@@ -120,7 +120,7 @@
             </button>
         </div>
 
-        <!-- Scrollable Thread Container -->
+        <!-- Chat Container -->
         <div id="chat-thread" class="flex-1 overflow-y-auto pr-1 space-y-4 sm:space-y-6">
             <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
                 <div class="flex items-start gap-4">
@@ -132,7 +132,7 @@
                             Aria - Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, your Senior Executive Advisor. Speak or write naturally, and I will assist you with executive-level guidance.
+                            Welcome. I am Aria, your Senior Executive Advisor. I offer strategic guidance and multi-language spoken interaction. Speak or write naturally.
                         </p>
                     </div>
                 </div>
@@ -144,7 +144,7 @@
                                 <i class="fa-solid fa-microphone"></i>
                                 <span>Start Hands-Free Voice Session</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Live conversation mode</div>
+                            <div class="text-[11px] text-slate-300">Continuous voice conversation mode</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
@@ -160,7 +160,6 @@
             </div>
         </div>
 
-        <!-- Input Control Panel -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Toggle Voice" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
@@ -179,7 +178,7 @@
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
                 <span class="flex items-center gap-1.5" id="connection-status-label">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Flowise Live Engine Connected (Male Executive Persona)
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Executive Engine Connected (Male Voice Output Active)
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -194,28 +193,41 @@
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
         let selectedMaleVoice = null;
+        let interactionCounter = 0;
 
-        // Force initialize and lock deep male voice on load
-        if ('speechSynthesis' in window) {
-            const loadVoices = () => {
-                const voices = window.speechSynthesis.getVoices();
-                selectedMaleVoice = voices.find(v => 
-                    (v.name.toLowerCase().includes('male') || 
-                     v.name.toLowerCase().includes('david') || 
-                     v.name.toLowerCase().includes('george') || 
-                     v.name.toLowerCase().includes('daniel') ||
-                     v.name.toLowerCase().includes('oliver') ||
-                     v.name.toLowerCase().includes('ryan')) && !v.name.toLowerCase().includes('female')
-                ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
-            };
-            loadVoices();
-            window.speechSynthesis.onvoiceschanged = loadVoices;
+        // Force initialize and lock deep male voice on load across browsers
+        function initVoiceSelection() {
+            if ('speechSynthesis' in window) {
+                const loadVoices = () => {
+                    const voices = window.speechSynthesis.getVoices();
+                    // Prioritize clear deep male voices
+                    selectedMaleVoice = voices.find(v => 
+                        (v.name.toLowerCase().includes('male') || 
+                         v.name.toLowerCase().includes('david') || 
+                         v.name.toLowerCase().includes('george') || 
+                         v.name.toLowerCase().includes('daniel') ||
+                         v.name.toLowerCase().includes('oliver') ||
+                         v.name.toLowerCase().includes('ryan') ||
+                         v.name.toLowerCase().includes('tarik') ||
+                         v.name.toLowerCase().includes('maged')) && !v.name.toLowerCase().includes('female')
+                    ) || voices.find(v => v.lang.startsWith('en') || v.lang.startsWith('ar')) || voices[0];
+                };
+                loadVoices();
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = loadVoices;
+                }
+            }
         }
+        window.addEventListener('DOMContentLoaded', initVoiceSelection);
 
         async function queryAriaBrain(userInput) {
             try {
-                // System directive explicitly locking the male executive persona
-                const finalQuestion = `[SYSTEM MANDATE: Respond in the user's exact input language. Maintain a professional male executive tone with deep authority.] ${userInput}`;
+                // Strict directive preventing repetitive greetings & preventing false claims about voice capability
+                const directive = interactionCounter > 1 
+                    ? "[SYSTEM DIRECTIVE: Respond directly to the user's question. DO NOT introduce yourself or repeat greetings. Maintain a male executive persona ('مستشار تنفيذي'). You DO have full spoken voice capability through the user's web interface, so never claim you cannot speak. Respond in the exact input language used by the user.]" 
+                    : "[SYSTEM DIRECTIVE: Respond in the user's exact input language. Maintain a male executive persona ('مستشار تنفيذي'). Note that you HAVE active voice text-to-speech output in this interface.]";
+
+                const finalQuestion = `${directive} ${userInput}`;
 
                 const response = await fetch(FLOWISE_API_URL, {
                     method: "POST",
@@ -240,6 +252,7 @@
             if (!userInput || isProcessingUtterance) return;
 
             isProcessingUtterance = true;
+            interactionCounter++;
 
             appendMessage('user', userInput);
             const loadingId = appendLoadingIndicator();
@@ -249,9 +262,8 @@
                 removeLoadingIndicator(loadingId);
                 appendMessage('aria', responseText);
 
-                if (isLiveCallActive) {
-                    speakAriaResponse(responseText);
-                }
+                // Speak response in live voice mode OR whenever synthesized voice is triggered
+                speakAriaResponse(responseText);
             } catch (err) {
                 removeLoadingIndicator(loadingId);
                 appendMessage('aria', "An error occurred during processing.");
@@ -264,9 +276,20 @@
             if (!('speechSynthesis' in window)) return;
 
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Clean markdown syntax for smooth speech output
+            const cleanText = text.replace(/[*#_`]/g, '').trim();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            
             utterance.rate = 0.95;
-            utterance.pitch = 0.85; // Deep male executive voice pitch
+            utterance.pitch = 0.85; // Deep male pitch standard
+
+            // Detect language for proper TTS accent allocation
+            if (/[\u0600-\u06FF]/.test(cleanText)) {
+                utterance.lang = 'ar-SA';
+            } else {
+                utterance.lang = 'en-US';
+            }
 
             if (selectedMaleVoice) {
                 utterance.voice = selectedMaleVoice;
@@ -419,7 +442,6 @@
         }
 
         function handleKeyPress(e) {
-            5;
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
@@ -437,6 +459,7 @@
         }
 
         function clearChat() {
+            interactionCounter = 0;
             const chatThread = document.getElementById('chat-thread');
             chatThread.innerHTML = `
                 <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
@@ -449,7 +472,7 @@
                                 Aria - Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. Male executive advisory engine ready.
+                                Session reset. Male executive engine ready.
                             </p>
                         </div>
                     </div>
