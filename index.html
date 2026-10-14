@@ -87,6 +87,12 @@
                     <span>Auto Language Sync</span>
                 </div>
 
+                <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1">
+                    <button onclick="setVoiceLang('ku-IQ')" id="lang-btn-ku" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition">KU</button>
+                    <button onclick="setVoiceLang('ar-IQ')" id="lang-btn-ar" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">AR</button>
+                    <button onclick="setVoiceLang('en-US')" id="lang-btn-en" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">EN</button>
+                </div>
+
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span class="hidden sm:inline">Reset Session</span>
@@ -108,7 +114,7 @@
                         <span>Live Voice Executive Call</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in any international language.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in your selected language.</p>
                 </div>
             </div>
 
@@ -198,11 +204,26 @@
         let isLiveCallActive = false;
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
+        let currentVoiceLang = 'ku-IQ';
 
         window.addEventListener('DOMContentLoaded', () => {
             const inputEl = document.getElementById('user-input');
             if (inputEl) inputEl.value = '';
         });
+
+        function setVoiceLang(lang) {
+            currentVoiceLang = lang;
+            ['ku', 'ar', 'en'].forEach(l => {
+                const btn = document.getElementById(`lang-btn-${l}`);
+                if (btn) {
+                    btn.className = `px-2.5 py-1 text-xs font-semibold rounded-lg transition ${(`lang-btn-${l}` === `lang-btn-${lang.substring(0,2)}`) ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`;
+                }
+            });
+
+            if (speechRecognitionEngine) {
+                speechRecognitionEngine.lang = currentVoiceLang;
+            }
+        }
 
         async function queryAriaBrain(userInput) {
             try {
@@ -273,7 +294,6 @@
         function speakAriaResponse(text, userInput) {
             if (!('speechSynthesis' in window)) return;
 
-            // ABSOLUTE LOCK: Cancel ongoing speech instantly to avoid duplication
             window.speechSynthesis.cancel();
             
             const cleanText = text.replace(/[*#_`>]/g, '').trim();
@@ -282,17 +302,17 @@
             utterance.rate = 0.95;
             utterance.pitch = 0.9;
 
-            const hasKurdish = /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(cleanText) || /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(userInput);
-            const hasArabic = /[\u0600-\u06FF]/.test(cleanText);
+            const hasKurdish = /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(cleanText) || /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(userInput) || currentVoiceLang === 'ku-IQ';
+            const hasArabic = /[\u0600-\u06FF]/.test(cleanText) || currentVoiceLang === 'ar-IQ';
 
             if (hasKurdish || hasArabic) {
-                utterance.lang = 'ar-SA';
+                utterance.lang = currentVoiceLang;
             } else {
                 utterance.lang = 'en-US';
             }
 
             const voices = window.speechSynthesis.getVoices();
-            const selectedVoice = voices.find(v => v.lang.startsWith(hasKurdish || hasArabic ? 'ar' : 'en')) || voices[0];
+            const selectedVoice = voices.find(v => v.lang.startsWith(hasKurdish || hasArabic ? (currentVoiceLang === 'ku-IQ' ? 'ku' : 'ar') : 'en')) || voices[0];
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
             }
@@ -310,7 +330,7 @@
             const recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'ar-IQ';
+            recognition.lang = currentVoiceLang;
 
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
@@ -352,6 +372,8 @@
                 alert("Speech recognition is not supported in this browser.");
                 return;
             }
+
+            speechRecognitionEngine.lang = currentVoiceLang;
 
             try {
                 speechRecognitionEngine.start();
