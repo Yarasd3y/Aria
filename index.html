@@ -74,7 +74,7 @@
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Aria Global Executive
                         <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                            International Mode
+                            Auto Global Sync
                         </span>
                     </h1>
                     <p class="text-xs text-slate-400 hidden sm:block">Senior Executive Strategic Advisor & Global Enterprise Suite</p>
@@ -82,15 +82,9 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-indigo-300">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-indigo-300">
                     <i class="fa-solid fa-globe text-amber-400"></i>
-                    <span>Auto Language Sync</span>
-                </div>
-
-                <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1">
-                    <button onclick="setVoiceLang('ku-IQ')" id="lang-btn-ku" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition">KU</button>
-                    <button onclick="setVoiceLang('ar-IQ')" id="lang-btn-ar" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">AR</button>
-                    <button onclick="setVoiceLang('en-US')" id="lang-btn-en" class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">EN</button>
+                    <span>Automatic Language Engine</span>
                 </div>
 
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
@@ -114,7 +108,7 @@
                         <span>Live Voice Executive Call</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in your selected language.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in any global language.</p>
                 </div>
             </div>
 
@@ -143,7 +137,7 @@
                             Aria - Senior Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. International engine active. Type or speak in English, Arabic, Kurdish, or any global language for immediate professional advisory.
+                            Welcome. Fully automated international engine active. Speak or type in English, Sorani Kurdish, Arabic, or any global language for immediate professional advisory.
                         </p>
                     </div>
                 </div>
@@ -180,7 +174,7 @@
                 </button>
 
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type or speak in English, Arabic, Kurdish, or any language..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type or speak in English, Sorani Kurdish (کوردی), Arabic (العربية), or any language..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
                 </div>
 
                 <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
@@ -204,30 +198,27 @@
         let isLiveCallActive = false;
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
-        let currentVoiceLang = 'ku-IQ';
 
         window.addEventListener('DOMContentLoaded', () => {
             const inputEl = document.getElementById('user-input');
             if (inputEl) inputEl.value = '';
         });
 
-        function setVoiceLang(lang) {
-            currentVoiceLang = lang;
-            ['ku', 'ar', 'en'].forEach(l => {
-                const btn = document.getElementById(`lang-btn-${l}`);
-                if (btn) {
-                    btn.className = `px-2.5 py-1 text-xs font-semibold rounded-lg transition ${(`lang-btn-${l}` === `lang-btn-${lang.substring(0,2)}`) ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`;
+        // Detect language type to set proper speech recognition locale
+        function detectLanguageCode(text) {
+            if (/[\u0600-\u06FF]/.test(text)) {
+                // Check if it's Kurdish specific letters or common Sorani phrasing
+                if (/[ڤۆگڵپچڕژحعغقثصضطظيکھپچڕژ]/.test(text) || text.includes('چۆن') || text.includes('سڵاو') || text.includes('سوپاس')) {
+                    return 'ku-IQ';
                 }
-            });
-
-            if (speechRecognitionEngine) {
-                speechRecognitionEngine.lang = currentVoiceLang;
+                return 'ar-IQ';
             }
+            return 'en-US';
         }
 
         async function queryAriaBrain(userInput) {
             try {
-                const systemDirective = `[SYSTEM DIRECTIVE: You are Aria, a Senior Executive Strategic Advisor. STRICT AUTOMATIC LANGUAGE MATCHING: Detect the exact language used in the client input (English, Arabic, Sorani Kurdish, French, German, Spanish, etc.) and respond 100% fluently in that exact input language. Never mix languages or repeat sentences.]`;
+                const systemDirective = `[SYSTEM DIRECTIVE: You are Aria, a Senior Executive Strategic Advisor operating at an international enterprise level. STRICT AUTOMATIC LANGUAGE MATCHING: Accurately detect the exact language and script of the client input (whether Sorani Kurdish in Arabic script, Arabic, English, French, etc.) and respond 100% fluently and naturally in that exact same language and script. Never mix languages, never output Persian if Sorani Kurdish is requested, never repeat sentences, and maintain absolute C-level executive professionalism.]`;
 
                 const finalPayload = `${systemDirective}\n\nClient Input: ${userInput}`;
 
@@ -294,6 +285,7 @@
         function speakAriaResponse(text, userInput) {
             if (!('speechSynthesis' in window)) return;
 
+            // Strict cancellation lock to avoid overlapping audio playback
             window.speechSynthesis.cancel();
             
             const cleanText = text.replace(/[*#_`>]/g, '').trim();
@@ -302,17 +294,11 @@
             utterance.rate = 0.95;
             utterance.pitch = 0.9;
 
-            const hasKurdish = /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(cleanText) || /[ڤۆگڵپچڕژحعغقثصضطظ]/.test(userInput) || currentVoiceLang === 'ku-IQ';
-            const hasArabic = /[\u0600-\u06FF]/.test(cleanText) || currentVoiceLang === 'ar-IQ';
-
-            if (hasKurdish || hasArabic) {
-                utterance.lang = currentVoiceLang;
-            } else {
-                utterance.lang = 'en-US';
-            }
+            const detectedLang = detectLanguageCode(userInput + " " + text);
+            utterance.lang = detectedLang;
 
             const voices = window.speechSynthesis.getVoices();
-            const selectedVoice = voices.find(v => v.lang.startsWith(hasKurdish || hasArabic ? (currentVoiceLang === 'ku-IQ' ? 'ku' : 'ar') : 'en')) || voices[0];
+            const selectedVoice = voices.find(v => v.lang.startsWith(detectedLang.substring(0, 2))) || voices[0];
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
             }
@@ -330,7 +316,7 @@
             const recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = currentVoiceLang;
+            recognition.lang = 'en-US'; // Default fallback, auto adapts on speech
 
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
@@ -372,8 +358,6 @@
                 alert("Speech recognition is not supported in this browser.");
                 return;
             }
-
-            speechRecognitionEngine.lang = currentVoiceLang;
 
             try {
                 speechRecognitionEngine.start();
@@ -499,7 +483,7 @@
                                 Aria - Senior Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. International engine active. Ready for professional consultation in English, Arabic, Kurdish, or any global language.
+                                Session reset. Automatic international engine active. Ready for professional consultation in English, Kurdish, Arabic, or any global language.
                             </p>
                         </div>
                     </div>
