@@ -92,7 +92,7 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-rotate-right"></i>
-                    <span class="hidden sm:inline">Reset</span>
+                    <span class="hidden sm:inline">Reset Session</span>
                 </button>
 
                 <button onclick="openConfigModal()" title="Engine Settings" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500/50 transition flex items-center gap-2 text-xs">
@@ -113,10 +113,10 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <span>Live Advisory Session</span>
+                        <span>Live Voice Advisory Session</span>
                         <span id="listening-indicator" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Listening...</span>
                     </h3>
-                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally in Kurdish, English, Arabic, or French.</p>
+                    <p class="text-xs text-slate-300" id="mic-status-text">Speak naturally. Microphone is live.</p>
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
             </div>
 
             <button onclick="stopLiveVoiceCall()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center gap-2">
-                <i class="fa-solid fa-phone-slash"></i> End Call
+                <i class="fa-solid fa-phone-slash"></i> End Session
             </button>
         </div>
 
@@ -142,47 +142,46 @@
                     </div>
                     <div class="space-y-1.5 flex-1">
                         <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                            Aria Executive Strategic Advisory
+                            Aria Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, Senior Strategic Business Advisor. I automatically detect and respond in your exact input language with high-level data-driven advisory.
+                            Welcome. I am Aria, your Senior Strategic Executive Advisor. I am directly connected to your Railway Flowise engine.
                         </p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <button onclick="startLiveVoiceCall()" class="p-4 bg-gradient-to-r from-emerald-600/30 to-indigo-600/30 hover:from-emerald-600/40 hover:to-indigo-600/40 border border-emerald-500/40 rounded-2xl text-left transition group shadow-md flex items-center justify-between">
+                    <button onclick="toggleLiveVoiceCall()" class="p-4 bg-gradient-to-r from-emerald-600/30 to-indigo-600/30 hover:from-emerald-600/40 hover:to-indigo-600/40 border border-emerald-500/40 rounded-2xl text-left transition group shadow-md flex items-center justify-between">
                         <div>
                             <div class="text-emerald-400 text-xs mb-1 font-bold flex items-center gap-2">
                                 <i class="fa-solid fa-microphone"></i>
-                                <span>Start Live Voice Call</span>
+                                <span>Start Microphone Voice Call</span>
                             </div>
-                            <div class="text-[11px] text-slate-300">Hands-free real-time strategic discussion</div>
+                            <div class="text-[11px] text-slate-300">Hands-free real-time strategic session</div>
                         </div>
                         <i class="fa-solid fa-circle-play text-emerald-400 text-xl group-hover:scale-110 transition"></i>
                     </button>
 
-                    <button onclick="setPrompt('How can we optimize operational efficiency and cross-border expansion?')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
+                    <button onclick="setPrompt('How can we optimize cross-border strategy and business operations?')" class="p-4 bg-slate-900/80 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 rounded-2xl text-left transition group shadow-md">
                         <div class="text-indigo-400 text-xs mb-1 font-bold flex items-center gap-2">
                             <i class="fa-solid fa-globe"></i>
-                            <span>Test Sample Executive Strategy Prompt</span>
+                            <span>Test Executive Prompt</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">How can we optimize operational efficiency and cross-border expansion?</div>
+                        <div class="text-[11px] text-slate-400 group-hover:text-slate-200 transition">How can we optimize cross-border strategy and business operations?</div>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Input Area -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
-                <button id="live-call-btn" onclick="toggleLiveVoiceCall()" title="Voice Call" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
+                <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Toggle Microphone" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
                     <i class="fa-solid fa-microphone text-sm" id="mic-btn-icon"></i>
                     <span id="live-btn-text">Voice</span>
                 </button>
 
                 <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type or speak in any language..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed ltr-text" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea id="user-input" rows="1" placeholder="Type or speak your message..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed ltr-text" onkeydown="handleKeyPress(event)" oninput="autoResizeTextarea(this)"></textarea>
                 </div>
 
                 <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
@@ -191,8 +190,8 @@
             </div>
 
             <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
-                <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Flowise Engine
+                <span class="flex items-center gap-1.5" id="connection-status-label">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Connected to Railway Flowise Engine
                 </span>
                 <span>Press <strong>Enter</strong> to send</span>
             </div>
@@ -216,15 +215,9 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Flowise Endpoint URL</label>
-                    <input type="text" id="flowise-url-input" placeholder="http://localhost:3000/api/v1/prediction/YOUR_CHATFLOW_ID" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
-                    <p class="text-[10px] text-slate-400 mt-1">Lینکەکە لە بەشی API Endpoints (ئایکۆنی &lt;/&gt;) لە Flowise کۆپی بکە و لێرە پەیستی بکە.</p>
+                    <input type="text" id="flowise-url-input" placeholder="https://flowise-production-439f.up.railway.app/api/v1/prediction/..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none ltr-text">
+                    <p class="text-[10px] text-slate-400 mt-1">Directly configured to your live Railway deployment.</p>
                 </div>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs hover:text-white">باشە / Cancel</button>
-                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">پاشەکەوتکردن / Save</button>
-            </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -235,25 +228,23 @@
     </div>
 
     <script>
+        // Exact hardcoded Railway Flowise API URL provided by user
+        const DEFAULT_FLOWISE_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
+        let flowiseApiUrl = localStorage.getItem('aria_flowise_url') || DEFAULT_FLOWISE_URL;
+
         let isLiveCallActive = false;
-        // Pre-configured directly with your exact Railway Flowise instance API
-        let flowiseApiUrl = localStorage.getItem('aria_flowise_url') || "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
         let speechRecognitionEngine = null;
         let isProcessingUtterance = false;
-        let isSpeaking = false;
-        let chatConversationHistory = [];
 
         function isArabicOrKurdishScript(text) {
             return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
         }
 
         async function queryAriaBrain(userInput) {
-            if (!flowiseApiUrl) {
-                return "تکایە سەرەتا URLی چاتفلۆکەی Flowise لە ڕێکخستنەکاندا (Settings) دابنێ.";
-            }
+            const endpoint = flowiseApiUrl.trim() || DEFAULT_FLOWISE_URL;
 
             try {
-                const response = await fetch(flowiseApiUrl, {
+                const response = await fetch(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ question: userInput })
@@ -266,12 +257,12 @@
                 const data = await response.json();
                 return data.text || data.json?.text || "وەڵام وەرنگیرایەوە.";
             } catch (err) {
-                console.error("Flowise error:", err);
-                return "کێشەیەک لە پەیوەندیکردن بە Flowise ڕوویدا. تکایە دڵنیابەرەوە لە ڕاستیی لینکەکە.";
+                console.error("Flowise connection error:", err);
+                return "کێشەیەک لە پەیوەندیکردن بە سێرڤەری Flowise ڕوویدا. تکایە دڵنیابەرەوە لینکەکە ئۆنلاینە.";
             }
         }
 
-        async function processLiveUserUtterance(userInput) {
+        async function processUserUtterance(userInput) {
             if (!userInput || isProcessingUtterance) return;
 
             isProcessingUtterance = true;
@@ -285,7 +276,7 @@
                 appendMessage('aria', responseText);
 
                 if (isLiveCallActive) {
-                    fallbackBrowserTTS(responseText, userInput);
+                    speakAriaResponse(responseText, userInput);
                 }
             } catch (err) {
                 removeLoadingIndicator(loadingId);
@@ -295,7 +286,7 @@
             }
         }
 
-        function fallbackBrowserTTS(text, originalInput) {
+        function speakAriaResponse(text, originalInput) {
             if (!('speechSynthesis' in window)) return;
 
             window.speechSynthesis.cancel();
@@ -309,6 +300,88 @@
             }
 
             window.speechSynthesis.speak(utterance);
+        }
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                alert("وێبگەڕەکەت پشتگیری مایکڕۆفۆن ناکات. تکایە Google Chrome بەکاربهێنە.");
+                return null;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'ku-IQ'; // Supports Arabic/English/Kurdish fallback dynamically
+
+            recognition.onresult = function(event) {
+                const lastIndex = event.results.length - 1;
+                const transcript = event.results[lastIndex][0].transcript.trim();
+                
+                if (transcript && !isProcessingUtterance) {
+                    document.getElementById('user-input').value = transcript;
+                    processUserUtterance(transcript);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.warn("Speech recognition event:", event.error);
+                if (event.error === 'not-allowed') {
+                    alert("تکایە ڕێگە بدە مایکڕۆفۆن لە وێبگەڕەکەتدا کار بکات (Allow Microphone).");
+                    stopLiveVoiceCall();
+                }
+            };
+
+            recognition.onend = function() {
+                if (isLiveCallActive) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            };
+
+            return recognition;
+        }
+
+        function toggleLiveVoiceCall() {
+            if (isLiveCallActive) {
+                stopLiveVoiceCall();
+            } else {
+                startLiveVoiceCall();
+            }
+        }
+
+        function startLiveVoiceCall() {
+            if (!speechRecognitionEngine) {
+                speechRecognitionEngine = initSpeechRecognition();
+            }
+
+            if (!speechRecognitionEngine) return;
+
+            try {
+                speechRecognitionEngine.start();
+                isLiveCallActive = true;
+
+                document.getElementById('live-call-card').classList.remove('hidden');
+                document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone-slash text-red-400";
+                document.getElementById('live-btn-text').innerText = "Stop Call";
+            } catch(e) {
+                console.log("Recognition already active or error:", e);
+            }
+        }
+
+        function stopLiveVoiceCall() {
+            isLiveCallActive = false;
+            if (speechRecognitionEngine) {
+                try { speechRecognitionEngine.stop(); } catch(e) {}
+            }
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            document.getElementById('live-call-card').classList.add('hidden');
+            document.getElementById('mic-btn-icon').className = "fa-solid fa-microphone text-sm";
+            document.getElementById('live-btn-text').innerText = "Voice";
         }
 
         function appendMessage(sender, text) {
@@ -379,7 +452,7 @@
 
             input.value = '';
             autoResizeTextarea(input);
-            await processLiveUserUtterance(text);
+            await processUserUtterance(text);
         }
 
         function handleKeyPress(e) {
@@ -400,7 +473,6 @@
         }
 
         function clearChat() {
-            chatConversationHistory = [];
             const chatThread = document.getElementById('chat-thread');
             chatThread.innerHTML = `
                 <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
@@ -413,7 +485,7 @@
                                 Aria Executive Strategic Advisor
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset.
+                                Session reset. Dedicated Flowise pipeline active.
                             </p>
                         </div>
                     </div>
@@ -433,8 +505,8 @@
 
         function saveSettings() {
             const url = document.getElementById('flowise-url-input').value.trim();
-            flowiseApiUrl = url;
-            localStorage.setItem('aria_flowise_url', url);
+            flowiseApiUrl = url || DEFAULT_FLOWISE_URL;
+            localStorage.setItem('aria_flowise_url', flowiseApiUrl);
             closeConfigModal();
         }
 
