@@ -60,6 +60,7 @@
 
 <body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden">
 
+    <!-- Application Header -->
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-6 py-3 shrink-0">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -82,6 +83,14 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Speech Input Language Switcher -->
+                <select id="mic-lang-select" onchange="updateSpeechLang()" class="bg-slate-900 text-xs border border-slate-800 rounded-xl px-2 py-1 text-slate-300 focus:outline-none focus:border-indigo-500">
+                    <option value="auto">🌐 Auto / Multi-Lang</option>
+                    <option value="ku-IQ">☀️ Kurdish (کوردی)</option>
+                    <option value="ar-SA">🌴 Arabic (العربية)</option>
+                    <option value="en-US">🌍 English</option>
+                </select>
+
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span class="hidden sm:inline">Reset Session</span>
@@ -90,6 +99,7 @@
         </div>
     </header>
 
+    <!-- Main Workspace Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
 
         <!-- Live Voice Session Banner -->
@@ -132,7 +142,7 @@
                             Aria - Executive Strategic Advisor
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. I am Aria, your Senior Executive Advisor. I offer strategic guidance and multi-language spoken interaction. Speak or write naturally.
+                            Welcome. I am Aria, your Senior Executive Advisor. I offer strategic guidance and multi-language spoken interaction. Speak or write naturally in Kurdish, Arabic, or English.
                         </p>
                     </div>
                 </div>
@@ -201,6 +211,7 @@
             if ('speechSynthesis' in window) {
                 const loadVoices = () => {
                     const voices = window.speechSynthesis.getVoices();
+                    // Prioritize male voice profiles across browsers
                     selectedMaleVoice = voices.find(v => 
                         (v.name.toLowerCase().includes('male') || 
                          v.name.toLowerCase().includes('david') || 
@@ -210,7 +221,7 @@
                          v.name.toLowerCase().includes('ryan') ||
                          v.name.toLowerCase().includes('tarik') ||
                          v.name.toLowerCase().includes('maged')) && !v.name.toLowerCase().includes('female')
-                    ) || voices.find(v => v.lang.startsWith('en') || v.lang.startsWith('ar')) || voices[0];
+                    ) || voices.find(v => v.lang.startsWith('en') || v.lang.startsWith('ar') || v.lang.startsWith('ku')) || voices[0];
                 };
                 loadVoices();
                 if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -220,17 +231,27 @@
         }
         window.addEventListener('DOMContentLoaded', initVoiceSelection);
 
-        // Pre-processing to prevent recognition misinterpretations like "in voice" -> "invoice"
+        // Pre-processing to prevent speech recognition misinterpretations
         function sanitizeSpeechTranscript(text) {
             let cleaned = text.replace(/\binvoice\b/gi, "in voice");
             cleaned = cleaned.replace(/\bvoice language\b/gi, "spoken voice");
+            cleaned = cleaned.replace(/\bslow area\b/gi, "سڵاو ئاریا");
+            cleaned = cleaned.replace(/\bturn it back sheet\b/gi, "چۆنیت باشیت");
             return cleaned;
         }
 
         async function queryAriaBrain(userInput) {
             try {
-                // System directive that explicitly instructs Aria about his voice capability and language matching
-                const directive = `[SYSTEM DIRECTIVE: You are Aria, a senior male executive advisor ('مستشار تنفيذي'). You ARE ALREADY connected to a real-time spoken voice interface on the user's screen. NEVER claim you cannot speak or give tutorials on how to turn on TTS settings. Respond directly and concisely to the user in their EXACT input language. Do not repeat greetings or self-introductions if this is an ongoing session.]`;
+                // Determine whether user is speaking Kurdish, Arabic, or English
+                const isKurdish = /[\u0600-\u06FF]/.test(userInput) && (userInput.includes("ک") || userInput.includes("گ") || userInput.includes("چ") || userInput.includes("پ") || userInput.includes("ژ") || userInput.includes("سڵاو") || userInput.includes("باشیت"));
+                const isArabic = /[\u0600-\u06FF]/.test(userInput) && !isKurdish;
+
+                let langRequirement = "EXACT language used by the user";
+                if (isKurdish) langRequirement = "FLUENT SORANI KURDISH (کوردی). Do NOT respond in Arabic or English";
+                else if (isArabic) langRequirement = "FLUENT ARABIC (العربية)";
+
+                // System directive that explicitly instructs Aria about his male persona and voice capability
+                const directive = `[SYSTEM DIRECTIVE: You are Aria, a senior male executive advisor ('مستشار تنفيذي'). You ARE ALREADY connected to a real-time spoken voice interface on the user's screen. NEVER claim you cannot speak or give tutorials on how to turn on TTS settings. Respond directly and concisely to the user in ${langRequirement}. Do not repeat greetings or self-introductions if this is an ongoing session.]`;
 
                 const finalQuestion = `${directive}\n\nClient Input: ${userInput}`;
 
@@ -314,6 +335,14 @@
             recognition.continuous = false;
             recognition.interimResults = false;
 
+            // Set language according to selector or default to Arabic/Kurdish detection
+            const selectedLang = document.getElementById('mic-lang-select')?.value || 'auto';
+            if (selectedLang !== 'auto') {
+                recognition.lang = selectedLang;
+            } else {
+                recognition.lang = 'ar-SA'; // Primary regional default with multi-dialect support
+            }
+
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
                 let transcript = event.results[lastIndex][0].transcript.trim();
@@ -332,6 +361,15 @@
             };
 
             return recognition;
+        }
+
+        function updateSpeechLang() {
+            if (speechRecognitionEngine) {
+                const selectedLang = document.getElementById('mic-lang-select').value;
+                if (selectedLang !== 'auto') {
+                    speechRecognitionEngine.lang = selectedLang;
+                }
+            }
         }
 
         function toggleLiveVoiceCall() {
