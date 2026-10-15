@@ -35,7 +35,6 @@
 
 <body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden">
 
-    <!-- Header Banner -->
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-8 py-4 shrink-0">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -63,7 +62,6 @@
         </div>
     </header>
 
-    <!-- Main Live Interactive Section -->
     <main class="flex-1 max-w-2xl w-full mx-auto flex flex-col justify-center items-center px-4 py-8 gap-8 text-center">
 
         <!-- Voice Call Primary Interactive Card -->
@@ -100,46 +98,84 @@
 
     </main>
 
-    <!-- Script Integration for Vapi SDK -->
     <script>
+        const VAPI_PUBLIC_KEY = "f9fea749-534d-433c-b3c8-7aadc3f7d104";
         const VAPI_ASSISTANT_ID = "f270f469-319e-4529-83f2-e9674b4518cd";
+        let vapiInstance = null;
         let isCallActive = false;
 
+        window.addEventListener('load', () => {
+            if (window.vapiSDK && VAPI_PUBLIC_KEY) {
+                vapiInstance = window.vapiSDK.run({
+                    apiKey: VAPI_PUBLIC_KEY,
+                    assistant: VAPI_ASSISTANT_ID,
+                    config: {
+                        buttonPosition: "bottom-right",
+                        // Custom SDK hooks if needed
+                    }
+                });
+
+                if (vapiInstance && typeof vapiInstance.on === 'function') {
+                    vapiInstance.on("call-start", () => {
+                        isCallActive = true;
+                        updateCallUI(true);
+                    });
+                    vapiInstance.on("call-end", () => {
+                        isCallActive = false;
+                        updateCallUI(false);
+                    });
+                }
+            }
+        });
+
         function toggleVapiCall() {
+            const callStatus = document.getElementById('call-status');
+
+            if (!isCallActive) {
+                callStatus.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-emerald-400">Connecting to Aria... Please allow microphone access.</span>
+                `;
+
+                if (window.vapiSDK) {
+                    // Start call using SDK
+                    window.vapiSDK.run({
+                        apiKey: VAPI_PUBLIC_KEY,
+                        assistant: VAPI_ASSISTANT_ID
+                    });
+                } else {
+                    alert("Vapi SDK is still loading. Please check your internet connection.");
+                }
+            } else {
+                if (window.vapiSDK && window.vapiSDK.stop) {
+                    window.vapiSDK.stop();
+                }
+                isCallActive = false;
+                updateCallUI(false);
+            }
+        }
+
+        function updateCallUI(active) {
             const btnText = document.getElementById('call-btn-text');
             const callBtn = document.getElementById('vapi-call-btn');
             const callStatus = document.getElementById('call-status');
 
-            if (!isCallActive) {
+            if (active) {
                 isCallActive = true;
                 btnText.innerText = "End Consultation";
                 callBtn.className = "px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-red-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
-                
                 callStatus.innerHTML = `
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     <span class="text-emerald-400">Call active... Connected with Aria</span>
                 `;
-
-                if (window.vapiSDK) {
-                    window.vapiSDK.run({
-                        assistant: VAPI_ASSISTANT_ID
-                    });
-                } else {
-                    alert("Vapi SDK is initializing. Please allow microphone access.");
-                }
             } else {
                 isCallActive = false;
                 btnText.innerText = "Start Voice Consultation";
                 callBtn.className = "px-8 py-4 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-emerald-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
-                
                 callStatus.innerHTML = `
                     <span class="w-2 h-2 rounded-full bg-slate-500"></span>
                     <span>Call ended. Ready for a new session.</span>
                 `;
-
-                if (window.vapiSDK && window.vapiSDK.stop) {
-                    window.vapiSDK.stop();
-                }
             }
         }
     </script>
