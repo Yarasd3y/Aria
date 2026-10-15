@@ -49,7 +49,7 @@
             height: 16px;
             background-color: #6366f1;
             border-radius: 9999px;
-            animation: wave 1s infinite ease-in-out;
+            animation: wave 1.0s infinite ease-in-out;
         }
         @keyframes wave {
             0%, 100% { height: 8px; }
@@ -74,7 +74,7 @@
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Aria Global Executive
                         <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                            Auto Global Sync
+                            Real-Time Ready
                         </span>
                     </h1>
                     <p class="text-xs text-slate-400 hidden sm:block">Senior Executive Strategic Advisor & Global Enterprise Suite</p>
@@ -82,11 +82,6 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-indigo-300">
-                    <i class="fa-solid fa-globe text-amber-400"></i>
-                    <span>Automatic Language Engine</span>
-                </div>
-
                 <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span class="hidden sm:inline">Reset Session</span>
@@ -165,7 +160,6 @@
             </div>
         </div>
 
-        <!-- Input Bar -->
         <div class="shrink-0 space-y-2">
             <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
                 <button id="mic-toggle-btn" onclick="toggleLiveVoiceCall()" title="Live Voice" class="px-4 h-11 rounded-2xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition shrink-0 shadow-lg shadow-emerald-600/20 group">
@@ -204,11 +198,10 @@
             if (inputEl) inputEl.value = '';
         });
 
-        // Detect language type to set proper speech recognition locale
+        // Dynamic Language Detection for Speech Recognition and TTS
         function detectLanguageCode(text) {
             if (/[\u0600-\u06FF]/.test(text)) {
-                // Check if it's Kurdish specific letters or common Sorani phrasing
-                if (/[ڤۆگڵپچڕژحعغقثصضطظيکھپچڕژ]/.test(text) || text.includes('چۆن') || text.includes('سڵاو') || text.includes('سوپاس')) {
+                if (/[ڤۆگڵپچڕژحعغقثصضطظيکھپچڕژ]/.test(text) || text.includes('چۆن') || text.includes('سڵاو') || text.includes('سوپاس') || text.includes('ئاریا')) {
                     return 'ku-IQ';
                 }
                 return 'ar-IQ';
@@ -218,7 +211,8 @@
 
         async function queryAriaBrain(userInput) {
             try {
-                const systemDirective = `[SYSTEM DIRECTIVE: You are Aria, a Senior Executive Strategic Advisor operating at an international enterprise level. STRICT AUTOMATIC LANGUAGE MATCHING: Accurately detect the exact language and script of the client input (whether Sorani Kurdish in Arabic script, Arabic, English, French, etc.) and respond 100% fluently and naturally in that exact same language and script. Never mix languages, never output Persian if Sorani Kurdish is requested, never repeat sentences, and maintain absolute C-level executive professionalism.]`;
+                // Streamlined and concise system directive without explicit title words, relying on natural executive persona and auto-language matching
+                const systemDirective = `[SYSTEM DIRECTIVE: You are Aria (ئاریا), a male Senior Executive Business Strategist and Global Growth Consultant. When responding in gendered languages like Arabic or Kurdish, always speak in the male executive form and use male pronouns for yourself. STRICT AUTOMATIC LANGUAGE MATCHING: Accurately detect the exact language and script of the client input and respond 100% fluently and concisely in that exact same language and script. Keep answers concise, direct, and authoritative.]`;
 
                 const finalPayload = `${systemDirective}\n\nClient Input: ${userInput}`;
 
@@ -285,7 +279,6 @@
         function speakAriaResponse(text, userInput) {
             if (!('speechSynthesis' in window)) return;
 
-            // Strict cancellation lock to avoid overlapping audio playback
             window.speechSynthesis.cancel();
             
             const cleanText = text.replace(/[*#_`>]/g, '').trim();
@@ -316,7 +309,7 @@
             const recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'en-US'; // Default fallback, auto adapts on speech
+            recognition.lang = 'ku-IQ'; // Default to Kurdish/English auto
 
             recognition.onresult = function(event) {
                 const lastIndex = event.results.length - 1;
