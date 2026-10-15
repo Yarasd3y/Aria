@@ -3,335 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aria - Global Strategic Executive Suite</title>
+    <title>Aria | Executive Strategic Advisor & Voice Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Vapi Web SDK for Real-Time Voice Calls -->
+    <!-- Vapi Web SDK for Direct Voice Calls -->
     <script src="https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 40%, #020617 100%);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top right, #0f172a 0%, #020617 100%);
         }
         .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.65);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .pulse-wave {
+            animation: pulse-ring 2s infinite ease-in-out;
         }
-        .live-active {
-            animation: live-pulse 1.5s infinite;
-        }
-        @keyframes live-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
-            70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
     </style>
 </head>
 
 <body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden">
 
-    <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-6 py-3 shrink-0">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- Header Banner -->
+    <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-8 py-4 shrink-0">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="relative flex items-center justify-center px-3.5 py-1.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 text-white font-black text-sm tracking-wider shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
-                    Aria
+                <div class="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-indigo-500 text-white font-black text-lg shadow-lg shadow-indigo-500/20">
+                    A
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </span>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                        Aria Global Executive
-                        <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                            Vapi Real-Time Phone Agent
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        Aria | Executive Strategist
+                        <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            Live Voice Active
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Senior Executive Strategic Advisor & Global Enterprise Suite</p>
+                    <p class="text-xs text-slate-400">Senior AI Business & Strategic Advisor</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3">
-                <button onclick="clearChat()" title="Reset Session" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-500/50 transition flex items-center gap-2 text-xs">
-                    <i class="fa-solid fa-rotate-right"></i>
-                    <span class="hidden sm:inline">Reset Session</span>
-                </button>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-400 hidden sm:inline-block">24/7 Voice Consultation</span>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col min-h-0 px-2 sm:px-4 py-3 sm:py-4 gap-4">
+    <!-- Main Live Interactive Section -->
+    <main class="flex-1 max-w-2xl w-full mx-auto flex flex-col justify-center items-center px-4 py-8 gap-8 text-center">
 
-        <!-- Vapi SDK Integration Banner -->
-        <div class="glass-card p-5 sm:p-6 rounded-3xl border border-emerald-500/40 shadow-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4 text-center sm:text-left">
-                <div class="relative flex items-center justify-center p-3.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 live-active shrink-0 mx-auto">
-                    <i class="fa-solid fa-phone-volume text-xl"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm sm:text-base font-bold text-white flex items-center justify-center sm:justify-start gap-2">
-                        <span>Connect with Aria via Real-Time Voice</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Vapi Voice Active</span>
-                    </h3>
-                    <p class="text-xs text-slate-300 mt-1">Speak naturally in Kurdish, Arabic, English or any global language with Aria's executive voice assistant.</p>
+        <!-- Voice Call Primary Interactive Card -->
+        <div class="w-full glass-panel p-8 sm:p-12 rounded-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden flex flex-col items-center gap-6">
+            <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 via-transparent to-transparent pointer-events-none"></div>
+
+            <div class="relative flex items-center justify-center">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 p-1 pulse-wave shadow-2xl shadow-indigo-500/30 flex items-center justify-center">
+                    <div class="w-full h-full bg-slate-950 rounded-full flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-microphone-lines text-3xl sm:text-4xl text-amber-400"></i>
+                    </div>
                 </div>
             </div>
 
-            <button id="start-vapi-call" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-xl shadow-emerald-600/20 transition flex items-center gap-2.5 shrink-0 active:scale-95">
-                <i class="fa-solid fa-microphone text-base"></i>
-                <span>Start Voice Call with Aria</span>
+            <div class="space-y-2 max-w-lg">
+                <h2 class="text-xl sm:text-2xl font-extrabold text-white">Speak with Aria Live</h2>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Click the button below to start a real-time voice conversation. Discuss strategic planning, business analytics, and operational insights seamlessly.
+                </p>
+            </div>
+
+            <!-- Start Call Button -->
+            <button id="vapi-call-btn" onclick="toggleVapiCall()" class="px-8 py-4 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-emerald-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3">
+                <i class="fa-solid fa-phone text-lg"></i>
+                <span id="call-btn-text">Start Voice Consultation</span>
             </button>
-        </div>
 
-        <!-- Chat Thread Container -->
-        <div id="chat-thread" class="flex-1 overflow-y-auto pr-1 space-y-4 sm:space-y-6">
-            <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
-                <div class="flex items-start gap-4">
-                    <div class="px-3.5 py-2 rounded-2xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-lg">
-                        Aria
-                    </div>
-                    <div class="space-y-1.5 flex-1">
-                        <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                            Aria - Senior Executive Strategic Advisor
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Welcome. Fully integrated with your Vapi assistant. You can use the Voice Call button above to speak directly, or type your inquiries below in English, Sorani Kurdish (کوردی), Arabic (العربية), or any global language.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="shrink-0 space-y-2">
-            <div class="glass-panel p-2 sm:p-2.5 rounded-3xl shadow-2xl border border-slate-800 flex items-center gap-2">
-                <div class="flex-1 relative">
-                    <textarea id="user-input" rows="1" placeholder="Type your strategic query in English, Sorani Kurdish (کوردی), or Arabic..." class="w-full bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 leading-relaxed" onkeydown="handleKeyPress(event)" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
-                </div>
-
-                <button id="send-btn" onclick="sendMessage()" title="Send Message" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white flex items-center justify-center text-base transition shrink-0 shadow-lg shadow-indigo-600/30 font-bold active:scale-95">
-                    <i class="fa-solid fa-paper-plane" id="send-icon"></i>
-                </button>
-            </div>
-
-            <div class="flex items-center justify-between text-[11px] text-slate-500 px-3">
-                <span class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Vapi Assistant SDK Synchronized
-                </span>
-                <span>Press <strong>Enter</strong> to send text query</span>
+            <!-- Call Status Message Indicator -->
+            <div id="call-status" class="text-xs text-slate-400 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                <span>Ready to connect</span>
             </div>
         </div>
 
     </main>
 
+    <!-- Script Integration for Vapi SDK -->
     <script>
-        // Placeholder for Flowise Backend or fallback intelligence
-        const FLOWISE_API_URL = "https://flowise-production-439f.up.railway.app/api/v1/prediction/466867ff-b8f9-46bc-a03a-5356deac4d42";
-
-        // Vapi Web SDK Configuration
-        const VAPI_PUBLIC_KEY = "YOUR_VAPI_PUBLIC_KEY"; 
         const VAPI_ASSISTANT_ID = "f270f469-319e-4529-83f2-e9674b4518cd";
+        let isCallActive = false;
 
-        let vapiInstance = null;
+        function toggleVapiCall() {
+            const btnText = document.getElementById('call-btn-text');
+            const callBtn = document.getElementById('vapi-call-btn');
+            const callStatus = document.getElementById('call-status');
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const inputEl = document.getElementById('user-input');
-            if (inputEl) inputEl.value = '';
-
-            // Initialize Vapi SDK if available
-            if (window.vapiSDK && VAPI_PUBLIC_KEY !== "YOUR_VAPI_PUBLIC_KEY") {
-                vapiInstance = window.vapiSDK.run({
-                    apiKey: VAPI_PUBLIC_KEY,
-                    assistant: VAPI_ASSISTANT_ID,
-                    config: {
-                        buttonPosition: "bottom-right",
-                        // additional config if needed
-                    }
-                });
-            }
-
-            // Bind Custom Call Button
-            const callBtn = document.getElementById('start-vapi-call');
-            if (callBtn) {
-                callBtn.addEventListener('click', () => {
-                    if (window.vapiSDK && VAPI_PUBLIC_KEY !== "YOUR_VAPI_PUBLIC_KEY") {
-                        window.vapiSDK.run({
-                            apiKey: VAPI_PUBLIC_KEY,
-                            assistant: VAPI_ASSISTANT_ID
-                        });
-                    } else {
-                        alert("Please insert your Vapi Public Key and Assistant ID in the code script to launch the live call.");
-                    }
-                });
-            }
-        });
-
-        async function queryAriaBrain(userInput) {
-            try {
-                const systemDirective = `[SYSTEM DIRECTIVE: You are Aria (ئاریا), a male Senior Executive Business Strategist and Global Growth Consultant. Speak in male executive form in Kurdish and Arabic. Automatically detect language and respond 100% fluently in the exact same language.]`;
-                const finalPayload = `${systemDirective}\n\nClient Input: ${userInput}`;
-
-                const response = await fetch(FLOWISE_API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ question: finalPayload })
-                });
-
-                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                const data = await response.json();
-                let replyText = data.text || data.json?.text || data.output || "No response received.";
-                return replyText.trim();
-            } catch (err) {
-                console.error("Connection error:", err);
-                return "Connection error encountered. Please verify network status.";
-            }
-        }
-
-        async function processUserUtterance(userInput) {
-            if (!userInput) return;
-            appendMessage('user', userInput);
-            
-            const inputEl = document.getElementById('user-input');
-            if (inputEl) inputEl.value = '';
-
-            const loadingId = appendLoadingIndicator();
-
-            try {
-                const responseText = await queryAriaBrain(userInput);
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', responseText);
-            } catch (err) {
-                removeLoadingIndicator(loadingId);
-                appendMessage('aria', "Error processing executive request.");
-            }
-        }
-
-        function appendMessage(sender, text) {
-            const chatThread = document.getElementById('chat-thread');
-            const welcomeCard = document.getElementById('welcome-card');
-            if (welcomeCard) welcomeCard.style.display = 'none';
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `flex gap-3 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-
-            if (sender === 'user') {
-                messageDiv.innerHTML = `
-                    <div class="max-w-[85%] sm:max-w-[75%] bg-indigo-600/90 text-white p-3.5 sm:p-4 rounded-3xl rounded-tr-sm shadow-xl text-xs sm:text-sm leading-relaxed border border-indigo-500/30" dir="auto">
-                        ${escapeHtml(text)}
-                    </div>
+            if (!isCallActive) {
+                isCallActive = true;
+                btnText.innerText = "End Consultation";
+                callBtn.className = "px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-red-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
+                
+                callStatus.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-emerald-400">Call active... Connected with Aria</span>
                 `;
+
+                if (window.vapiSDK) {
+                    window.vapiSDK.run({
+                        assistant: VAPI_ASSISTANT_ID
+                    });
+                } else {
+                    alert("Vapi SDK is initializing. Please allow microphone access.");
+                }
             } else {
-                messageDiv.innerHTML = `
-                    <div class="flex items-start gap-3 max-w-[90%] sm:max-w-[80%]">
-                        <div class="px-2.5 py-1.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-xs shrink-0 shadow-md">
-                            Aria
-                        </div>
-                        <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-100 text-xs sm:text-sm leading-relaxed shadow-xl border border-slate-800 space-y-2" dir="auto">
-                            ${formatMarkdown(text)}
-                        </div>
-                    </div>
+                isCallActive = false;
+                btnText.innerText = "Start Voice Consultation";
+                callBtn.className = "px-8 py-4 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-emerald-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
+                
+                callStatus.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    <span>Call ended. Ready for a new session.</span>
                 `;
+
+                if (window.vapiSDK && window.vapiSDK.stop) {
+                    window.vapiSDK.stop();
+                }
             }
-
-            chatThread.appendChild(messageDiv);
-            chatThread.scrollTop = chatThread.scrollHeight;
-        }
-
-        function appendLoadingIndicator() {
-            const id = 'loading-' + Date.now();
-            const chatThread = document.getElementById('chat-thread');
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = id;
-            loadingDiv.className = "flex gap-3 justify-start";
-            loadingDiv.innerHTML = `
-                <div class="flex items-start gap-3">
-                    <div class="px-2.5 py-1.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-xs shrink-0 shadow-md animate-pulse">
-                        Aria
-                    </div>
-                    <div class="glass-card p-4 rounded-3xl rounded-tl-sm text-slate-400 text-xs flex items-center gap-2 border border-slate-800">
-                        <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-                        <span>Aria is processing executive response...</span>
-                    </div>
-                </div>
-            `;
-            chatThread.appendChild(loadingDiv);
-            chatThread.scrollTop = chatThread.scrollHeight;
-            return id;
-        }
-
-        function removeLoadingIndicator(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const text = input.value.trim();
-            if (!text) return;
-            await processUserUtterance(text);
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
-
-        function clearChat() {
-            const input = document.getElementById('user-input');
-            if (input) input.value = '';
-
-            const chatThread = document.getElementById('chat-thread');
-            chatThread.innerHTML = `
-                <div class="glass-card p-5 sm:p-6 rounded-3xl space-y-4 shadow-2xl border border-slate-800/80" id="welcome-card">
-                    <div class="flex items-start gap-2">
-                        <div class="px-3.5 py-2 rounded-2xl bg-gradient-to-tr from-indigo-600 to-amber-500 text-white font-black text-sm tracking-wider flex items-center justify-center shrink-0 shadow-lg">
-                            Aria
-                        </div>
-                        <div class="space-y-1.5 flex-1">
-                            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                                Aria - Senior Executive Strategic Advisor
-                            </h2>
-                            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                Session reset. Ready for professional consultation in English, Kurdish, Arabic, or via Vapi Voice call.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/[&<>"']/g, function(m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-            });
-        }
-
-        function formatMarkdown(text) {
-            let escaped = escapeHtml(text);
-            return escaped.replace(/\n/g, '<br>');
         }
     </script>
 </body>
