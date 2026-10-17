@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aria | Executive Strategic Advisor & Voice Portal</title>
+    <title>Aria | Executive Strategic Advisor</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Vapi Web SDK for Direct Voice Calls -->
+    <!-- Vapi Web SDK -->
     <script src="https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js"></script>
 
     <style>
@@ -23,17 +26,17 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .pulse-wave {
-            animation: pulse-ring 2s infinite ease-in-out;
+            animation: pulse-ring 2.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
         }
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0% { transform: scale(0.96); opacity: 0.8; box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            50% { transform: scale(1.04); opacity: 1; box-shadow: 0 0 30px 10px rgba(99, 102, 241, 0.2); }
+            100% { transform: scale(0.96); opacity: 0.8; box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
         }
     </style>
 </head>
 
-<body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden">
+<body class="h-full text-slate-100 flex flex-col antialiased overflow-hidden selection:bg-indigo-500 selection:text-white">
 
     <header class="w-full glass-panel z-30 border-b border-slate-800/80 px-4 sm:px-8 py-4 shrink-0">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
@@ -47,24 +50,25 @@
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                        Aria | Executive Strategist
+                        Aria
                         <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                            Live Voice Active
+                            Executive Advisor
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400">Senior AI Business & Strategic Advisor</p>
+                    <p class="text-xs text-slate-400">Senior AI Business & Strategic Consultant</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <span class="text-xs text-slate-400 hidden sm:inline-block">24/7 Voice Consultation</span>
+                <span class="text-xs font-medium text-slate-400 hidden sm:inline-block bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-globe text-indigo-400 mr-1.5"></i> Sorani Kurdish & Multilingual Support
+                </span>
             </div>
         </div>
     </header>
 
     <main class="flex-1 max-w-2xl w-full mx-auto flex flex-col justify-center items-center px-4 py-8 gap-8 text-center">
 
-        <!-- Voice Call Primary Interactive Card -->
         <div class="w-full glass-panel p-8 sm:p-12 rounded-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden flex flex-col items-center gap-6">
             <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 via-transparent to-transparent pointer-events-none"></div>
 
@@ -77,19 +81,17 @@
             </div>
 
             <div class="space-y-2 max-w-lg">
-                <h2 class="text-xl sm:text-2xl font-extrabold text-white">Speak with Aria Live</h2>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-white">Direct Executive Voice Call</h2>
                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Click the button below to start a real-time voice conversation. Discuss strategic planning, business analytics, and operational insights seamlessly.
+                    Initiate a real-time voice consultation with Aria to discuss corporate strategy, operational scaling, and business insights.
                 </p>
             </div>
 
-            <!-- Start Call Button -->
             <button id="vapi-call-btn" onclick="toggleVapiCall()" class="px-8 py-4 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-emerald-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3">
                 <i class="fa-solid fa-phone text-lg"></i>
                 <span id="call-btn-text">Start Voice Consultation</span>
             </button>
 
-            <!-- Call Status Message Indicator -->
             <div id="call-status" class="text-xs text-slate-400 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-slate-500"></span>
                 <span>Ready to connect</span>
@@ -101,30 +103,32 @@
     <script>
         const VAPI_PUBLIC_KEY = "f9fea749-534d-433c-b3c8-7aadc3f7d104";
         const VAPI_ASSISTANT_ID = "f270f469-319e-4529-83f2-e9674b4518cd";
-        let vapiInstance = null;
         let isCallActive = false;
+        let vapiSDKInstance = null;
+
+        // Forced Assistant Override directly sent via Web SDK payload to prevent cache conflicts
+        const STRICT_ASSISTANT_OVERRIDE = {
+            firstMessage: "Hello, this is Aria. How can I assist with your business strategy today?",
+            model: {
+                messages: [
+                    {
+                        role: "system",
+                        content: `You are Aria, an elite male business strategist.
+
+STRICT CONSULTATION & LANGUAGE RULES:
+1. GREETING RULE: Start EVERY call exclusively with: "Hello, this is Aria. How can I assist with your business strategy today?"
+2. KURDISH LANGUAGE RULE: When the caller speaks Kurdish or mentions Kurdish, respond strictly in native Central Sorani Kurdish (سۆڕانی پاك بە ئەلفوبێی کوردی). NEVER respond in Farsi (فارسی), Persian, Kurmanji, or Latin script.
+3. ABSOLUTE NO FARSI RULE: Under no circumstances are you allowed to speak or write Persian/Farsi words or phrases. Use pure Sorani business terminology.
+4. DIALECTS: Do not ask about language or dialect preferences. Just speak pure, fluid, professional Sorani Kurdish naturally.
+5. CONCISE VOICE DELIVERY: Keep each answer concise (1 to 3 short sentences max). NEVER use bullet points, numbered lists, or markdown list formatting so speech flows naturally without timeouts.`
+                    }
+                ]
+            }
+        };
 
         window.addEventListener('load', () => {
-            if (window.vapiSDK && VAPI_PUBLIC_KEY) {
-                vapiInstance = window.vapiSDK.run({
-                    apiKey: VAPI_PUBLIC_KEY,
-                    assistant: VAPI_ASSISTANT_ID,
-                    config: {
-                        buttonPosition: "bottom-right",
-                        // Custom SDK hooks if needed
-                    }
-                });
-
-                if (vapiInstance && typeof vapiInstance.on === 'function') {
-                    vapiInstance.on("call-start", () => {
-                        isCallActive = true;
-                        updateCallUI(true);
-                    });
-                    vapiInstance.on("call-end", () => {
-                        isCallActive = false;
-                        updateCallUI(false);
-                    });
-                }
+            if (window.vapiSDK) {
+                vapiSDKInstance = window.vapiSDK;
             }
         });
 
@@ -133,24 +137,26 @@
 
             if (!isCallActive) {
                 callStatus.innerHTML = `
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span class="text-emerald-400">Connecting to Aria... Please allow microphone access.</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span class="text-amber-400">Connecting to Aria...</span>
                 `;
 
                 if (window.vapiSDK) {
-                    // Start call using SDK
-                    window.vapiSDK.run({
-                        apiKey: VAPI_PUBLIC_KEY,
-                        assistant: VAPI_ASSISTANT_ID
-                    });
-                } else {
-                    alert("Vapi SDK is still loading. Please check your internet connection.");
+                    try {
+                        window.vapiSDK.run({
+                            apiKey: VAPI_PUBLIC_KEY,
+                            assistant: VAPI_ASSISTANT_ID,
+                            assistantOverrides: STRICT_ASSISTANT_OVERRIDE
+                        });
+                        updateCallUI(true);
+                    } catch (e) {
+                        console.error("Vapi call trigger error:", e);
+                    }
                 }
             } else {
                 if (window.vapiSDK && window.vapiSDK.stop) {
                     window.vapiSDK.stop();
                 }
-                isCallActive = false;
                 updateCallUI(false);
             }
         }
@@ -160,21 +166,21 @@
             const callBtn = document.getElementById('vapi-call-btn');
             const callStatus = document.getElementById('call-status');
 
+            isCallActive = active;
+
             if (active) {
-                isCallActive = true;
                 btnText.innerText = "End Consultation";
                 callBtn.className = "px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-red-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
                 callStatus.innerHTML = `
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span class="text-emerald-400">Call active... Connected with Aria</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-emerald-400">Call Active — Connected with Aria</span>
                 `;
             } else {
-                isCallActive = false;
                 btnText.innerText = "Start Voice Consultation";
                 callBtn.className = "px-8 py-4 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl shadow-emerald-600/30 transition-all duration-300 transform active:scale-95 flex items-center gap-3";
                 callStatus.innerHTML = `
                     <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    <span>Call ended. Ready for a new session.</span>
+                    <span>Ready to connect</span>
                 `;
             }
         }
