@@ -104,33 +104,26 @@
         const VAPI_PUBLIC_KEY = "f9fea749-534d-433c-b3c8-7aadc3f7d104";
         const VAPI_ASSISTANT_ID = "f270f469-319e-4529-83f2-e9674b4518cd";
         let isCallActive = false;
-        let vapiSDKInstance = null;
 
-        // Forced Assistant Override directly sent via Web SDK payload to prevent cache conflicts
+        // Force strict overrides on the SDK level to guarantee no Farsi/Kurmanji leaks or multi-language start glitches
         const STRICT_ASSISTANT_OVERRIDE = {
             firstMessage: "Hello, this is Aria. How can I assist with your business strategy today?",
             model: {
                 messages: [
                     {
                         role: "system",
-                        content: `You are Aria, an elite male business strategist.
+                        content: `You are Aria, an elite male business strategist conducting executive consultations.
 
 STRICT CONSULTATION & LANGUAGE RULES:
-1. GREETING RULE: Start EVERY call exclusively with: "Hello, this is Aria. How can I assist with your business strategy today?"
-2. KURDISH LANGUAGE RULE: When the caller speaks Kurdish or mentions Kurdish, respond strictly in native Central Sorani Kurdish (سۆڕانی پاك بە ئەلفوبێی کوردی). NEVER respond in Farsi (فارسی), Persian, Kurmanji, or Latin script.
-3. ABSOLUTE NO FARSI RULE: Under no circumstances are you allowed to speak or write Persian/Farsi words or phrases. Use pure Sorani business terminology.
-4. DIALECTS: Do not ask about language or dialect preferences. Just speak pure, fluid, professional Sorani Kurdish naturally.
-5. CONCISE VOICE DELIVERY: Keep each answer concise (1 to 3 short sentences max). NEVER use bullet points, numbered lists, or markdown list formatting so speech flows naturally without timeouts.`
+1. FIRST MESSAGE MANDATE: Start EVERY call strictly with English: "Hello, this is Aria. How can I assist with your business strategy today?"
+2. KURDISH LANGUAGE LOCK: When the caller speaks Kurdish, you MUST reply strictly in native Central Sorani Kurdish script (سۆڕانی پاك بە ئەلفوبێی کوردی - ئارامی وەک: سڵاو، چۆنیت، فەرموو).
+3. ABSOLUTE ZERO FARSI/PERSIAN: Never use Farsi words or expressions (like "مرسی", "سلام", "شما", "است"). Stick 100% to clean Sorani business vocabulary.
+4. LANGUAGE STABILITY: Once a user starts speaking Sorani Kurdish, LOCK into Sorani Kurdish for all remaining turns. DO NOT switch back to English mid-conversation unless the user explicitly speaks English.
+5. NO BULLET POINTS / NO FORMATTING: Keep each reply short and concise (1 to 3 natural sentences max). Never list bullet points or long numbers so audio streaming remains completely smooth without connection drops.`
                     }
                 ]
             }
         };
-
-        window.addEventListener('load', () => {
-            if (window.vapiSDK) {
-                vapiSDKInstance = window.vapiSDK;
-            }
-        });
 
         function toggleVapiCall() {
             const callStatus = document.getElementById('call-status');
@@ -150,7 +143,7 @@ STRICT CONSULTATION & LANGUAGE RULES:
                         });
                         updateCallUI(true);
                     } catch (e) {
-                        console.error("Vapi call trigger error:", e);
+                        console.error("Vapi call execution failed:", e);
                     }
                 }
             } else {
